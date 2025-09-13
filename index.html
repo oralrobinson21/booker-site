@@ -644,438 +644,84 @@
     </div>
 
 <script>
-  // ===== 0) Initialize libraries =====
-  AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
-  if (window.feather && typeof feather.replace === 'function') feather.replace();
-
-  // ===== 1) Elements =====
-  const bubble    = document.getElementById('widget-bubble');
-  const panel     = document.getElementById('widget-panel');
-  const closeBtn  = document.getElementById('close-widget');
-  const openDemo  = document.getElementById('open-demo-widget'); // optional "Open Demo Widget" button
-  const input     = document.getElementById('chat-input');
-  const sendBtn   = document.getElementById('send-btn');
-  const scrollBox = panel.querySelector('.flex-1.p-4.overflow-y-auto');
-  const chatArea  = scrollBox.querySelector('.space-y-4');
-
-  // ===== 2) Open/Close widget =====
-  function openWidget(){
-    panel.style.display = 'flex';
-    bubble.style.display = 'none';
-    setTimeout(()=>input?.focus(), 50);
-  }
-  function closeWidget(){
-    panel.style.display = 'none';
-    bubble.style.display = 'flex';
-  }
-  bubble?.addEventListener('click', openWidget);
-  closeBtn?.addEventListener('click', closeWidget);
-  openDemo?.addEventListener('click', openWidget);
-  window.addEventListener('keydown', e => { if (e.key === 'Escape') closeWidget(); });
-
-  // ===== 3) UI helpers =====
-  function addMsg(text, who='bot'){
-    const wrap = document.createElement('div');
-    wrap.className = `flex ${who==='user'?'justify-end':'justify-start'}`;
-
-    const bub = document.createElement('div');
-    bub.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-      who==='user' ? 'rounded-tr-none bg-indigo-600 text-white'
-                   : 'rounded-tl-none bg-gray-100 text-gray-800'
-    }`;
-    bub.textContent = text;
-
-    wrap.appendChild(bub);
-    chatArea.appendChild(wrap);
-    requestAnimationFrame(()=>{ scrollBox.scrollTop = scrollBox.scrollHeight; });
-  }
-
-  // ===== 4) Business knowledge (edit to your brand) =====
-  const KB = {
-    businessName: 'Acme Cleaning',
-    shortDesc: 'Eco-friendly home & apartment cleaning.',
-    areas: ['Brooklyn','Queens','Manhattan','Bronx','Staten Island'],
-    hours: 'Mon–Sat, 8:00am–6:00pm',
-    pricing: {
-      studio: 99,
-      '1br': 129,
-      '2br': 159,
-      deepCleanAddOn: 60
-    },
-    phone: '(555) 555-1234',
-    email: 'hello@acmecleaning.demo',
-    site: 'https://bookerpilot.com',
-    cancellation: 'Free cancellation up to 24 hours before your appointment.',
-    payments: 'We accept Stripe card payments and deposits.',
-    supplies: 'We bring our own supplies. Pet-safe & kid-safe options available.',
-    firstTime: 'First-time cleans may take longer. We’ll confirm the estimate before booking.'
-  };
-
-  // ===== 5) Utility: normalize text =====
-  function norm(s){ return (s||'').toLowerCase().trim(); }
-
-  // ===== 6) Utility: safe arithmetic evaluator (very simple) =====
-  function tryMath(expr){
-    const clean = expr.replace(/[^0-9+\-*/().\s]/g, '');
-    if (!clean) return null;
-    // must contain some operator to be math-like
-    if (!/[+\-*/]/.test(clean)) return null;
-    try {
-      // eslint-disable-next-line no-new-func
-      const val = Function('"use strict";return ('+clean+')')();
-      if (typeof val === 'number' && isFinite(val)) return val;
-      return null;
-    } catch { return null; }
-  }
-
-  // ===== 7) Intent matchers (dumb but wide coverage) =====
-  const intents = [
-    {
-      name: 'greeting',
-      test: t => /\b(hi|hello|hey|good (morning|afternoon|evening))\b/.test(t),
-      reply: () => `Hi! I’m the ${KB.businessName} demo assistant. Ask me about pricing, availability, areas we serve, booking, cancellation, or anything else.`
-    },
-    {
-      name: 'pricing',
-      test: t => /(price|how much|cost|rate|fee)/.test(t),
-      reply: () => `Typical prices: Studio $${KB.pricing.studio}, 1BR $${KB.pricing['1br']}, 2BR $${KB.pricing['2br']}. Deep clean +$${KB.pricing.deepCleanAddOn}.`
-    },
-    {
-      name: 'availability',
-      test: t => /(availability|available|open|when|time|slot|schedule)/.test(t),
-      reply: () => `We’re open ${KB.hours}. Earliest next-day slots are usually available.`
-    },
-    {
-      name: 'areas',
-      test: t => /(area|serve|service|borough|where|location|brooklyn|queens|manhattan|bronx|staten)/.test(t),
-      reply: () => `We serve: ${KB.areas.join(', ')}.`
-    },
-    {
-      name: 'cancellation',
-      test: t => /(cancel|cancellation|reschedule|refund)/.test(t),
-      reply: () => KB.cancellation
-    },
-    {
-      name: 'payments',
-      test: t => /(payment|pay|deposit|card|stripe|visa|mastercard|amex)/.test(t),
-      reply: () => KB.payments
-    },
-    {
-      name: 'supplies',
-      test: t => /(supplies|products|eco|green|safe|pet|kid)/.test(t),
-      reply: () => KB.supplies
-    },
-    {
-      name: 'first_time',
-      test: t => /(first time|first-time|initial clean|deep clean)/.test(t),
-      reply: () => KB.firstTime
-    },
-    {
-      name: 'contact',
-      test: t => /(contact|call|email|phone|speak|reach)/.test(t),
-      reply: () => `You can reach us at ${KB.phone} or ${KB.email}.`
-    },
-    {
-      name: 'about',
-      test: t => /(who are you|about|what do you do|company|business)/.test(t),
-      reply: () => `${KB.businessName}: ${KB.shortDesc}`
-    },
-    {
-      name: 'booking',
-      test: t => /(book|schedule|appointment|reserve)/.test(t),
-      reply: () => `In this demo, just tell me your preferred date & time and I’ll confirm a mock booking. (No charges.)`
-    },
-    {
-      name: 'hours',
-      test: t => /(hours|open|close|when)/.test(t),
-      reply: () => `Our hours are ${KB.hours}.`
-    },
-    {
-      name: 'time_date',
-      test: t => /(time|date|today|tomorrow|day)/.test(t),
-      reply: () => {
-        const now = new Date();
-        return `Right now it’s ${now.toLocaleString()} in your locale.`;
-      }
-    },
-    {
-      name: 'math',
-      test: t => !!tryMath(t),
-      reply: (_, q) => {
-        const ans = tryMath(q);
-        return ans !== null ? `Answer: ${ans}` : "I couldn't compute that.";
-      }
-    },
-    {
-      name: 'smalltalk',
-      test: t => /(thank|thanks|great|awesome|cool|lol|haha|how are you|who made you|joke)/.test(t),
-      reply: () => `Happy to help! If you want to try a booking, just say “book” with a date/time.`
-    }
-  ];
-
-  // ===== 8) Fallback generator =====
-  function fallback(reason){
-    const tips = [
-      `Here’s what I can help with right now: pricing, areas, hours, booking, cancellation, payments, supplies.`,
-      `If you’re testing, try: “price”, “availability”, “Brooklyn”, “book tomorrow 10am”, or “cancelation policy”.`,
-      `Want a real person? Call ${KB.phone} or email ${KB.email}.`
-    ];
-    return `I don’t have that exact info in this demo, but ${reason}\n\n${tips[Math.floor(Math.random()*tips.length)]}`;
-  }
-
-  // ===== 9) Very light entity extraction for booking-ish phrases =====
-  function tryExtractBooking(t){
-    // examples it will catch: "book tomorrow 10am", "schedule Monday 2 pm", "book 9/20 at 1pm"
-    const dayMatch = t.match(/\b(today|tomorrow|mon(day)?|tue(sday)?|wed(nesday)?|thu(rsday)?|fri(day)?|sat(urday)?|sun(day)?)\b/);
-    const dateMatch = t.match(/\b(\d{1,2}[\/\-]\d{1,2}([\/\-]\d{2,4})?)\b/);
-    const timeMatch = t.match(/\b(\d{1,2}(:\d{2})?\s?(am|pm)?)\b/);
-
-    if (dayMatch || dateMatch || timeMatch) {
-      const dayOrDate = (dayMatch && dayMatch[0]) || (dateMatch && dateMatch[0]) || 'the next available day';
-      const time = (timeMatch && timeMatch[0]) || 'a convenient time';
-      return `Great — I can pencil you in for ${dayOrDate} at ${time}. This is a demo confirmation (no charges).`;
-    }
-    return null;
-  }
-
-  // ===== 10) Brain: route a question to the best intent =====
-  function think(userText){
-    const t = norm(userText);
-
-    // booking phrasing first
-    if (/(book|schedule|appointment|reserve)/.test(t)) {
-      const bk = tryExtractBooking(t);
-      if (bk) return bk;
-    }
-
-    // score intents by how many keyword hits their test implies
-    for (const intent of intents) {
-      try {
-        if (intent.test(t)) {
-          return typeof intent.reply === 'function' ? intent.reply(t, userText) : intent.reply;
-        }
-      } catch {}
-    }
-
-    // fallback: mild fuzzy handling
-    if (/\?$/.test(t) || t.split(' ').length > 3) {
-      return fallback('I gave a general answer instead.');
-    }
-    return fallback('try asking in a different way.');
-  }
-
-  // ===== 11) Send/Reply wiring =====
-  function send(){
-    const text = (input?.value || '').trim();
-    if (!text) return;
-    addMsg(text, 'user');
-    input.value = '';
-    setTimeout(() => {
-      const answer = think(text);
-      addMsg(answer, 'bot');
-    }, 300);
-  }
-  sendBtn?.addEventListener('click', send);
-  input?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send(); }});
-
-  // ===== 12) Greet once on open =====
-  let greeted = false;
-  function greetOnce(){
-    if (greeted) return;
-    greeted = true;
-    addMsg(`Hi! I’m the ${KB.businessName} demo assistant. Ask me anything — pricing, availability, areas, booking, policies, or even math.`, 'bot');
-  }
-  bubble?.addEventListener('click', greetOnce);
-  openDemo?.addEventListener('click', greetOnce);
-</script>
-
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-<script>
-// ------------------------------
-// BookerPilot AI - Enterprise-y client
-// Drop-in: connects your chat UI to Supabase Edge Function "ai-chat"
-// ------------------------------
-
-// 0) Config (EDIT THESE TWO)
-const SUPABASE_URL = 'https://lzitxdifsukaywuansgh.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY'; // keep anon, NOT the OpenAI key
-
-// 1) Boot Supabase
-if (!window.supabase) { console.error('Missing supabase-js <script> in <head>.'); }
-const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// 2) Grab existing UI hooks from your page
-const bubble    = document.getElementById('widget-bubble');
-const panel     = document.getElementById('widget-panel');
-const closeBtn  = document.getElementById('close-widget');
-const openDemo  = document.getElementById('open-demo-widget');
-const input     = document.getElementById('chat-input');
-const sendBtn   = document.getElementById('send-btn');
-const scrollBox = panel?.querySelector('.flex-1.p-4.overflow-y-auto');
-const chatArea  = scrollBox?.querySelector('.space-y-4');
-
-// 3) Light session state
-const SESSION = {
-  id: crypto.randomUUID(),
-  startedAt: Date.now(),
-  turns: [],               // short-term memory [{role, content}]
-  asksInWindow: 0,         // client-side rate limiting
-  lastReset: Date.now()
-};
-
-// 4) UI helpers
-function scrollToBottom() {
-  if (!scrollBox) return;
-  scrollBox.scrollTop = scrollBox.scrollHeight;
-}
-function bubbleEl(text, who) {
-  const wrap = document.createElement('div');
-  wrap.className = `flex ${who==='user'?'justify-end':'justify-start'}`;
-  const bub = document.createElement('div');
-  bub.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-    who==='user' ? 'rounded-tr-none bg-indigo-600 text-white'
-                 : 'rounded-tl-none bg-gray-100 text-gray-800'
-  }`;
-  bub.textContent = text;
-  wrap.appendChild(bub);
-  chatArea.appendChild(wrap);
-  scrollToBottom();
-  return bub;
-}
-function typeInto(el, fullText, speed=18) {
-  el.textContent = '';
-  let i = 0;
-  return new Promise(resolve=>{
-    const tick = () => {
-      if (i >= fullText.length) return resolve(null);
-      el.textContent += fullText[i++];
-      scrollToBottom();
-      setTimeout(tick, speed);
-    };
-    tick();
-  });
-}
-function ctaRow() {
-  const row = document.createElement('div');
-  row.className = "flex gap-2 pt-2";
-  const btn1 = document.createElement('button');
-  btn1.className = "px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700";
-  btn1.textContent = "Start free trial";
-  btn1.onclick = () => location.href = "/signup.html";
-  const btn2 = document.createElement('button');
-  btn2.className = "px-3 py-1 text-sm border rounded hover:bg-gray-50";
-  btn2.textContent = "See pricing";
-  btn2.onclick = () => location.href = "#pricing";
-  row.appendChild(btn1); row.appendChild(btn2);
-  return row;
+if (now - SESSION.lastReset > 3600_000) { SESSION.asksInWindow=0; SESSION.lastReset = now; }
+if (SESSION.asksInWindow >= CONFIG.maxMessagesPerHour) return `Demo limit reached (${CONFIG.maxMessagesPerHour}/hr). Please try later or start a free trial.`;
+SESSION.asksInWindow++; return null;
 }
 
-// 5) Basic open/close wiring (keep your existing behavior)
-function openWidget(){ panel.style.display='flex'; bubble.style.display='none'; setTimeout(()=>input?.focus(), 80); }
-function closeWidget(){ panel.style.display='none'; bubble.style.display='flex'; }
-bubble?.addEventListener('click', openWidget);
-closeBtn?.addEventListener('click', closeWidget);
-openDemo?.addEventListener('click', openWidget);
-window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeWidget(); });
 
-// 6) Client-side rate limit (soft)
-function checkRateLimit() {
-  const now = Date.now();
-  if (now - SESSION.lastReset > 60*60*1000) { // reset hourly
-    SESSION.asksInWindow = 0;
-    SESSION.lastReset = now;
-  }
-  if (SESSION.asksInWindow >= 15) {
-    return "You've reached the demo limit (15 messages per hour). Please try again later or sign up for full access.";
-  }
-  SESSION.asksInWindow++;
-  return null;
+// ===============================
+// 7) THINK (LOCAL) OR CALL EDGE (HYBRID)
+// ===============================
+function localThink(userText){
+const t = norm(userText);
+if (/(book|schedule|appointment|reserve)/.test(t)) { const bk = tryExtractBooking(t); if (bk) return bk; }
+for (const intent of intents) { try { if (intent.test(t)) { return typeof intent.reply === 'function' ? intent.reply(t, userText) : intent.reply; } } catch {}
+}
+return fallback();
 }
 
-// 7) Invoke the edge function with retries
-async function invokeAI(userText, businessType) {
-  if (!sb) throw new Error('Supabase client not initialized.');
-  const payload = {
-    message: { text: userText, businessType },
-    history: SESSION.turns.slice(-10), // send last 10 turns
-    meta: { page: location.pathname, ref: document.referrer?.slice(0, 180) || "" }
-  };
 
-  // retry with exponential backoff
-  let attempt = 0, lastErr;
-  while (attempt < 3) {
-    try {
-      const { data, error } = await sb.functions.invoke('ai-chat', { body: payload });
-      if (error) throw error;
-      if (!data?.text) throw new Error('No text returned.');
-      return data.text.toString();
-    } catch (e) {
-      lastErr = e;
-      await new Promise(r => setTimeout(r, 300 * Math.pow(2, attempt)));
-      attempt++;
-    }
-  }
-  throw lastErr || new Error('AI request failed.');
+function detectBizHint(){
+const t = (SESSION.turns.find(u=>u.role==='user')?.content||'');
+const m = t.match(/(salon|cleaning|cleaner|tutor|tutoring|fitness|gym|trainer|pet|grooming|handyman|repair|spa|massage|landscap(?:ing)?|plumb(?:er|ing)?|electr(?:ician|ical)?)/i);
+return m ? m[1] : 'local services';
 }
 
-// 8) Send flow
-async function send() {
-  const text = (input?.value || '').trim();
-  if (!text) return;
 
-  // rate limit
-  const limitMsg = checkRateLimit();
-  bubbleEl(text, 'user');
-  SESSION.turns.push({ role: 'user', content: text });
-  input.value = '';
+// ===============================
+// 8) SEND FLOW
+// ===============================
+async function send(){
+const raw = input?.value || ''; const text = raw.trim(); if (!text) return;
+const limitMsg = checkRateLimit();
+bubbleEl(text, 'user');
+SESSION.turns.push({ role:'user', content: stripHtml(text) });
+input.value = '';
 
-  if (limitMsg) {
-    const el = bubbleEl('', 'bot');
-    await typeInto(el, limitMsg);
-    return;
-  }
 
-  // ask for business type once if not known (simple)
-  const hasType = SESSION.turns.find(t => t.role==='user' && /salon|clean|tutor|fitness|gym|trainer|pet|groom|handyman|repair|spa|massage|landscap|plumb|electr/i.test(t.content));
-  let bizHint = 'local services';
-  if (hasType) {
-    const m = hasType.content.match(/(salon|cleaning|cleaner|tutor|tutoring|fitness|gym|trainer|pet|grooming|handyman|repair|spa|massage|landscap(?:ing)?|plumb(?:er|ing)?|electr(?:ician|ical)?)/i);
-    if (m) bizHint = m[1];
-  }
+const thinking = bubbleEl('Thinking…', 'bot');
 
-  const thinking = bubbleEl('Thinking…', 'bot');
-  try {
-    const reply = await invokeAI(text, bizHint);
-    // replace "Thinking…" with typed answer + CTAs
-    await typeInto(thinking, reply);
-    thinking.parentElement.appendChild(ctaRow());
-    SESSION.turns.push({ role: 'assistant', content: reply });
-    // fire-and-forget analytics (optional; table: chat_events)
-    // try { await sb.from('chat_events').insert([{ session_id: SESSION.id, event: 'reply', q: text, a: reply }]); } catch {}
-  } catch (e) {
-    const msg = 'Sorry—our AI is busy right now. Please try again, or start a free trial to talk to a real agent.';
-    thinking.textContent = msg;
-    thinking.parentElement.appendChild(ctaRow());
-    // try { await sb.from('chat_events').insert([{ session_id: SESSION.id, event: 'error', detail: String(e) }]); } catch {}
-  }
+
+if (limitMsg){ await typeInto(thinking, limitMsg); return; }
+
+
+// Hybrid strategy: try Edge function; fallback to local intents on failure
+const biz = detectBizHint();
+try {
+const reply = await SB.aiChat(SESSION.turns, text, biz);
+const finalReply = `${reply}\n\nQuestions? Email ${CONFIG.contactEmail}.`;
+await typeInto(thinking, finalReply);
+thinking.parentElement.appendChild(ctaRow());
+SESSION.turns.push({ role:'assistant', content: finalReply });
+} catch(e){
+const local = `${localThink(text)}\n\nQuestions? Email ${CONFIG.contactEmail}.`;
+thinking.textContent = local;
+thinking.parentElement.appendChild(ctaRow());
+SESSION.turns.push({ role:'assistant', content: local });
+}
 }
 
-// 9) Wire buttons / Enter key
+
 sendBtn?.addEventListener('click', send);
-input?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send(); }});
+input?.addEventListener('keydown', e=>{ if (e.key==='Enter'){ e.preventDefault(); send(); }});
 
-// 10) Greet on first open
+
+// ===============================
+// 9) GREETING (CHALLENGE COPY)
+// ===============================
 let greeted = false;
-function greet() {
-  if (greeted) return; greeted = true;
-  const g = bubbleEl('', 'bot');
-  typeInto(g,
-    "Hi! I’m the BookerPilot demo assistant. Tell me about your business and I’ll show exactly how we boost bookings, cut no-shows, and save you time. Ask me anything!"
-  ).then(()=> g.parentElement.appendChild(ctaRow()));
+function greet(){
+if (greeted) return; greeted = true;
+const g = bubbleEl('', 'bot');
+typeInto(g, `Hi! I’m the ${CONFIG.businessName} assistant. Challenge me: ask pricing, availability, or say “book tomorrow 10am”. If I can’t answer in 10s, you win. Let’s see how I can help your business grow.\n\nQuestions? Email ${CONFIG.contactEmail}.`)
+.then(()=> g.parentElement.appendChild(ctaRow()));
 }
 bubble?.addEventListener('click', greet);
 openDemo?.addEventListener('click', greet);
+
+
+})();
 </script>
         
         
