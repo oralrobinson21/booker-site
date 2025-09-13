@@ -644,79 +644,100 @@
     </div>
 
 <script>
-if (now - SESSION.lastReset > 3600_000) { SESSION.asksInWindow=0; SESSION.lastReset = now; }
-if (SESSION.asksInWindow >= CONFIG.maxMessagesPerHour) return `Demo limit reached (${CONFIG.maxMessagesPerHour}/hr). Please try later or start a free trial.`;
-SESSION.asksInWindow++; return null;
+const date=t.match(/\b(\d{1,2}[\/\-]\d{1,2}([\/\-]\d{2,4})?)\b/);
+const time=t.match(/\b(\d{1,2}(:\d{2})?\s?(am|pm)?)\b/);
+if(day||date||time){ const d=(day&&day[0])||(date&&date[0])||'the next available day'; const tm=(time&&time[0])||'a convenient time'; return `Great — penciling you in for ${d} at ${tm}. This is a demo confirmation (no charges).`; }
+return null;
 }
-
-
-// ===============================
-// 7) THINK (LOCAL) OR CALL EDGE (HYBRID)
-// ===============================
+const intents=[
+{name:'greeting', test:t=>/\b(hi|hello|hey|good (morning|afternoon|evening))\b/.test(t), reply:()=>`Hi! I’m the ${CONFIG.businessName} assistant. Ask pricing, availability, areas, or say “book tomorrow 10am”.`},
+{name:'pricing', test:t=>/(price|how much|cost|rate|fee)/.test(t), reply:()=>`Typical prices: Studio $${CONFIG.pricing.studio}, 1BR $${CONFIG.pricing['1br']}, 2BR $${CONFIG.pricing['2br']}. Deep clean +$${CONFIG.pricing.deepCleanAddOn}.`},
+{name:'availability', test:t=>/(availability|available|open|when|time|slot|schedule)/.test(t), reply:()=>`We’re open ${CONFIG.hours}. Earliest next‑day slots are usually available.`},
+{name:'areas', test:t=>/(area|serve|service|borough|where|location|brooklyn|queens|manhattan|bronx|staten)/.test(t), reply:()=>`We serve: ${CONFIG.areas.join(', ')}.`},
+{name:'cancellation', test:t=>/(cancel|cancellation|reschedule|refund)/.test(t), reply:()=>CONFIG.cancellation},
+{name:'payments', test:t=>/(payment|pay|deposit|card|stripe|visa|mastercard|amex)/.test(t), reply:()=>CONFIG.payments},
+{name:'supplies', test:t=>/(supplies|products|eco|green|safe|pet|kid)/.test(t), reply:()=>CONFIG.supplies},
+{name:'first_time', test:t=>/(first time|first-time|initial clean|deep clean)/.test(t), reply:()=>CONFIG.firstTime},
+{name:'contact', test:t=>/(contact|call|email|phone|speak|reach)/.test(t), reply:()=>`Questions? Email ${CONFIG.contactEmail}.`},
+{name:'about', test:t=>/(who are you|about|what do you do|company|business)/.test(t), reply:()=>`${CONFIG.businessName}: ${CONFIG.shortDesc}`},
+{name:'booking', test:t=>/(book|schedule|appointment|reserve)/.test(t), reply:()=>`In this demo, tell me a date & time and I’ll confirm a mock booking. (No charges.)`},
+{name:'hours', test:t=>/(hours|open|close|when)/.test(t), reply:()=>`Our hours are ${CONFIG.hours}.`},
+{name:'time_date', test:t=>/(time|date|today|tomorrow|day)/.test(t), reply:()=>`Right now it’s ${new Date().toLocaleString()}.`},
+{name:'math', test:t=>!!tryMath(t), reply:(_,q)=>`Answer: ${tryMath(q)}`}
+];
 function localThink(userText){
-const t = norm(userText);
-if (/(book|schedule|appointment|reserve)/.test(t)) { const bk = tryExtractBooking(t); if (bk) return bk; }
-for (const intent of intents) { try { if (intent.test(t)) { return typeof intent.reply === 'function' ? intent.reply(t, userText) : intent.reply; } } catch {}
-}
-return fallback();
-}
-
-
-function detectBizHint(){
-const t = (SESSION.turns.find(u=>u.role==='user')?.content||'');
-const m = t.match(/(salon|cleaning|cleaner|tutor|tutoring|fitness|gym|trainer|pet|grooming|handyman|repair|spa|massage|landscap(?:ing)?|plumb(?:er|ing)?|electr(?:ician|ical)?)/i);
-return m ? m[1] : 'local services';
+const t=norm(userText);
+if(/(book|schedule|appointment|reserve)/.test(t)){ const bk=tryExtractBooking(t); if(bk) return bk; }
+for(const i of intents){ try{ if(i.test(t)) return typeof i.reply==='function'?i.reply(t,userText):i.reply; }catch{} }
+return `Here’s what I can help with: pricing, areas, hours, booking, cancellation, payments, supplies.`;
 }
 
 
-// ===============================
-// 8) SEND FLOW
-// ===============================
+// =====================
+// SUPABASE EDGE FUNCTION (ChatGPT server-side)
+// =====================
+if(!window.supabase){ console.error('Missing supabase-js <script> in <head>.'); }
+const sb = window.supabase?.createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey);
+const SESSION = { id: crypto.randomUUID(), turns: [], asksInWindow:0, lastReset:Date.now() };
+
+
+function checkRateLimit(){ const now=Date.now(); if(now-SESSION.lastReset>3600_000){ SESSION.asksInWindow=0; SESSION.lastReset=now; } if(SESSION.asksInWindow>=CONFIG.maxMessagesPerHour) return `Demo limit reached (${CONFIG.maxMessagesPerHour}/hr). Please try later.`; SESSION.asksInWindow++; return null; }
+
+
+async function callEdge(userText){
+if(!sb) throw new Error('Supabase client not initialized');
+const payload={
+message:{ text:userText, businessType:'local services' },
+history: SESSION.turns.slice(-10),
+brand: { name: CONFIG.businessName, shortDesc: CONFIG.shortDesc, email: CONFIG.contactEmail },
+meta: { page: location.pathname, ref: document.referrer?.slice(0,180)||'' }
+};
+const { data, error } = await sb.functions.invoke('ai-chat', { body: payload });
+if(error) throw error;
+if(!data?.text) throw new Error('No text returned');
+return String(data.text);
+}
+
+
+// =====================
+// SEND FLOW
+// =====================
 async function send(){
-const raw = input?.value || ''; const text = raw.trim(); if (!text) return;
-const limitMsg = checkRateLimit();
-bubbleEl(text, 'user');
+const text=(input?.value||'').trim(); if(!text) return;
+const limitMsg=checkRateLimit();
+bubbleEl(text,'user');
 SESSION.turns.push({ role:'user', content: stripHtml(text) });
-input.value = '';
+input.value='';
 
 
-const thinking = bubbleEl('Thinking…', 'bot');
-
-
-if (limitMsg){ await typeInto(thinking, limitMsg); return; }
-
-
-// Hybrid strategy: try Edge function; fallback to local intents on failure
-const biz = detectBizHint();
-try {
-const reply = await SB.aiChat(SESSION.turns, text, biz);
+const thinking=bubbleEl('Thinking…','bot');
+try{
+if(limitMsg) { await typeInto(thinking, limitMsg); return; }
+let reply=await callEdge(text);
+// Final safety: purge any stray “Acme Cleaning” from server responses
+reply = reply.replace(/\bacme\s+cleaning\b/gi, CONFIG.businessName);
 const finalReply = `${reply}\n\nQuestions? Email ${CONFIG.contactEmail}.`;
 await typeInto(thinking, finalReply);
 thinking.parentElement.appendChild(ctaRow());
 SESSION.turns.push({ role:'assistant', content: finalReply });
-} catch(e){
-const local = `${localThink(text)}\n\nQuestions? Email ${CONFIG.contactEmail}.`;
-thinking.textContent = local;
+}catch(e){
+const fallback = `${localThink(text)}\n\nQuestions? Email ${CONFIG.contactEmail}.`;
+thinking.textContent = fallback;
 thinking.parentElement.appendChild(ctaRow());
-SESSION.turns.push({ role:'assistant', content: local });
+SESSION.turns.push({ role:'assistant', content: fallback });
 }
 }
 
 
 sendBtn?.addEventListener('click', send);
-input?.addEventListener('keydown', e=>{ if (e.key==='Enter'){ e.preventDefault(); send(); }});
+input?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); }});
 
 
-// ===============================
-// 9) GREETING (CHALLENGE COPY)
-// ===============================
-let greeted = false;
-function greet(){
-if (greeted) return; greeted = true;
-const g = bubbleEl('', 'bot');
-typeInto(g, `Hi! I’m the ${CONFIG.businessName} assistant. Challenge me: ask pricing, availability, or say “book tomorrow 10am”. If I can’t answer in 10s, you win. Let’s see how I can help your business grow.\n\nQuestions? Email ${CONFIG.contactEmail}.`)
-.then(()=> g.parentElement.appendChild(ctaRow()));
-}
+// =====================
+// GREETING
+// =====================
+let greeted=false;
+function greet(){ if(greeted) return; greeted=true; const g=bubbleEl('', 'bot'); typeInto(g, `Hi! I’m the ${CONFIG.businessName} assistant. Ask me anything — pricing, availability, areas, booking, policies, or even math.\n\nQuestions? Email ${CONFIG.contactEmail}.`).then(()=> g.parentElement.appendChild(ctaRow())); }
 bubble?.addEventListener('click', greet);
 openDemo?.addEventListener('click', greet);
 
