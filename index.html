@@ -579,7 +579,60 @@
     <p class="text-[11px] text-gray-400 mt-2">Demo only. No data is sent to a server.</p>
   </div>
 </div>
-     
+
+<!-- Widget Bubble -->
+<div id="widget-bubble" class="widget-bubble">
+  <i data-feather="message-square"></i>
+</div>
+
+<!-- Widget Panel (popup only; hidden by default) -->
+<div id="widget-panel" class="widget-panel">
+  <div class="bg-indigo-600 text-white p-4">
+    <div class="flex justify-between items-center">
+      <h3 class="font-medium">Acme Cleaning</h3>
+      <button id="close-widget" class="text-white hover:text-indigo-200">
+        <i data-feather="x"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- CHAT SCROLL -->
+  <div id="chat-scroll" class="flex-1 p-4 overflow-y-auto">
+    <div id="chat-list" class="space-y-4">
+      <div class="flex justify-start">
+        <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100">
+          <p class="text-gray-800">
+            Hi there! I’m Booker. Ask about pricing, areas we serve, or how to book. Try the quick replies below.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REPLIES -->
+  <div id="quick-suggestions" class="px-4 py-2 border-t border-gray-100">
+    <div class="flex flex-wrap gap-2">
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="How much for a 1 bedroom?">1BR price</button>
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="Do you service Brooklyn?">Service area</button>
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="What's your cancellation policy?">Cancellation</button>
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="How do I book?">How to book</button>
+      <button id="clear-chat" class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200">Clear</button>
+    </div>
+  </div>
+
+  <!-- INPUT (POPUP ONLY) -->
+  <div class="border-t border-gray-200 p-4">
+    <div class="flex items-center">
+      <input id="chat-input" type="text" placeholder="Type your question..."
+             class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+      <button id="chat-send" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+        <i data-feather="send"></i>
+      </button>
+    </div>
+    <p class="text-[11px] text-gray-400 mt-2">Demo only. No data is sent to a server.</p>
+  </div>
+</div>
+
 
 <script>
   window.addEventListener("DOMContentLoaded", () => {
