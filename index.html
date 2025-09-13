@@ -889,6 +889,195 @@
   openDemo?.addEventListener('click', greetOnce);
 </script>
 
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
+<script>
+// ------------------------------
+// BookerPilot AI - Enterprise-y client
+// Drop-in: connects your chat UI to Supabase Edge Function "ai-chat"
+// ------------------------------
+
+// 0) Config (EDIT THESE TWO)
+const SUPABASE_URL = 'https://lzitxdifsukaywuansgh.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY'; // keep anon, NOT the OpenAI key
+
+// 1) Boot Supabase
+if (!window.supabase) { console.error('Missing supabase-js <script> in <head>.'); }
+const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// 2) Grab existing UI hooks from your page
+const bubble    = document.getElementById('widget-bubble');
+const panel     = document.getElementById('widget-panel');
+const closeBtn  = document.getElementById('close-widget');
+const openDemo  = document.getElementById('open-demo-widget');
+const input     = document.getElementById('chat-input');
+const sendBtn   = document.getElementById('send-btn');
+const scrollBox = panel?.querySelector('.flex-1.p-4.overflow-y-auto');
+const chatArea  = scrollBox?.querySelector('.space-y-4');
+
+// 3) Light session state
+const SESSION = {
+  id: crypto.randomUUID(),
+  startedAt: Date.now(),
+  turns: [],               // short-term memory [{role, content}]
+  asksInWindow: 0,         // client-side rate limiting
+  lastReset: Date.now()
+};
+
+// 4) UI helpers
+function scrollToBottom() {
+  if (!scrollBox) return;
+  scrollBox.scrollTop = scrollBox.scrollHeight;
+}
+function bubbleEl(text, who) {
+  const wrap = document.createElement('div');
+  wrap.className = `flex ${who==='user'?'justify-end':'justify-start'}`;
+  const bub = document.createElement('div');
+  bub.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+    who==='user' ? 'rounded-tr-none bg-indigo-600 text-white'
+                 : 'rounded-tl-none bg-gray-100 text-gray-800'
+  }`;
+  bub.textContent = text;
+  wrap.appendChild(bub);
+  chatArea.appendChild(wrap);
+  scrollToBottom();
+  return bub;
+}
+function typeInto(el, fullText, speed=18) {
+  el.textContent = '';
+  let i = 0;
+  return new Promise(resolve=>{
+    const tick = () => {
+      if (i >= fullText.length) return resolve(null);
+      el.textContent += fullText[i++];
+      scrollToBottom();
+      setTimeout(tick, speed);
+    };
+    tick();
+  });
+}
+function ctaRow() {
+  const row = document.createElement('div');
+  row.className = "flex gap-2 pt-2";
+  const btn1 = document.createElement('button');
+  btn1.className = "px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700";
+  btn1.textContent = "Start free trial";
+  btn1.onclick = () => location.href = "/signup.html";
+  const btn2 = document.createElement('button');
+  btn2.className = "px-3 py-1 text-sm border rounded hover:bg-gray-50";
+  btn2.textContent = "See pricing";
+  btn2.onclick = () => location.href = "#pricing";
+  row.appendChild(btn1); row.appendChild(btn2);
+  return row;
+}
+
+// 5) Basic open/close wiring (keep your existing behavior)
+function openWidget(){ panel.style.display='flex'; bubble.style.display='none'; setTimeout(()=>input?.focus(), 80); }
+function closeWidget(){ panel.style.display='none'; bubble.style.display='flex'; }
+bubble?.addEventListener('click', openWidget);
+closeBtn?.addEventListener('click', closeWidget);
+openDemo?.addEventListener('click', openWidget);
+window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeWidget(); });
+
+// 6) Client-side rate limit (soft)
+function checkRateLimit() {
+  const now = Date.now();
+  if (now - SESSION.lastReset > 60*60*1000) { // reset hourly
+    SESSION.asksInWindow = 0;
+    SESSION.lastReset = now;
+  }
+  if (SESSION.asksInWindow >= 15) {
+    return "You've reached the demo limit (15 messages per hour). Please try again later or sign up for full access.";
+  }
+  SESSION.asksInWindow++;
+  return null;
+}
+
+// 7) Invoke the edge function with retries
+async function invokeAI(userText, businessType) {
+  if (!sb) throw new Error('Supabase client not initialized.');
+  const payload = {
+    message: { text: userText, businessType },
+    history: SESSION.turns.slice(-10), // send last 10 turns
+    meta: { page: location.pathname, ref: document.referrer?.slice(0, 180) || "" }
+  };
+
+  // retry with exponential backoff
+  let attempt = 0, lastErr;
+  while (attempt < 3) {
+    try {
+      const { data, error } = await sb.functions.invoke('ai-chat', { body: payload });
+      if (error) throw error;
+      if (!data?.text) throw new Error('No text returned.');
+      return data.text.toString();
+    } catch (e) {
+      lastErr = e;
+      await new Promise(r => setTimeout(r, 300 * Math.pow(2, attempt)));
+      attempt++;
+    }
+  }
+  throw lastErr || new Error('AI request failed.');
+}
+
+// 8) Send flow
+async function send() {
+  const text = (input?.value || '').trim();
+  if (!text) return;
+
+  // rate limit
+  const limitMsg = checkRateLimit();
+  bubbleEl(text, 'user');
+  SESSION.turns.push({ role: 'user', content: text });
+  input.value = '';
+
+  if (limitMsg) {
+    const el = bubbleEl('', 'bot');
+    await typeInto(el, limitMsg);
+    return;
+  }
+
+  // ask for business type once if not known (simple)
+  const hasType = SESSION.turns.find(t => t.role==='user' && /salon|clean|tutor|fitness|gym|trainer|pet|groom|handyman|repair|spa|massage|landscap|plumb|electr/i.test(t.content));
+  let bizHint = 'local services';
+  if (hasType) {
+    const m = hasType.content.match(/(salon|cleaning|cleaner|tutor|tutoring|fitness|gym|trainer|pet|grooming|handyman|repair|spa|massage|landscap(?:ing)?|plumb(?:er|ing)?|electr(?:ician|ical)?)/i);
+    if (m) bizHint = m[1];
+  }
+
+  const thinking = bubbleEl('Thinking…', 'bot');
+  try {
+    const reply = await invokeAI(text, bizHint);
+    // replace "Thinking…" with typed answer + CTAs
+    await typeInto(thinking, reply);
+    thinking.parentElement.appendChild(ctaRow());
+    SESSION.turns.push({ role: 'assistant', content: reply });
+    // fire-and-forget analytics (optional; table: chat_events)
+    // try { await sb.from('chat_events').insert([{ session_id: SESSION.id, event: 'reply', q: text, a: reply }]); } catch {}
+  } catch (e) {
+    const msg = 'Sorry—our AI is busy right now. Please try again, or start a free trial to talk to a real agent.';
+    thinking.textContent = msg;
+    thinking.parentElement.appendChild(ctaRow());
+    // try { await sb.from('chat_events').insert([{ session_id: SESSION.id, event: 'error', detail: String(e) }]); } catch {}
+  }
+}
+
+// 9) Wire buttons / Enter key
+sendBtn?.addEventListener('click', send);
+input?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send(); }});
+
+// 10) Greet on first open
+let greeted = false;
+function greet() {
+  if (greeted) return; greeted = true;
+  const g = bubbleEl('', 'bot');
+  typeInto(g,
+    "Hi! I’m the BookerPilot demo assistant. Tell me about your business and I’ll show exactly how we boost bookings, cut no-shows, and save you time. Ask me anything!"
+  ).then(()=> g.parentElement.appendChild(ctaRow()));
+}
+bubble?.addEventListener('click', greet);
+openDemo?.addEventListener('click', greet);
+</script>
+        
+        
 </body>
 </html>
