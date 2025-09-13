@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>Log In – BookerPilot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -9,32 +9,49 @@
 </head>
 <body class="min-h-screen bg-gray-50">
 
-  <!-- Top bar with brand that links home -->
-  <header class="bg-white border-b">
-    <div class="max-w-7xl mx-auto h-14 px-4 sm:px-6 lg:px-8 flex items-center">
-      <a href="/" aria-label="Go to BookerPilot home"
-         class="text-indigo-600 font-bold text-lg hover:text-indigo-700">
+  <!-- Top navigation: logo (left) + back arrow (right) -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+      <!-- Left: Brand -> Home -->
+      <a href="/index.html" aria-label="Go to BookerPilot home"
+         class="text-indigo-600 font-bold text-xl hover:text-indigo-700">
         BookerPilot
       </a>
+
+      <!-- Right: Back to Home + optional Get Started -->
+      <nav class="flex items-center space-x-6">
+        <a href="/index.html" class="flex items-center text-gray-500 hover:text-gray-900 text-sm font-medium">
+          &#8592; Back to Home
+        </a>
+        <a href="/signup.html"
+           class="hidden sm:inline-flex bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700">
+          Get Started
+        </a>
+      </nav>
     </div>
   </header>
 
   <!-- Login form -->
   <main class="w-full max-w-md mx-auto mt-10 bg-white shadow p-8 rounded-xl">
-    <h1 class="text-3xl font-bold mb-2">Log In</h1>
-    <p class="text-gray-600 mb-6">Access your account below.</p>
+    <h1 class="text-3xl font-bold mb-2 text-center">Log In</h1>
+    <p class="text-gray-600 mb-6 text-center">Access your account below.</p>
 
     <form id="login-form" class="space-y-4">
       <input id="email" type="email" placeholder="Email"
-             class="w-full border rounded-lg px-3 py-2" required>
+             class="w-full border rounded-lg px-3 py-2" required />
       <input id="password" type="password" placeholder="Password"
-             class="w-full border rounded-lg px-3 py-2" required>
+             class="w-full border rounded-lg px-3 py-2" required />
       <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
         Log In
       </button>
     </form>
 
-    <p id="msg" class="mt-4 text-sm text-gray-700"></p>
+    <p id="msg" class="mt-4 text-sm text-gray-700 text-center"></p>
+
+    <p class="mt-6 text-center text-sm text-gray-600">
+      Don’t have an account?
+      <a href="/signup.html" class="text-indigo-600 hover:text-indigo-700 font-medium">Create one</a>
+    </p>
   </main>
 
   <script>
@@ -57,10 +74,10 @@
         return;
       }
 
-      msgEl.textContent = 'Success! You are logged in.';
-      // redirect to dashboard
+      msgEl.textContent = 'Success! Redirecting…';
       window.location.href = '/dashboard.html';
     });
   </script>
 </body>
 </html>
+
