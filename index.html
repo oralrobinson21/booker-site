@@ -533,14 +533,42 @@
     </div>
 
     <!-- Widget Panel -->
-    <div id="widget-panel" class="widget-panel">
-        <div class="bg-indigo-600 text-white p-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-medium">Acme Cleaning</h3>
-                <button id="close-widget" class="text-white hover:text-indigo-200">
-                    <i data-feather="x"></i>
-                </button>
-            </div>
+  <div id="widget-panel" class="widget-panel">
+  <div class="bg-indigo-600 text-white p-4">
+    <div class="flex justify-between items-center">
+      <h3 class="font-medium">Acme Cleaning</h3>
+      <button id="close-widget" class="text-white hover:text-indigo-200">
+        <i data-feather="x"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div id="chat-scroll" class="flex-1 p-4 overflow-y-auto">
+    <!-- MESSAGE LIST -->
+    <div id="chat-list" class="space-y-4">
+      <!-- Greeting -->
+      <div class="flex justify-start">
+        <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100">
+          <p class="text-gray-800">Hi there! I’m Booker for Acme Cleaning. Ask about pricing, areas we serve, or bookings.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT ROW -->
+  <div class="border-t border-gray-200 p-4">
+    <div class="flex items-center">
+      <input id="chat-input" type="text" placeholder="Type your question..."
+             class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+      <button id="chat-send" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+        <i data-feather="send"></i>
+      </button>
+    </div>
+    <p class="text-xs text-gray-400 mt-2">Demo mode: answers come from a built-in sample knowledge base.</p>
+  </div>
+</div>
+
         </div>
         <div class="flex-1 p-4 overflow-y-auto">
             <div class="space-y-4">
@@ -593,44 +621,120 @@
     </div>
 
     <script>
-        // Initialize AOS animations
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
+  // --- Init + open/close wiring ---
+  window.addEventListener("DOMContentLoaded", () => {
+    if (window.AOS) AOS.init({ duration: 800, easing: "ease-in-out", once: true });
+    if (window.feather) feather.replace();
 
-        // Initialize feather icons
-        feather.replace();
+    const widgetBubble = document.getElementById('widget-bubble');
+    const widgetPanel  = document.getElementById('widget-panel');
+    const closeWidget  = document.getElementById('close-widget');
+    const openDemoBtn  = document.getElementById('open-demo-widget');
 
-        // Widget toggle functionality
-        const widgetBubble = document.getElementById('widget-bubble');
-        const widgetPanel = document.getElementById('widget-panel');
-        const closeWidget = document.getElementById('close-widget');
-        const openDemoWidget = document.getElementById('open-demo-widget');
+    function openWidget() {
+      widgetPanel.style.display = 'flex';
+      widgetBubble.style.display = 'none';
+      setTimeout(() => document.getElementById('chat-input')?.focus(), 50);
+    }
+    function closeWidgetFn() {
+      widgetPanel.style.display = 'none';
+      widgetBubble.style.display = 'flex';
+    }
 
-        widgetBubble.addEventListener('click', () => {
-            widgetPanel.style.display = 'flex';
-            widgetBubble.style.display = 'none';
-        });
+    widgetBubble?.addEventListener('click', openWidget);
+    closeWidget?.addEventListener('click', closeWidgetFn);
+    openDemoBtn?.addEventListener('click', openWidget);
 
-        closeWidget.addEventListener('click', () => {
-            widgetPanel.style.display = 'none';
-            widgetBubble.style.display = 'flex';
-        });
+    // --- Demo AI KB (no backend) ---
+    const KB = {
+      pricing: [
+        { match: ["1 bedroom","one bedroom","studio"], answer: "A studio/1 bedroom is $99–$129 depending on condition. Deep cleans add +$40." },
+        { match: ["2 bedroom","two bedroom"],          answer: "2 bedrooms typically run $139–$169." },
+        { match: ["3 bedroom","three bedroom"],        answer: "3 bedrooms are usually $179–$219." }
+      ],
+      areas: [
+        { match: ["brooklyn","bk"], answer: "Yes, we service Brooklyn (Williamsburg, Bushwick, Bed-Stuy, Park Slope, more)." },
+        { match: ["manhattan","nyc"], answer: "We cover Manhattan below 110th St. Queens on request." }
+      ],
+      policy: [
+        { match: ["cancel","cancellation"], answer: "Cancel or reschedule up to 24h before. Inside 24h a deposit may be forfeited." },
+        { match: ["deposit","no-show","no show"], answer: "We take a small Stripe deposit to hold the slot and reduce no-shows. It’s applied to the final bill." }
+      ],
+      booking: [
+        { match: ["book","booking","schedule","availability","openings"], answer:
+          "To book: pick a time on our calendar and pay the small deposit. You’ll get instant confirmation and reminders." }
+      ],
+      general:
+        "I can help with pricing, areas, booking steps, deposits, and policies. Try: “How much for a 1 bedroom?”, “Do you service Brooklyn?”, or “What’s your cancellation policy?”."
+    };
 
-        openDemoWidget.addEventListener('click', () => {
-            widgetPanel.style.display = 'flex';
-            widgetBubble.style.display = 'none';
-        });
+    function norm(s){ return (s||"").toLowerCase(); }
+    function hasAny(t, arr){ return arr.some(k => t.includes(k)); }
 
-        // Simulate widget functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // This would be replaced with actual widget.js implementation
-            window.BookerAI = window.BookerAI || function() {
-                (BookerAI.q = BookerAI.q || []).push(arguments);
-            };
-        });
-    </script>
+    function demoAnswer(q){
+      const t = norm(q);
+      for (const r of KB.pricing) if (hasAny(t, r.match)) return r.answer;
+      for (const r of KB.areas)   if (hasAny(t, r.match)) return r.answer;
+      for (const r of KB.policy)  if (hasAny(t, r.match)) return r.answer;
+      for (const r of KB.booking) if (hasAny(t, r.match)) return r.answer;
+
+      if (t.match(/price|cost|how much|quote/))  return "For pricing, tell me bedrooms, bathrooms, and if you want a deep clean.";
+      if (t.match(/area|serve|service|where/))   return "We cover most of NYC. Brooklyn full coverage; Manhattan below 110th; Queens on request.";
+      if (t.match(/cancel|policy/))              return "Cancel/reschedule up to 24h before to keep deposit. Inside 24h it may be forfeited.";
+      if (t.match(/book|schedule|when|time|slot/)) return "Tap “Pick a Time”, choose a slot, and pay the small deposit to confirm.";
+      return KB.general;
+    }
+
+    // --- Chat UI ---
+    const chatList   = document.getElementById('chat-list');
+    const chatScroll = document.getElementById('chat-scroll');
+    const chatInput  = document.getElementById('chat-input');
+    const chatSend   = document.getElementById('chat-send');
+
+    function scrollToBottom(){ chatScroll.scrollTop = chatScroll.scrollHeight; }
+    function bubble(role, text){
+      const wrap = document.createElement('div');
+      wrap.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start');
+      const b = document.createElement('div');
+      b.className = 'max-w-xs lg:max-w-md px-4 py-2 rounded-lg ' + (role === 'user'
+        ? 'rounded-tr-none bg-indigo-600 text-white'
+        : 'rounded-tl-none bg-gray-100 text-gray-800');
+      b.innerHTML = `<p>${text.replace(/</g,"&lt;")}</p>`;
+      wrap.appendChild(b);
+      chatList.appendChild(wrap);
+      scrollToBottom();
+    }
+
+    let typingEl = null;
+    function showTyping(){
+      typingEl = document.createElement('div');
+      typingEl.className = 'flex justify-start';
+      typingEl.innerHTML = '<div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100 text-gray-500"><em>typing…</em></div>';
+      chatList.appendChild(typingEl);
+      scrollToBottom();
+    }
+    function hideTyping(){ if (typingEl){ typingEl.remove(); typingEl = null; } }
+
+    function handleSend(){
+      const text = (chatInput.value || '').trim();
+      if (!text) return;
+      bubble('user', text);
+      chatInput.value = '';
+      showTyping();
+      setTimeout(() => {
+        const reply = demoAnswer(text);
+        hideTyping();
+        bubble('assistant', reply);
+      }, 500);
+    }
+
+    chatSend?.addEventListener('click', handleSend);
+    chatInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSend(); });
+
+    // Placeholder global (kept)
+    window.BookerAI = window.BookerAI || function(){ (BookerAI.q = BookerAI.q || []).push(arguments); };
+  });
+</script>
+
 </body>
 </html>
