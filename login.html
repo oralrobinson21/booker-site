@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Log In – BookerPilot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center">
+  <div class="w-full max-w-md bg-white shadow p-8 rounded-xl">
+    <h1 class="text-2xl font-bold mb-2">Welcome back</h1>
+    <p class="text-sm text-gray-600 mb-6">Log in to manage your subscription.</p>
+
+    <form id="login-form" class="space-y-4">
+      <input id="email" type="email" placeholder="Email" class="w-full border rounded-lg px-3 py-2" required>
+      <input id="password" type="password" placeholder="Password" class="w-full border rounded-lg px-3 py-2" required>
+      <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Log In</button>
+    </form>
+
+    <p class="mt-4 text-sm">
+      No account? <a class="text-indigo-600" href="/signup.html">Sign up</a>
+    </p>
+
+    <p id="msg" class="mt-4 text-sm text-gray-700"></p>
+  </div>
+
+<script>
+const SUPABASE_URL = 'https://lzitxdifsukaywuansgh.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6aXR4ZGlmc3VrYXl3dWFuc2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NzY3ODMsImV4cCI6MjA3MzM1Mjc4M30.hH9S-SLi7u2Hmy-9pNb_Z1l0fZCTsZ8HultBUY9WpEo';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+document.getElementById('login-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const msg = document.getElementById('msg');
+  if (error) { msg.textContent = error.message; return; }
+  window.location.href = '/dashboard.html';
+});
+</script>
+</body>
+</html>
