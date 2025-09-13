@@ -484,14 +484,21 @@
     </div>
 
     <!-- Contact Form -->
-    <form action="https://formsubmit.co/support@bookerpilot.com" method="POST" class="max-w-2xl mx-auto space-y-4">
-      <!-- real email address to receive responses -->
+    <form action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="max-w-2xl mx-auto space-y-4">
+      <!-- Hidden inputs for success redirect and email subject -->
       <input type="hidden" name="_next" value="https://bookerpilot.com/index.html#contact">
-      <input type="hidden" name="_subject" value="New Contact from BookerPilot">
-      <input type="text" name="name" placeholder="Your Name" class="w-full border rounded-lg px-3 py-2" required>
-      <input type="email" name="email" placeholder="Your Email" class="w-full border rounded-lg px-3 py-2" required>
+      <input type="hidden" name="_subject" value="New Contact from BookerPilot Website">
+      <input type="hidden" name="_captcha" value="false">
+
+      <!-- User inputs -->
+      <input type="text" name="name" placeholder="Your Name"
+             class="w-full border rounded-lg px-3 py-2" required>
+      <input type="email" name="email" placeholder="Your Email"
+             class="w-full border rounded-lg px-3 py-2" required>
       <textarea name="message" placeholder="Your Question or Message"
                 class="w-full border rounded-lg px-3 py-2 h-32" required></textarea>
+
+      <!-- Submit button -->
       <button type="submit"
               class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 shadow">
         Send Message
