@@ -533,7 +533,7 @@
     </div>
 
     <!-- Widget Panel -->
-  <div id="widget-panel" class="widget-panel">
+<div id="widget-panel" class="widget-panel">
   <div class="bg-indigo-600 text-white p-4">
     <div class="flex justify-between items-center">
       <h3 class="font-medium">Acme Cleaning</h3>
@@ -541,6 +541,71 @@
         <i data-feather="x"></i>
       </button>
     </div>
+  </div>
+
+  <!-- CHAT SCROLL -->
+  <div id="chat-scroll" class="flex-1 p-4 overflow-y-auto">
+    <div id="chat-list" class="space-y-4">
+      <div class="flex justify-start">
+        <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100">
+          <p class="text-gray-800">
+            Hi there! I’m Booker. Ask about pricing, areas we serve, or how to book. Try the quick replies below.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REPLIES -->
+  <div id="quick-suggestions" class="px-4 py-2 border-t border-gray-100">
+    <div class="flex flex-wrap gap-2">
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="How much for a 1 bedroom?">1BR price</button>
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="Do you service Brooklyn?">Service area</button>
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="What's your cancellation policy?">Cancellation</button>
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="How do I book?">How to book</button>
+      <button id="clear-chat" class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200">Clear</button>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="border-t border-gray-200 p-4">
+    <div class="flex items-center">
+      <input id="chat-input" type="text" placeholder="Type your question..."
+             class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+      <button id="chat-send" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+        <i data-feather="send"></i>
+      </button>
+    </div>
+    <p class="text-[11px] text-gray-400 mt-2">Demo only. No data is sent to a server.</p>
+  </div>
+</div>
+
+  </div>
+
+  <!-- SCROLL AREA (chat list lives here) -->
+  <div id="chat-scroll" class="flex-1 p-4 overflow-y-auto">
+    <div id="chat-list" class="space-y-4">
+      <div class="flex justify-start">
+        <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100">
+          <p class="text-gray-800">Hi there! I’m Booker. Ask about pricing, areas we serve, or bookings.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT ROW (ONLY inside popup) -->
+  <div class="border-t border-gray-200 p-4">
+    <div class="flex items-center">
+      <input id="chat-input" type="text" placeholder="Type your question..."
+             class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+      <button id="chat-send" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+        <i data-feather="send"></i>
+      </button>
+    </div>
+    <p class="text-xs text-gray-400 mt-2">Demo mode: answers come from a built-in sample knowledge base.</p>
+  </div>
+</div>
+
   </div>
 
   <!-- SCROLL AREA -->
@@ -620,121 +685,177 @@
         </div>
     </div>
 
-    <script>
-  // --- Init + open/close wiring ---
+   <script>
   window.addEventListener("DOMContentLoaded", () => {
+    // Init
     if (window.AOS) AOS.init({ duration: 800, easing: "ease-in-out", once: true });
     if (window.feather) feather.replace();
 
+    // Elements
     const widgetBubble = document.getElementById('widget-bubble');
     const widgetPanel  = document.getElementById('widget-panel');
     const closeWidget  = document.getElementById('close-widget');
     const openDemoBtn  = document.getElementById('open-demo-widget');
+    const chatList     = document.getElementById('chat-list');
+    const chatScroll   = document.getElementById('chat-scroll');
+    const chatInput    = document.getElementById('chat-input');
+    const chatSend     = document.getElementById('chat-send');
+    const quickBar     = document.getElementById('quick-suggestions');
+    const clearBtn     = document.getElementById('clear-chat');
 
+    // Open/close popup
     function openWidget() {
       widgetPanel.style.display = 'flex';
       widgetBubble.style.display = 'none';
-      setTimeout(() => document.getElementById('chat-input')?.focus(), 50);
+      setTimeout(() => chatInput?.focus(), 80);
     }
     function closeWidgetFn() {
       widgetPanel.style.display = 'none';
       widgetBubble.style.display = 'flex';
     }
-
     widgetBubble?.addEventListener('click', openWidget);
-    closeWidget?.addEventListener('click', closeWidgetFn);
     openDemoBtn?.addEventListener('click', openWidget);
+    closeWidget?.addEventListener('click', closeWidgetFn);
 
-    // --- Demo AI KB (no backend) ---
-    const KB = {
-      pricing: [
-        { match: ["1 bedroom","one bedroom","studio"], answer: "A studio/1 bedroom is $99–$129 depending on condition. Deep cleans add +$40." },
-        { match: ["2 bedroom","two bedroom"],          answer: "2 bedrooms typically run $139–$169." },
-        { match: ["3 bedroom","three bedroom"],        answer: "3 bedrooms are usually $179–$219." }
-      ],
-      areas: [
-        { match: ["brooklyn","bk"], answer: "Yes, we service Brooklyn (Williamsburg, Bushwick, Bed-Stuy, Park Slope, more)." },
-        { match: ["manhattan","nyc"], answer: "We cover Manhattan below 110th St. Queens on request." }
-      ],
-      policy: [
-        { match: ["cancel","cancellation"], answer: "Cancel or reschedule up to 24h before. Inside 24h a deposit may be forfeited." },
-        { match: ["deposit","no-show","no show"], answer: "We take a small Stripe deposit to hold the slot and reduce no-shows. It’s applied to the final bill." }
-      ],
-      booking: [
-        { match: ["book","booking","schedule","availability","openings"], answer:
-          "To book: pick a time on our calendar and pay the small deposit. You’ll get instant confirmation and reminders." }
-      ],
-      general:
-        "I can help with pricing, areas, booking steps, deposits, and policies. Try: “How much for a 1 bedroom?”, “Do you service Brooklyn?”, or “What’s your cancellation policy?”."
-    };
+    // Links you already have
+    const STARTER_LINK = "https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03";
+    const PRO_LINK     = "https://buy.stripe.com/6oU3cu4Khacj6O81cv43S04";
 
-    function norm(s){ return (s||"").toLowerCase(); }
-    function hasAny(t, arr){ return arr.some(k => t.includes(k)); }
+    // --- Simple “memory” for multi-turn demo
+    const mem = { bedrooms: null, deep: null, city: null, email: null };
 
-    function demoAnswer(q){
-      const t = norm(q);
-      for (const r of KB.pricing) if (hasAny(t, r.match)) return r.answer;
-      for (const r of KB.areas)   if (hasAny(t, r.match)) return r.answer;
-      for (const r of KB.policy)  if (hasAny(t, r.match)) return r.answer;
-      for (const r of KB.booking) if (hasAny(t, r.match)) return r.answer;
-
-      if (t.match(/price|cost|how much|quote/))  return "For pricing, tell me bedrooms, bathrooms, and if you want a deep clean.";
-      if (t.match(/area|serve|service|where/))   return "We cover most of NYC. Brooklyn full coverage; Manhattan below 110th; Queens on request.";
-      if (t.match(/cancel|policy/))              return "Cancel/reschedule up to 24h before to keep deposit. Inside 24h it may be forfeited.";
-      if (t.match(/book|schedule|when|time|slot/)) return "Tap “Pick a Time”, choose a slot, and pay the small deposit to confirm.";
-      return KB.general;
-    }
-
-    // --- Chat UI ---
-    const chatList   = document.getElementById('chat-list');
-    const chatScroll = document.getElementById('chat-scroll');
-    const chatInput  = document.getElementById('chat-input');
-    const chatSend   = document.getElementById('chat-send');
-
+    // Utilities
+    const now = () => new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     function scrollToBottom(){ chatScroll.scrollTop = chatScroll.scrollHeight; }
-    function bubble(role, text){
+    function sanitize(s){ return (s||"").replace(/</g,"&lt;"); }
+
+    // Add a bubble (with tiny timestamp)
+    function bubble(role, text) {
       const wrap = document.createElement('div');
       wrap.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start');
       const b = document.createElement('div');
       b.className = 'max-w-xs lg:max-w-md px-4 py-2 rounded-lg ' + (role === 'user'
         ? 'rounded-tr-none bg-indigo-600 text-white'
         : 'rounded-tl-none bg-gray-100 text-gray-800');
-      b.innerHTML = `<p>${text.replace(/</g,"&lt;")}</p>`;
+      b.innerHTML = `<p>${sanitize(text)}</p><div class="mt-1 text-[10px] opacity-60">${now()}</div>`;
       wrap.appendChild(b);
       chatList.appendChild(wrap);
       scrollToBottom();
     }
 
+    // Typing indicator + typewriter effect
     let typingEl = null;
     function showTyping(){
       typingEl = document.createElement('div');
       typingEl.className = 'flex justify-start';
       typingEl.innerHTML = '<div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100 text-gray-500"><em>typing…</em></div>';
-      chatList.appendChild(typingEl);
-      scrollToBottom();
+      chatList.appendChild(typingEl); scrollToBottom();
     }
     function hideTyping(){ if (typingEl){ typingEl.remove(); typingEl = null; } }
+    function typewriter(text, cb) {
+      const speed = 10; // ms/char
+      let out = '', i = 0;
+      const tick = () => {
+        out += text[i++]; typingEl.querySelector('em').innerText = out + '▌';
+        if (i < text.length) setTimeout(tick, speed); else { hideTyping(); cb(out); }
+      };
+      tick();
+    }
 
-    function handleSend(){
-      const text = (chatInput.value || '').trim();
+    // Parse intent & details
+    function parse(msg){
+      const t = msg.toLowerCase();
+      // bedrooms
+      const m = t.match(/(\d+)\s*bed|(\bstudio\b)/);
+      if (m){
+        mem.bedrooms = m[1] ? parseInt(m[1],10) : 1; // studio -> 1 for demo
+      }
+      mem.deep = /deep clean|deep-clean/.test(t) ? true : ( /basic|standard/.test(t) ? false : mem.deep );
+      const cityMatch = t.match(/\b(brooklyn|manhattan|queens|bronx|staten island)\b/);
+      if (cityMatch) mem.city = cityMatch[1];
+
+      // intents
+      const intent =
+        /price|cost|how much|quote|\bbr\b|bedroom/.test(t) ? 'pricing' :
+        /area|serve|service where|brooklyn|manhattan|queens/.test(t) ? 'areas' :
+        /cancel|policy|deposit|no-?show/.test(t) ? 'policy' :
+        /book|schedule|availability|openings|calendar/.test(t) ? 'booking' :
+        /email|@/.test(t) ? 'email' :
+        'other';
+      return intent;
+    }
+
+    function estimatePrice(){
+      const b = mem.bedrooms ?? 1;
+      const table = {1:[99,129], 2:[139,169], 3:[179,219], 4:[219,259]};
+      const band = table[Math.min(b,4)];
+      const base = `${b===1?'Studio/1BR':b+'BR'} is $${band[0]}–$${band[1]}`;
+      const deep = mem.deep===true ? ' (+$40 deep clean).' : '.';
+      return base + deep;
+    }
+
+    function reply(msg){
+      const intent = parse(msg);
+
+      if (intent==='pricing'){
+        const p = estimatePrice();
+        const add = ' Want to lock a slot now? Tap one:';
+        return p + add + `\n• Starter trial (Stripe): ${STARTER_LINK}\n• Pro trial (Stripe): ${PRO_LINK}`;
+      }
+      if (intent==='areas'){
+        const area = mem.city ? `Yes, we service ${mem.city[0].toUpperCase()+mem.city.slice(1)}.` :
+          'We cover most of NYC: Brooklyn (full), Manhattan below 110th, Queens on request.';
+        return area + ' Ask for a quote with bedrooms/bathrooms.';
+      }
+      if (intent==='policy'){
+        return 'Cancel/reschedule up to 24h before to keep your deposit. Inside 24h the deposit may be forfeited. Deposits apply to the final bill.';
+      }
+      if (intent==='booking'){
+        return 'To book: pick a time on our calendar and pay a small deposit via Stripe. You’ll get instant confirmation + reminders. (Use the buttons at the top of the page.)';
+      }
+      if (intent==='email'){
+        const m = msg.match(/[^\s]+@[^\s]+\.[^\s]+/);
+        if (m){ mem.email = m[0]; return `Got it: ${mem.email}. We’ll send your estimate + reminder there.`; }
+        return 'Drop your email and I’ll send your estimate + reminder (example: you@domain.com).';
+      }
+      return 'I can help with pricing, areas, booking steps, deposits, and policies. Try “How much for a 2 bedroom?”, “Do you service Brooklyn?”, or “How do I book?”';
+    }
+
+    function handleSend(textFromBtn){
+      const text = (textFromBtn ?? chatInput.value || '').trim();
       if (!text) return;
       bubble('user', text);
       chatInput.value = '';
       showTyping();
-      setTimeout(() => {
-        const reply = demoAnswer(text);
-        hideTyping();
-        bubble('assistant', reply);
-      }, 500);
+      // simulate thinking + typewriter
+      const r = reply(text);
+      typingEl.querySelector('em').innerText = ''; // prepare for typewriter
+      typewriter(r, final => bubble('assistant', final));
     }
 
-    chatSend?.addEventListener('click', handleSend);
-    chatInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSend(); });
+    // Events
+    chatSend?.addEventListener('click', () => handleSend());
+    chatInput?.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
+    quickBar?.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-say]');
+      if (btn) handleSend(btn.getAttribute('data-say'));
+    });
+    clearBtn?.addEventListener('click', () => {
+      mem.bedrooms = mem.deep = mem.city = mem.email = null;
+      chatList.innerHTML = `
+        <div class="flex justify-start">
+          <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100">
+            <p class="text-gray-800">Cleared. Ask about pricing, areas, or how to book.</p>
+          </div>
+        </div>`;
+    });
 
-    // Placeholder global (kept)
+    // Keep placeholder queue
     window.BookerAI = window.BookerAI || function(){ (BookerAI.q = BookerAI.q || []).push(arguments); };
   });
 </script>
+
+
 
 </body>
 </html>
