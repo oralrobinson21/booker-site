@@ -592,45 +592,130 @@
         </div>
     </div>
 
-    <script>
-        // Initialize AOS animations
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
+<script>
+// ---------- AOS (animations) ----------
+AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
 
-        // Initialize feather icons
-        feather.replace();
+// ---------- Feather Icons (render once) ----------
+if (window.feather && typeof feather.replace === 'function') {
+  feather.replace();
+}
 
-        // Widget toggle functionality
-        const widgetBubble = document.getElementById('widget-bubble');
-        const widgetPanel = document.getElementById('widget-panel');
-        const closeWidget = document.getElementById('close-widget');
-        const openDemoWidget = document.getElementById('open-demo-widget');
+// ---------- Element references ----------
+const widgetBubble = document.getElementById('widget-bubble');
+const widgetPanel  = document.getElementById('widget-panel');
+const closeWidget  = document.getElementById('close-widget');
+const openDemoWidgetBtn = document.getElementById('open-demo-widget');
 
-        widgetBubble.addEventListener('click', () => {
-            widgetPanel.style.display = 'flex';
-            widgetBubble.style.display = 'none';
-        });
+const inputEl   = widgetPanel.querySelector('input[type="text"]');
+const sendBtn   = widgetPanel.querySelector('button i[data-feather="send"]')?.parentElement;
+const scrollBox = widgetPanel.querySelector('.flex-1.p-4.overflow-y-auto');
+const chatSpace = scrollBox.querySelector('.space-y-4');
 
-        closeWidget.addEventListener('click', () => {
-            widgetPanel.style.display = 'none';
-            widgetBubble.style.display = 'flex';
-        });
+// ---------- Helpers ----------
+function openWidget() {
+  widgetPanel.style.display = 'flex';
+  widgetBubble.style.display = 'none';
+  document.body.style.overflow = 'hidden'; // prevent background scroll
+  inputEl?.focus();
+}
 
-        openDemoWidget.addEventListener('click', () => {
-            widgetPanel.style.display = 'flex';
-            widgetBubble.style.display = 'none';
-        });
+function closeWidgetFn() {
+  widgetPanel.style.display = 'none';
+  widgetBubble.style.display = 'flex';
+  document.body.style.overflow = '';
+}
 
-        // Simulate widget functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // This would be replaced with actual widget.js implementation
-            window.BookerAI = window.BookerAI || function() {
-                (BookerAI.q = BookerAI.q || []).push(arguments);
-            };
-        });
-    </script>
+function scrollToBottom() {
+  requestAnimationFrame(() => {
+    scrollBox.scrollTop = scrollBox.scrollHeight;
+  });
+}
+
+function addMessage(text, who = 'bot') {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'flex ' + (who === 'user' ? 'justify-end' : 'justify-start');
+
+  const bubble = document.createElement('div');
+  bubble.className = 'max-w-xs lg:max-w-md px-4 py-2 rounded-lg ' + 
+                     (who === 'user'
+                      ? 'rounded-tr-none bg-indigo-600 text-white'
+                      : 'rounded-tl-none bg-gray-100 text-gray-800');
+
+  bubble.innerHTML = `<p class="${who === 'user' ? 'text-white' : 'text-gray-800'}"></p>`;
+  bubble.querySelector('p').textContent = text;
+
+  wrapper.appendChild(bubble);
+  chatSpace.appendChild(wrapper);
+  scrollToBottom();
+}
+
+function fakeReply(userText) {
+  const t = userText.trim().toLowerCase();
+
+  // Simple keyword router (customize freely)
+  if (t.includes('price') || t.includes('how much')) {
+    addMessage('For Acme Cleaning: Studio $99, 1BR $129, 2BR $159. Deep cleans +$60.');
+  } else if (t.includes('availability') || t.includes('time') || t.includes('open')) {
+    addMessage('We have openings Mon–Sat, 8am–6pm. Earliest next-day slots are usually available.');
+  } else if (t.includes('brooklyn') || t.includes('service area') || t.includes('do you service')) {
+    addMessage('Yes! We service all NYC boroughs including Brooklyn, Queens, Manhattan, and the Bronx.');
+  } else if (t.includes('cancel') || t.includes('cancellation')) {
+    addMessage('Free cancellation up to 24 hours before your appointment.');
+  } else if (t.includes('book') || t.includes('schedule')) {
+    addMessage('To book, choose a date/time and leave your contact—this demo won’t charge you.');
+  } else if (t === 'hi' || t === 'hello' || t.includes('help')) {
+    addMessage('Hi! Ask me about pricing, availability, service areas, or how to book.');
+  } else {
+    addMessage("I didn't catch that—try 'pricing', 'availability', 'Brooklyn', 'cancellation', or 'book'.");
+  }
+}
+
+// ---------- Event wiring ----------
+widgetBubble.addEventListener('click', openWidget);
+closeWidget.addEventListener('click', closeWidgetFn);
+
+// Open from any "Try it" button that exists
+if (openDemoWidgetBtn) openDemoWidgetBtn.addEventListener('click', openWidget);
+
+// Close on ESC
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && widgetPanel.style.display === 'flex') closeWidgetFn();
+});
+
+// Close when clicking outside the panel body (but not on bubble)
+widgetPanel.addEventListener('click', (e) => {
+  // Clicks on the panel chrome shouldn’t close; only if clicking the area outside content.
+  // Since the panel fills the card, we’ll skip this to avoid accidental closes.
+  // (Keep only header "X" and ESC to close for better UX on mobile.)
+});
+
+// Send message on Enter
+inputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    sendBtn.click();
+  }
+});
+
+// Send button
+sendBtn.addEventListener('click', () => {
+  const text = inputEl.value.trim();
+  if (!text) return;
+  addMessage(text, 'user');
+  inputEl.value = '';
+  // Simulate thinking latency
+  setTimeout(() => fakeReply(text), 400);
+});
+
+// ---------- Mock global (shows how your real widget would queue calls) ----------
+window.BookerAI = window.BookerAI || function() {
+  (BookerAI.q = BookerAI.q || []).push(arguments);
+};
+
+// ---------- Initial scroll to bottom ----------
+scrollToBottom();
+</script>
+
 </body>
 </html>
