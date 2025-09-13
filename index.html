@@ -533,14 +533,53 @@
     </div>
 
     <!-- Widget Panel -->
-    <div id="widget-panel" class="widget-panel">
-        <div class="bg-indigo-600 text-white p-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-medium">Acme Cleaning</h3>
-                <button id="close-widget" class="text-white hover:text-indigo-200">
-                    <i data-feather="x"></i>
-                </button>
-            </div>
+  <div id="widget-panel" class="widget-panel">
+  <div class="bg-indigo-600 text-white p-4">
+    <div class="flex justify-between items-center">
+      <h3 class="font-medium">Acme Cleaning</h3>
+      <button id="close-widget" class="text-white hover:text-indigo-200">
+        <i data-feather="x"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- CHAT SCROLL -->
+  <div id="chat-scroll" class="flex-1 p-4 overflow-y-auto">
+    <div id="chat-list" class="space-y-4">
+      <div class="flex justify-start">
+        <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100">
+          <p class="text-gray-800">
+            Hi there! I’m Booker. Ask about pricing, areas we serve, or how to book. Try the quick replies below.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REPLIES -->
+  <div id="quick-suggestions" class="px-4 py-2 border-t border-gray-100">
+    <div class="flex flex-wrap gap-2">
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="How much for a 1 bedroom?">1BR price</button>
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="Do you service Brooklyn?">Service area</button>
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="What's your cancellation policy?">Cancellation</button>
+      <button class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200" data-say="How do I book?">How to book</button>
+      <button id="clear-chat" class="px-3 py-1 text-sm bg-gray-100 rounded-full hover:bg-gray-200">Clear</button>
+    </div>
+  </div>
+
+  <!-- INPUT (POPUP ONLY) -->
+  <div class="border-t border-gray-200 p-4">
+    <div class="flex items-center">
+      <input id="chat-input" type="text" placeholder="Type your question..."
+             class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+      <button id="chat-send" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+        <i data-feather="send"></i>
+      </button>
+    </div>
+    <p class="text-[11px] text-gray-400 mt-2">Demo only. No data is sent to a server.</p>
+  </div>
+</div>
+
         </div>
         <div class="flex-1 p-4 overflow-y-auto">
             <div class="space-y-4">
@@ -592,45 +631,176 @@
         </div>
     </div>
 
-    <script>
-        // Initialize AOS animations
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
+  <script>
+  window.addEventListener("DOMContentLoaded", () => {
+    // Init
+    if (window.AOS) AOS.init({ duration: 800, easing: "ease-in-out", once: true });
+    if (window.feather) feather.replace();
 
-        // Initialize feather icons
-        feather.replace();
+    // Elements
+    const widgetBubble = document.getElementById('widget-bubble');
+    const widgetPanel  = document.getElementById('widget-panel');
+    const closeWidget  = document.getElementById('close-widget');
+    const openDemoBtn  = document.getElementById('open-demo-widget');
+    const chatList     = document.getElementById('chat-list');
+    const chatScroll   = document.getElementById('chat-scroll');
+    const chatInput    = document.getElementById('chat-input');
+    const chatSend     = document.getElementById('chat-send');
+    const quickBar     = document.getElementById('quick-suggestions');
+    const clearBtn     = document.getElementById('clear-chat');
 
-        // Widget toggle functionality
-        const widgetBubble = document.getElementById('widget-bubble');
-        const widgetPanel = document.getElementById('widget-panel');
-        const closeWidget = document.getElementById('close-widget');
-        const openDemoWidget = document.getElementById('open-demo-widget');
+    // Open/close popup
+    function openWidget() {
+      widgetPanel.style.display = 'flex';
+      widgetBubble.style.display = 'none';
+      setTimeout(() => chatInput?.focus(), 80);
+    }
+    function closeWidgetFn() {
+      widgetPanel.style.display = 'none';
+      widgetBubble.style.display = 'flex';
+    }
+    widgetBubble?.addEventListener('click', openWidget);
+    openDemoBtn?.addEventListener('click', openWidget);
+    closeWidget?.addEventListener('click', closeWidgetFn);
 
-        widgetBubble.addEventListener('click', () => {
-            widgetPanel.style.display = 'flex';
-            widgetBubble.style.display = 'none';
-        });
+    // Safety: hide any stray chat inputs that might exist outside the popup
+    document.querySelectorAll('#chat-input').forEach(el => {
+      if (!widgetPanel.contains(el)) el.closest('div')?.style && (el.closest('div').style.display = 'none');
+    });
 
-        closeWidget.addEventListener('click', () => {
-            widgetPanel.style.display = 'none';
-            widgetBubble.style.display = 'flex';
-        });
+    // Stripe links (used in answers)
+    const STARTER_LINK = "https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03";
+    const PRO_LINK     = "https://buy.stripe.com/6oU3cu4Khacj6O81cv43S04";
 
-        openDemoWidget.addEventListener('click', () => {
-            widgetPanel.style.display = 'flex';
-            widgetBubble.style.display = 'none';
-        });
+    // --- Simple “memory” for multi-turn demo ---
+    const mem = { bedrooms: null, deep: null, city: null, email: null };
 
-        // Simulate widget functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // This would be replaced with actual widget.js implementation
-            window.BookerAI = window.BookerAI || function() {
-                (BookerAI.q = BookerAI.q || []).push(arguments);
-            };
-        });
-    </script>
+    // Utilities
+    const now = () => new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    function scrollToBottom(){ chatScroll.scrollTop = chatScroll.scrollHeight; }
+    function sanitize(s){ return (s||"").replace(/</g,"&lt;"); }
+
+    // Add a bubble (with timestamp)
+    function bubble(role, text) {
+      const wrap = document.createElement('div');
+      wrap.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start');
+      const b = document.createElement('div');
+      b.className = 'max-w-xs lg:max-w-md px-4 py-2 rounded-lg ' + (role === 'user'
+        ? 'rounded-tr-none bg-indigo-600 text-white'
+        : 'rounded-tl-none bg-gray-100 text-gray-800');
+      b.innerHTML = `<p>${sanitize(text).replace(/\n/g,'<br>')}</p><div class="mt-1 text-[10px] opacity-60">${now()}</div>`;
+      wrap.appendChild(b);
+      chatList.appendChild(wrap);
+      scrollToBottom();
+    }
+
+    // Typing indicator + simple typewriter
+    let typingEl = null;
+    function showTyping(){
+      typingEl = document.createElement('div');
+      typingEl.className = 'flex justify-start';
+      typingEl.innerHTML = '<div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100 text-gray-500"><em>typing…</em></div>';
+      chatList.appendChild(typingEl); scrollToBottom();
+    }
+    function hideTyping(){ if (typingEl){ typingEl.remove(); typingEl = null; } }
+    function typewriter(text, done) {
+      const speed = 12; let out = '', i = 0;
+      const tick = () => {
+        out += text[i++] || '';
+        if (typingEl) typingEl.querySelector('em').innerText = out;
+        if (i < text.length) setTimeout(tick, speed); else { hideTyping(); done(out); }
+      };
+      tick();
+    }
+
+    // Intent parsing
+    function parse(msg){
+      const t = msg.toLowerCase();
+
+      // capture details
+      const bed = t.match(/(\d+)\s*bed|(\bstudio\b)/);
+      if (bed) mem.bedrooms = bed[1] ? parseInt(bed[1],10) : 1; // studio => 1 for demo
+      if (/deep clean|deep-clean/.test(t)) mem.deep = true;
+      if (/basic|standard/.test(t)) mem.deep = false;
+      const city = t.match(/\b(brooklyn|manhattan|queens|bronx|staten island)\b/);
+      if (city) mem.city = city[1];
+
+      if (/price|cost|how much|quote|\bbr\b|bedroom/.test(t)) return 'pricing';
+      if (/area|serve|service where|brooklyn|manhattan|queens/.test(t)) return 'areas';
+      if (/cancel|policy|deposit|no-?show/.test(t)) return 'policy';
+      if (/book|schedule|availability|openings|calendar/.test(t)) return 'booking';
+      if (/email|@/.test(t)) return 'email';
+      return 'other';
+    }
+
+    function estimatePrice(){
+      const b = mem.bedrooms ?? 1;
+      const table = {1:[99,129], 2:[139,169], 3:[179,219], 4:[219,259]};
+      const band = table[Math.min(b,4)];
+      const base = `${b===1?'Studio/1BR':b+'BR'} is $${band[0]}–$${band[1]}`;
+      const deep = mem.deep===true ? ' (+$40 deep clean).' : '.';
+      return base + deep;
+    }
+
+    function reply(msg){
+      const intent = parse(msg);
+
+      if (intent==='pricing'){
+        const p = estimatePrice();
+        return `${p}\nWant to lock a slot now?\n• Starter trial: ${STARTER_LINK}\n• Pro trial: ${PRO_LINK}`;
+      }
+      if (intent==='areas'){
+        const area = mem.city ? `Yes, we service ${mem.city[0].toUpperCase()+mem.city.slice(1)}.` :
+          'We cover most of NYC: Brooklyn (full), Manhattan below 110th, Queens on request.';
+        return `${area}\nTell me bedrooms/bathrooms for a quote.`;
+      }
+      if (intent==='policy'){
+        return 'Cancel/reschedule up to 24h before to keep your deposit. Inside 24h the deposit may be forfeited. Deposits apply to the final bill.';
+      }
+      if (intent==='booking'){
+        return 'To book: pick a time on our calendar and pay a small deposit via Stripe. You’ll get instant confirmation and reminders.';
+      }
+      if (intent==='email'){
+        const m = msg.match(/[^\s]+@[^\s]+\.[^\s]+/);
+        if (m){ mem.email = m[0]; return `Got it: ${mem.email}. We’ll send your estimate + reminder there.`; }
+        return 'Drop your email and I’ll send your estimate + reminder (example: you@domain.com).';
+      }
+      return 'I can help with pricing, areas, booking steps, deposits, and policies. Try “How much for a 2 bedroom?”, “Do you service Brooklyn?”, or “How do I book?”.';
+    }
+
+    function handleSend(textFromBtn){
+      const text = (textFromBtn ?? chatInput.value || '').trim();
+      if (!text) return;
+      bubble('user', text);
+      chatInput.value = '';
+      showTyping();
+      const r = reply(text);
+      typewriter(r, final => bubble('assistant', final));
+    }
+
+    // Events
+    chatSend?.addEventListener('click', () => handleSend());
+    chatInput?.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
+    quickBar?.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-say]');
+      if (btn) handleSend(btn.getAttribute('data-say'));
+    });
+    clearBtn?.addEventListener('click', () => {
+      mem.bedrooms = mem.deep = mem.city = mem.email = null;
+      chatList.innerHTML = `
+        <div class="flex justify-start">
+          <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100">
+            <p class="text-gray-800">Cleared. Ask about pricing, areas, or how to book. Try the quick replies above.</p>
+          </div>
+        </div>`;
+      scrollToBottom();
+    });
+
+    // Keep placeholder queue from original
+    window.BookerAI = window.BookerAI || function(){ (BookerAI.q = BookerAI.q || []).push(arguments); };
+  });
+</script>
+
+
 </body>
 </html>
