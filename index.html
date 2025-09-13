@@ -592,39 +592,36 @@
     </div>
 
 <script>
-  // 1) Init animations & icons
+  // ===== 0) Initialize libraries =====
   AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
   if (window.feather && typeof feather.replace === 'function') feather.replace();
 
-  // 2) Grab elements
+  // ===== 1) Elements =====
   const bubble    = document.getElementById('widget-bubble');
   const panel     = document.getElementById('widget-panel');
   const closeBtn  = document.getElementById('close-widget');
-  const openDemo  = document.getElementById('open-demo-widget'); // button in your Demo card
-
-  const input     = document.getElementById('chat-input'); // <-- we added this id
-  const sendBtn   = document.getElementById('send-btn');   // <-- and this id
-
+  const openDemo  = document.getElementById('open-demo-widget'); // optional "Open Demo Widget" button
+  const input     = document.getElementById('chat-input');
+  const sendBtn   = document.getElementById('send-btn');
   const scrollBox = panel.querySelector('.flex-1.p-4.overflow-y-auto');
   const chatArea  = scrollBox.querySelector('.space-y-4');
 
-  // 3) Open/Close widget
+  // ===== 2) Open/Close widget =====
   function openWidget(){
     panel.style.display = 'flex';
     bubble.style.display = 'none';
-    input && input.focus();
+    setTimeout(()=>input?.focus(), 50);
   }
   function closeWidget(){
     panel.style.display = 'none';
     bubble.style.display = 'flex';
   }
-
-  bubble.addEventListener('click', openWidget);
-  closeBtn.addEventListener('click', closeWidget);
-  if (openDemo) openDemo.addEventListener('click', openWidget);
+  bubble?.addEventListener('click', openWidget);
+  closeBtn?.addEventListener('click', closeWidget);
+  openDemo?.addEventListener('click', openWidget);
   window.addEventListener('keydown', e => { if (e.key === 'Escape') closeWidget(); });
 
-  // 4) Helpers to add messages
+  // ===== 3) UI helpers =====
   function addMsg(text, who='bot'){
     const wrap = document.createElement('div');
     wrap.className = `flex ${who==='user'?'justify-end':'justify-start'}`;
@@ -641,41 +638,203 @@
     requestAnimationFrame(()=>{ scrollBox.scrollTop = scrollBox.scrollHeight; });
   }
 
-  // 5) Simple auto-replies (demo)
-  function reply(userText){
-    const t = userText.trim().toLowerCase();
-    if (!t) return;
-    if (t.includes('price') || t.includes('how much')) {
-      addMsg('Studio $99 • 1BR $129 • 2BR $159 • Deep clean +$60.');
-    } else if (t.includes('availability') || t.includes('time') || t.includes('open')) {
-      addMsg('Openings Mon–Sat, 8am–6pm. Earliest next-day usually available.');
-    } else if (t.includes('brooklyn') || t.includes('service area') || t.includes('do you service')) {
-      addMsg('Yes—NYC boroughs incl. Brooklyn, Queens, Manhattan, Bronx.');
-    } else if (t.includes('cancel')) {
-      addMsg('Free cancellation up to 24 hours before your appointment.');
-    } else if (t.includes('book') || t.includes('schedule')) {
-      addMsg('In this demo, tell me your preferred date & time (no charge).');
-    } else {
-      addMsg("Try 'pricing', 'availability', 'Brooklyn', 'cancellation', or 'book'.");
-    }
+  // ===== 4) Business knowledge (edit to your brand) =====
+  const KB = {
+    businessName: 'Acme Cleaning',
+    shortDesc: 'Eco-friendly home & apartment cleaning.',
+    areas: ['Brooklyn','Queens','Manhattan','Bronx','Staten Island'],
+    hours: 'Mon–Sat, 8:00am–6:00pm',
+    pricing: {
+      studio: 99,
+      '1br': 129,
+      '2br': 159,
+      deepCleanAddOn: 60
+    },
+    phone: '(555) 555-1234',
+    email: 'hello@acmecleaning.demo',
+    site: 'https://bookerpilot.com',
+    cancellation: 'Free cancellation up to 24 hours before your appointment.',
+    payments: 'We accept Stripe card payments and deposits.',
+    supplies: 'We bring our own supplies. Pet-safe & kid-safe options available.',
+    firstTime: 'First-time cleans may take longer. We’ll confirm the estimate before booking.'
+  };
+
+  // ===== 5) Utility: normalize text =====
+  function norm(s){ return (s||'').toLowerCase().trim(); }
+
+  // ===== 6) Utility: safe arithmetic evaluator (very simple) =====
+  function tryMath(expr){
+    const clean = expr.replace(/[^0-9+\-*/().\s]/g, '');
+    if (!clean) return null;
+    // must contain some operator to be math-like
+    if (!/[+\-*/]/.test(clean)) return null;
+    try {
+      // eslint-disable-next-line no-new-func
+      const val = Function('"use strict";return ('+clean+')')();
+      if (typeof val === 'number' && isFinite(val)) return val;
+      return null;
+    } catch { return null; }
   }
 
-  // 6) Send message (button + Enter)
+  // ===== 7) Intent matchers (dumb but wide coverage) =====
+  const intents = [
+    {
+      name: 'greeting',
+      test: t => /\b(hi|hello|hey|good (morning|afternoon|evening))\b/.test(t),
+      reply: () => `Hi! I’m the ${KB.businessName} demo assistant. Ask me about pricing, availability, areas we serve, booking, cancellation, or anything else.`
+    },
+    {
+      name: 'pricing',
+      test: t => /(price|how much|cost|rate|fee)/.test(t),
+      reply: () => `Typical prices: Studio $${KB.pricing.studio}, 1BR $${KB.pricing['1br']}, 2BR $${KB.pricing['2br']}. Deep clean +$${KB.pricing.deepCleanAddOn}.`
+    },
+    {
+      name: 'availability',
+      test: t => /(availability|available|open|when|time|slot|schedule)/.test(t),
+      reply: () => `We’re open ${KB.hours}. Earliest next-day slots are usually available.`
+    },
+    {
+      name: 'areas',
+      test: t => /(area|serve|service|borough|where|location|brooklyn|queens|manhattan|bronx|staten)/.test(t),
+      reply: () => `We serve: ${KB.areas.join(', ')}.`
+    },
+    {
+      name: 'cancellation',
+      test: t => /(cancel|cancellation|reschedule|refund)/.test(t),
+      reply: () => KB.cancellation
+    },
+    {
+      name: 'payments',
+      test: t => /(payment|pay|deposit|card|stripe|visa|mastercard|amex)/.test(t),
+      reply: () => KB.payments
+    },
+    {
+      name: 'supplies',
+      test: t => /(supplies|products|eco|green|safe|pet|kid)/.test(t),
+      reply: () => KB.supplies
+    },
+    {
+      name: 'first_time',
+      test: t => /(first time|first-time|initial clean|deep clean)/.test(t),
+      reply: () => KB.firstTime
+    },
+    {
+      name: 'contact',
+      test: t => /(contact|call|email|phone|speak|reach)/.test(t),
+      reply: () => `You can reach us at ${KB.phone} or ${KB.email}.`
+    },
+    {
+      name: 'about',
+      test: t => /(who are you|about|what do you do|company|business)/.test(t),
+      reply: () => `${KB.businessName}: ${KB.shortDesc}`
+    },
+    {
+      name: 'booking',
+      test: t => /(book|schedule|appointment|reserve)/.test(t),
+      reply: () => `In this demo, just tell me your preferred date & time and I’ll confirm a mock booking. (No charges.)`
+    },
+    {
+      name: 'hours',
+      test: t => /(hours|open|close|when)/.test(t),
+      reply: () => `Our hours are ${KB.hours}.`
+    },
+    {
+      name: 'time_date',
+      test: t => /(time|date|today|tomorrow|day)/.test(t),
+      reply: () => {
+        const now = new Date();
+        return `Right now it’s ${now.toLocaleString()} in your locale.`;
+      }
+    },
+    {
+      name: 'math',
+      test: t => !!tryMath(t),
+      reply: (_, q) => {
+        const ans = tryMath(q);
+        return ans !== null ? `Answer: ${ans}` : "I couldn't compute that.";
+      }
+    },
+    {
+      name: 'smalltalk',
+      test: t => /(thank|thanks|great|awesome|cool|lol|haha|how are you|who made you|joke)/.test(t),
+      reply: () => `Happy to help! If you want to try a booking, just say “book” with a date/time.`
+    }
+  ];
+
+  // ===== 8) Fallback generator =====
+  function fallback(reason){
+    const tips = [
+      `Here’s what I can help with right now: pricing, areas, hours, booking, cancellation, payments, supplies.`,
+      `If you’re testing, try: “price”, “availability”, “Brooklyn”, “book tomorrow 10am”, or “cancelation policy”.`,
+      `Want a real person? Call ${KB.phone} or email ${KB.email}.`
+    ];
+    return `I don’t have that exact info in this demo, but ${reason}\n\n${tips[Math.floor(Math.random()*tips.length)]}`;
+  }
+
+  // ===== 9) Very light entity extraction for booking-ish phrases =====
+  function tryExtractBooking(t){
+    // examples it will catch: "book tomorrow 10am", "schedule Monday 2 pm", "book 9/20 at 1pm"
+    const dayMatch = t.match(/\b(today|tomorrow|mon(day)?|tue(sday)?|wed(nesday)?|thu(rsday)?|fri(day)?|sat(urday)?|sun(day)?)\b/);
+    const dateMatch = t.match(/\b(\d{1,2}[\/\-]\d{1,2}([\/\-]\d{2,4})?)\b/);
+    const timeMatch = t.match(/\b(\d{1,2}(:\d{2})?\s?(am|pm)?)\b/);
+
+    if (dayMatch || dateMatch || timeMatch) {
+      const dayOrDate = (dayMatch && dayMatch[0]) || (dateMatch && dateMatch[0]) || 'the next available day';
+      const time = (timeMatch && timeMatch[0]) || 'a convenient time';
+      return `Great — I can pencil you in for ${dayOrDate} at ${time}. This is a demo confirmation (no charges).`;
+    }
+    return null;
+  }
+
+  // ===== 10) Brain: route a question to the best intent =====
+  function think(userText){
+    const t = norm(userText);
+
+    // booking phrasing first
+    if (/(book|schedule|appointment|reserve)/.test(t)) {
+      const bk = tryExtractBooking(t);
+      if (bk) return bk;
+    }
+
+    // score intents by how many keyword hits their test implies
+    for (const intent of intents) {
+      try {
+        if (intent.test(t)) {
+          return typeof intent.reply === 'function' ? intent.reply(t, userText) : intent.reply;
+        }
+      } catch {}
+    }
+
+    // fallback: mild fuzzy handling
+    if (/\?$/.test(t) || t.split(' ').length > 3) {
+      return fallback('I gave a general answer instead.');
+    }
+    return fallback('try asking in a different way.');
+  }
+
+  // ===== 11) Send/Reply wiring =====
   function send(){
     const text = (input?.value || '').trim();
     if (!text) return;
     addMsg(text, 'user');
     input.value = '';
-    setTimeout(()=>reply(text), 350);
+    setTimeout(() => {
+      const answer = think(text);
+      addMsg(answer, 'bot');
+    }, 300);
   }
+  sendBtn?.addEventListener('click', send);
+  input?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send(); }});
 
-  sendBtn.addEventListener('click', send);
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); send(); }
-  });
-
-  // 7) (Optional) Queue function for later real widget.js
-  window.BookerAI = window.BookerAI || function(){ (BookerAI.q = BookerAI.q || []).push(arguments); };
+  // ===== 12) Greet once on open =====
+  let greeted = false;
+  function greetOnce(){
+    if (greeted) return;
+    greeted = true;
+    addMsg(`Hi! I’m the ${KB.businessName} demo assistant. Ask me anything — pricing, availability, areas, booking, policies, or even math.`, 'bot');
+  }
+  bubble?.addEventListener('click', greetOnce);
+  openDemo?.addEventListener('click', greetOnce);
 </script>
 
 
