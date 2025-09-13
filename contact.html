@@ -2,45 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Contact – BookerPilot</title>
+  <title>Contact & Join Waitlist – BookerPilot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body class="min-h-screen bg-gray-50 flex flex-col">
+<body class="min-h-screen bg-gray-50">
 
-  <!-- Sticky top bar with Back link -->
-  <header class="bg-white shadow-sm sticky top-0">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold text-indigo-600">BookerPilot</h1>
-      <a href="/" class="text-indigo-600 hover:text-indigo-800 font-medium">
-        ← Back to Home
+  <!-- Top bar with brand that links home -->
+  <header class="bg-white border-b">
+    <div class="max-w-7xl mx-auto h-14 px-4 sm:px-6 lg:px-8 flex items-center">
+      <a href="/" aria-label="Go to BookerPilot home"
+         class="text-indigo-600 font-bold text-lg hover:text-indigo-700">
+        BookerPilot
       </a>
     </div>
   </header>
 
-  <!-- Contact box -->
-  <main class="flex-1 flex items-center justify-center p-6">
-    <div class="w-full max-w-lg bg-white shadow p-8 rounded-xl text-center">
-      <h2 class="text-3xl font-bold mb-4">Contact Us</h2>
-      <p class="text-gray-600 mb-8">
-        Tap below and your email app will open pre-addressed to us.
-      </p>
+  <!-- Page content -->
+  <main class="w-full max-w-lg mx-auto mt-10 bg-white shadow p-8 rounded-xl">
+    <h1 class="text-3xl font-bold mb-2">Contact Us</h1>
+    <p class="text-gray-600 mb-6">
+      Have questions or want early access? Send us a message or join the waitlist below.
+    </p>
 
-      <a href="mailto:support@bookerpilot.com?subject=BookerPilot%20Inquiry&body=Hi%20there,"
-         class="block w-full bg-indigo-600 text-white text-lg font-medium py-3 rounded-lg hover:bg-indigo-700">
-         Contact Support
-      </a>
+    <!-- Contact / Waitlist Form -->
+    <form id="contact-form" class="space-y-4">
+      <input id="name" type="text" placeholder="Your Name"
+             class="w-full border rounded-lg px-3 py-2" required>
+      <input id="email" type="email" placeholder="Your Email"
+             class="w-full border rounded-lg px-3 py-2" required>
+      <textarea id="message" placeholder="Your Message (or say 'Join waitlist')"
+                class="w-full border rounded-lg px-3 py-2 h-32"></textarea>
+      <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+        Send
+      </button>
+    </form>
 
-      <p class="mt-6 text-sm text-gray-500">
-        We typically reply within one business day.
-      </p>
-    </div>
+    <p id="msg" class="mt-4 text-sm text-gray-700"></p>
   </main>
 
-  <!-- Optional footer -->
-  <footer class="bg-white py-6 text-center text-gray-400 text-sm">
-    &copy; 2025 BookerPilot. All rights reserved.
-  </footer>
+  <script>
+    // --- Supabase credentials ---
+    const SUPABASE_URL = 'https://lzitxdifsukaywuansgh.supabase.co';
+    const SUPABASE_ANON_KEY =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6aXR4ZGlmc3VrYXl3dWFuc2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NzY3ODMsImV4cCI6MjA3MzM1Mjc4M30.hH9S-SLi7u2Hmy-9pNb_Z1l0fZCTsZ8HultBUY9WpEo';
 
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // --- Handle form submission ---
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name    = document.getElementById('name').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim() || 'Join waitlist';
+      const msgEl   = document.getElementById('msg');
+
+      // Save to Supabase
+      const { error } = await supabase
+        .from('contacts')
+        .insert([{ name, email, message }]);
+
+      if (error) {
+        msgEl.textContent = error.message;
+        return;
+      }
+
+      // Open mail client to send email notification
+      window.location.href =
+        `mailto:support@bookerpilot.com?subject=New Contact/Waitlist&body=` +
+        `Name: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AMessage: ${encodeURIComponent(message)}`;
+
+      msgEl.textContent = 'Thank you! Your request has been sent and added to our waitlist.';
+      e.target.reset();
+    });
+  </script>
 </body>
 </html>
