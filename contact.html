@@ -10,39 +10,60 @@
 <body class="min-h-screen bg-gray-50 flex items-center justify-center">
   <div class="w-full max-w-lg bg-white shadow p-8 rounded-xl">
     <h1 class="text-3xl font-bold mb-2">Contact Us</h1>
-    <p class="text-gray-600 mb-6">Have questions or want early access? Send us a message or join the waitlist below.</p>
+    <p class="text-gray-600 mb-6">
+      Have questions or want early access? Send us a message or join the waitlist below.
+    </p>
 
     <!-- Contact / Waitlist Form -->
     <form id="contact-form" class="space-y-4">
-      <input id="name" type="text" placeholder="Your Name" class="w-full border rounded-lg px-3 py-2" required>
-      <input id="email" type="email" placeholder="Your Email" class="w-full border rounded-lg px-3 py-2" required>
-      <textarea id="message" placeholder="Your Message (or say 'Join waitlist')" class="w-full border rounded-lg px-3 py-2 h-32"></textarea>
-      <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Send</button>
+      <input id="name" type="text" placeholder="Your Name"
+             class="w-full border rounded-lg px-3 py-2" required>
+      <input id="email" type="email" placeholder="Your Email"
+             class="w-full border rounded-lg px-3 py-2" required>
+      <textarea id="message" placeholder="Your Message (or say 'Join waitlist')"
+                class="w-full border rounded-lg px-3 py-2 h-32"></textarea>
+      <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+        Send
+      </button>
     </form>
 
     <p id="msg" class="mt-4 text-sm text-gray-700"></p>
   </div>
 
-<script>
-const SUPABASE_URL = 'https://lzitxdifsukaywuansgh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6aXR4ZGlmc3VrYXl3dWFuc2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NzY3ODMsImV4cCI6MjA3MzM1Mjc4M30.hH9S-SLi7u2Hmy-9pNb_Z1l0fZCTsZ8HultBUY9WpEo';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script>
+    // --- Supabase credentials ---
+    const SUPABASE_URL = 'https://lzitxdifsukaywuansgh.supabase.co';
+    const SUPABASE_ANON_KEY =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6aXR4ZGlmc3VrYXl3dWFuc2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NzY3ODMsImV4cCI6MjA3MzM1Mjc4M30.hH9S-SLi7u2Hmy-9pNb_Z1l0fZCTsZ8HultBUY9WpEo';
 
-document.getElementById('contact-form').addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const message = document.getElementById('message').value.trim() || 'Join waitlist';
-  const { error } = await supabase.from('contacts').insert([{ name, email, message }]);
-  const msg = document.getElementById('msg');
-  if (error) { msg.textContent = error.message; return; }
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Send email notification (simple mailto fallback)
-  window.location.href = `mailto:support@bookerpilot.com?subject=New Contact/Waitlist&body=Name: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AMessage: ${encodeURIComponent(message)}`;
+    // --- Handle form submission ---
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name    = document.getElementById('name').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim() || 'Join waitlist';
+      const msg     = document.getElementById('msg');
 
-  msg.textContent = 'Thank you! Your request has been sent and added to our waitlist.';
-  e.target.reset();
-});
-</script>
+      // Save to Supabase
+      const { error } = await supabase
+        .from('contacts')
+        .insert([{ name, email, message }]);
+
+      if (error) {
+        msg.textContent = error.message;
+        return;
+      }
+
+      // Optional: open mail client to send email notification
+      window.location.href =
+        `mailto:support@bookerpilot.com?subject=New Contact/Waitlist&body=` +
+        `Name: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AMessage: ${encodeURIComponent(message)}`;
+
+      msg.textContent = 'Thank you! Your request has been sent and added to our waitlist.';
+      e.target.reset();
+    });
+  </script>
 </body>
 </html>
