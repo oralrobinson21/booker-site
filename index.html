@@ -582,83 +582,102 @@
             </div>
         </div>
         <div class="border-t border-gray-200 p-4">
-            <div class="flex items-center">
-                <input type="text" placeholder="Type your question..." class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                <button class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
-                    <i data-feather="send"></i>
-                </button>
-            </div>
-        </div>
+  <div class="flex items-center">
+    <input id="chat-input" type="text" placeholder="Type your question..." class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+    <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+      <i data-feather="send"></i>
+    </button>
+  </div>
+</div>
     </div>
 
 <script>
-AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
-if (window.feather && typeof feather.replace === 'function') feather.replace();
+  // 1) Init animations & icons
+  AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+  if (window.feather && typeof feather.replace === 'function') feather.replace();
 
-// --- Grab elements ---
-const bubble   = document.getElementById('widget-bubble');
-const panel    = document.getElementById('widget-panel');
-const closeBtn = document.getElementById('close-widget');
-const input    = panel.querySelector('input[type="text"]');
-const sendBtn  = panel.querySelector('button i[data-feather="send"]').parentElement;
-const scrollBox= panel.querySelector('.flex-1');
-const chatArea = scrollBox.querySelector('.space-y-4');
+  // 2) Grab elements
+  const bubble    = document.getElementById('widget-bubble');
+  const panel     = document.getElementById('widget-panel');
+  const closeBtn  = document.getElementById('close-widget');
+  const openDemo  = document.getElementById('open-demo-widget'); // button in your Demo card
 
-// --- Show/Hide widget ---
-function openWidget(){
-  panel.style.display = 'flex';
-  bubble.style.display = 'none';
-  input.focus();
-}
-function closeWidget(){
-  panel.style.display = 'none';
-  bubble.style.display = 'flex';
-}
-bubble.addEventListener('click', openWidget);
-closeBtn.addEventListener('click', closeWidget);
-window.addEventListener('keydown', e => { if (e.key === 'Escape') closeWidget(); });
+  const input     = document.getElementById('chat-input'); // <-- we added this id
+  const sendBtn   = document.getElementById('send-btn');   // <-- and this id
 
-// --- Add chat message ---
-function addMsg(text, who='bot'){
-  const wrap = document.createElement('div');
-  wrap.className = `flex ${who==='user'?'justify-end':'justify-start'}`;
-  const bubble = document.createElement('div');
-  bubble.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${who==='user'?'rounded-tr-none bg-indigo-600 text-white':'rounded-tl-none bg-gray-100 text-gray-800'}`;
-  bubble.textContent = text;
-  wrap.appendChild(bubble);
-  chatArea.appendChild(wrap);
-  scrollBox.scrollTop = scrollBox.scrollHeight;
-}
+  const scrollBox = panel.querySelector('.flex-1.p-4.overflow-y-auto');
+  const chatArea  = scrollBox.querySelector('.space-y-4');
 
-// --- Simple auto replies ---
-function reply(user){
-  const t = user.toLowerCase();
-  if (t.includes('price')||t.includes('how much')) {
-    addMsg('Studio $99 • 1BR $129 • 2BR $159 • deep clean +$60');
-  } else if (t.includes('available')||t.includes('time')) {
-    addMsg('Openings Mon–Sat, 8 am–6 pm. Earliest slot usually next day.');
-  } else if (t.includes('brooklyn')||t.includes('area')) {
-    addMsg('Yes, we serve all NYC boroughs including Brooklyn.');
-  } else if (t.includes('cancel')) {
-    addMsg('Free cancellation up to 24 hours before your appointment.');
-  } else if (t.includes('book')||t.includes('schedule')) {
-    addMsg('Just pick a date and time—no charge in this demo.');
-  } else {
-    addMsg('Try asking about pricing, availability, service area, or booking.');
+  // 3) Open/Close widget
+  function openWidget(){
+    panel.style.display = 'flex';
+    bubble.style.display = 'none';
+    input && input.focus();
   }
-}
+  function closeWidget(){
+    panel.style.display = 'none';
+    bubble.style.display = 'flex';
+  }
 
-// --- Send message ---
-function send(){
-  const txt = input.value.trim();
-  if (!txt) return;
-  addMsg(txt, 'user');
-  input.value = '';
-  setTimeout(()=>reply(txt), 400);
-}
-sendBtn.addEventListener('click', send);
-input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send(); }});
+  bubble.addEventListener('click', openWidget);
+  closeBtn.addEventListener('click', closeWidget);
+  if (openDemo) openDemo.addEventListener('click', openWidget);
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') closeWidget(); });
+
+  // 4) Helpers to add messages
+  function addMsg(text, who='bot'){
+    const wrap = document.createElement('div');
+    wrap.className = `flex ${who==='user'?'justify-end':'justify-start'}`;
+
+    const bub = document.createElement('div');
+    bub.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+      who==='user' ? 'rounded-tr-none bg-indigo-600 text-white'
+                   : 'rounded-tl-none bg-gray-100 text-gray-800'
+    }`;
+    bub.textContent = text;
+
+    wrap.appendChild(bub);
+    chatArea.appendChild(wrap);
+    requestAnimationFrame(()=>{ scrollBox.scrollTop = scrollBox.scrollHeight; });
+  }
+
+  // 5) Simple auto-replies (demo)
+  function reply(userText){
+    const t = userText.trim().toLowerCase();
+    if (!t) return;
+    if (t.includes('price') || t.includes('how much')) {
+      addMsg('Studio $99 • 1BR $129 • 2BR $159 • Deep clean +$60.');
+    } else if (t.includes('availability') || t.includes('time') || t.includes('open')) {
+      addMsg('Openings Mon–Sat, 8am–6pm. Earliest next-day usually available.');
+    } else if (t.includes('brooklyn') || t.includes('service area') || t.includes('do you service')) {
+      addMsg('Yes—NYC boroughs incl. Brooklyn, Queens, Manhattan, Bronx.');
+    } else if (t.includes('cancel')) {
+      addMsg('Free cancellation up to 24 hours before your appointment.');
+    } else if (t.includes('book') || t.includes('schedule')) {
+      addMsg('In this demo, tell me your preferred date & time (no charge).');
+    } else {
+      addMsg("Try 'pricing', 'availability', 'Brooklyn', 'cancellation', or 'book'.");
+    }
+  }
+
+  // 6) Send message (button + Enter)
+  function send(){
+    const text = (input?.value || '').trim();
+    if (!text) return;
+    addMsg(text, 'user');
+    input.value = '';
+    setTimeout(()=>reply(text), 350);
+  }
+
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); send(); }
+  });
+
+  // 7) (Optional) Queue function for later real widget.js
+  window.BookerAI = window.BookerAI || function(){ (BookerAI.q = BookerAI.q || []).push(arguments); };
 </script>
+
 
 </body>
 </html>
