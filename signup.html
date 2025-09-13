@@ -1,44 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up – BookerPilot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body class="min-h-screen bg-gray-50 flex items-center justify-center">
-  <div class="w-full max-w-md bg-white shadow p-8 rounded-xl">
-    <h1 class="text-2xl font-bold mb-2">Create your account</h1>
-    <p class="text-sm text-gray-600 mb-6">Access your dashboard and connect your subscription.</p>
+<body class="bg-gray-50">
 
-    <form id="signup-form" class="space-y-4">
-      <input id="email" type="email" placeholder="Email" class="w-full border rounded-lg px-3 py-2" required>
-      <input id="password" type="password" placeholder="Password" class="w-full border rounded-lg px-3 py-2" required>
-      <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Sign Up</button>
-    </form>
+  <!-- Top nav with logo + back arrow + maybe login -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+      <!-- Logo to home -->
+      <a href="/index.html" aria-label="Go to BookerPilot home"
+         class="text-indigo-600 font-bold text-xl hover:text-indigo-700">
+        BookerPilot
+      </a>
 
-    <p class="mt-4 text-sm">Already have an account?
-      <a class="text-indigo-600" href="/login.html">Log in</a>
-    </p>
+      <nav class="flex items-center space-x-6">
+        <!-- Back to home arrow -->
+        <a href="/index.html" class="flex items-center text-gray-500 hover:text-gray-900 text-sm font-medium">
+          &#8592; Back to Home
+        </a>
+        <!-- If you want, a Log In link on right -->
+        <a href="/login.html" class="text-gray-500 hover:text-gray-900 text-sm font-medium">Log In</a>
+      </nav>
+    </div>
+  </header>
 
-    <p id="msg" class="mt-4 text-sm text-gray-700"></p>
-  </div>
+  <!-- Signup form -->
+  <main class="min-h-screen flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-md bg-white shadow p-8 rounded-xl">
+      <h1 class="text-3xl font-bold mb-2 text-center">Create your account</h1>
+      <p class="text-gray-600 mb-6 text-center">Let’s get started with BookerPilot.</p>
 
-<script>
-const SUPABASE_URL = 'https://lzitxdifsukaywuansgh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6aXR4ZGlmc3VrYXl3dWFuc2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NzY3ODMsImV4cCI6MjA3MzM1Mjc4M30.hH9S-SLi7u2Hmy-9pNb_Z1l0fZCTsZ8HultBUY9WpEo';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      <form id="signup-form" class="space-y-4">
+        <input id="email" type="email" placeholder="Your Email"
+               class="w-full border rounded-lg px-3 py-2" required>
+        <input id="password" type="password" placeholder="Password"
+               class="w-full border rounded-lg px-3 py-2" required>
+        <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+          Sign Up
+        </button>
+      </form>
 
-document.getElementById('signup-form').addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-  const { error } = await supabase.auth.signUp({ email, password });
-  const msg = document.getElementById('msg');
-  if (error) { msg.textContent = error.message; return; }
-  msg.textContent = 'Account created. Now log in.';
-});
-</script>
+      <p id="msg" class="mt-4 text-sm text-gray-700 text-center"></p>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://lzitxdifsukaywuansgh.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6aXR4ZGlmc3VrYXl3dWFuc2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NzY3ODMsImV4cCI6MjA3MzM1Mjc4M30.hH9S-SLi7u2Hmy-9pNb_Z1l0fZCTsZ8HultBUY9WpEo';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const msgEl = document.getElementById('msg');
+
+      const { error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        msgEl.textContent = error.message;
+        return;
+      }
+
+      msgEl.textContent = 'Success! Check your email to confirm & log in.';
+      // optionally redirect to login or dashboard
+      setTimeout(()=>{ window.location.href = '/login.html'; }, 2000);
+    });
+  </script>
+
 </body>
 </html>
