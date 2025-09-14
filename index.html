@@ -64,7 +64,7 @@
       .widget-panel  { bottom: calc(1rem + 80px); right: 1rem; width: 92vw; }
     }
 
-    /* Chips */
+    /* Chips & buttons */
     .chip {
       display:inline-block; margin:.25rem .3rem 0 0;
       padding:.45rem .75rem; border-radius:9999px;
@@ -74,7 +74,6 @@
     }
     .chip:hover { background:#f9fafb; }
     .chip:active { transform: scale(.98); }
-
     .btn {
       display:inline-flex; align-items:center; justify-content:center;
       padding:.6rem .9rem; border-radius:.5rem; font-weight:600;
@@ -160,7 +159,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">AI Chat & FAQ</h3>
-            <p class="mt-2 text-base text-gray-500">Answer customer questions instantly using your business knowledge.</p>
+            <p class="mt-2 text-base text-gray-500">Answers common questions, then guides customers into booking.</p>
           </div>
         </div>
 
@@ -172,7 +171,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Real-time Availability</h3>
-            <p class="mt-2 text-base text-gray-500">Offer suggested times and hold spots instantly.</p>
+            <p class="mt-2 text-base text-gray-500">Shows up-to-date slots & holds them during checkout.</p>
           </div>
         </div>
 
@@ -184,7 +183,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Secure Payments</h3>
-            <p class="mt-2 text-base text-gray-500">Collect deposits via Stripe to reduce no-shows.</p>
+            <p class="mt-2 text-base text-gray-500">Collect deposits via Stripe checkout links.</p>
           </div>
         </div>
 
@@ -196,7 +195,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Text & Email Reminders</h3>
-            <p class="mt-2 text-base text-gray-500">Automatic confirmations and reminders for every booking.</p>
+            <p class="mt-2 text-base text-gray-500">Sends confirmations & reminders automatically.</p>
           </div>
         </div>
       </div>
@@ -209,7 +208,7 @@
       <div class="lg:text-center mb-12">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Live Demo</h2>
         <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">
-          Try it yourself
+          Ask anything — then book in seconds
         </p>
       </div>
 
@@ -240,12 +239,12 @@
 
         <div class="relative" data-aos="fade-left">
           <div class="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Demo: Yoga Studio Booking</h3>
-            <p class="text-gray-600 mb-4">Ask the assistant to book a class:</p>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Demo: Yoga Studio</h3>
+            <p class="text-gray-600 mb-4">Try questions like:</p>
             <ul class="space-y-2 text-gray-700 text-sm">
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Book a beginner class tomorrow.”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Do you have Puppy Yoga this week?”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“What times are available?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“What times do you have for Puppy Yoga?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“How much is Beginner Flow?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“What’s your cancellation policy?”</span></li>
             </ul>
             <button id="open-demo-widget" class="mt-6 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Open Demo Widget
@@ -332,7 +331,7 @@
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="100">
           <dt class="text-lg leading-6 font-medium text-gray-900">How does the AI work?</dt>
-          <dd class="mt-2 text-base text-gray-600">After integration, the AI answers from your guidelines, books in your calendar, sends reminders, and can accept payments via your website.</dd>
+          <dd class="mt-2 text-base text-gray-600">Once enabled, the AI answers from your guidelines, books directly to your calendar (and sends invites), reminds customers, and can accept payments on your site.</dd>
         </div>
       </dl>
     </div>
@@ -431,8 +430,33 @@
     AOS.init({ duration: 700, once: true });
     feather.replace();
 
-    // ===== Config: Stripe Pay-Deposit link used in chat confirmation
-    const DEPOSIT_URL = "https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03"; // replace with your booking/deposit link if different
+    // ===== Config
+    const DEPOSIT_URL = "https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03"; // replace with your per-class deposit link if you want
+
+    const STUDIO_NAME = "Sunrise Yoga Studio";
+    const STUDIO_ADDRESS = "Sunrise Yoga Studio — 123 Harmony Ave, Suite 201, Brooklyn, NY 11211";
+
+    const CLASS_OPTIONS = {
+      "Puppy Yoga":     ["Tue 6:30 PM","Thu 5:00 PM","Sat 10:00 AM"],
+      "Beginner Flow":  ["Mon 7:00 AM","Wed 12:00 PM","Fri 6:00 PM"],
+      "Power Vinyasa":  ["Tue 7:00 AM","Thu 6:00 PM","Sun 9:00 AM"],
+      "Restorative":    ["Mon 8:00 PM","Wed 8:00 PM","Sat 4:00 PM"]
+    };
+
+    const PRICES = {
+      "Puppy Yoga": "$35",
+      "Beginner Flow": "$25",
+      "Power Vinyasa": "$29",
+      "Restorative": "$22"
+    };
+
+    const FAQ = {
+      cancellation: "You can cancel or reschedule up to 12 hours before class for a full credit. Inside 12 hours, the class is non-refundable.",
+      serviceArea: "We’re in Williamsburg, Brooklyn, and welcome students from all boroughs. Street parking is available nearby.",
+      parking: "Street parking and a public garage across the street (first hour $7).",
+      bring: "Bring a water bottle and comfortable clothing. We provide mats, blocks, and straps. Puppy Yoga: please wear closed-toe shoes.",
+      memberships: "Unlimited Monthly ($129), 8-Class Pack ($99), 4-Class Pack ($59)."
+    };
 
     // ===== DOM
     const bubble = document.getElementById('widget-bubble');
@@ -446,7 +470,6 @@
       const sc = panel.querySelector('.overflow-y-auto');
       if (sc) sc.scrollTop = sc.scrollHeight;
     }
-
     function addBubble(text, who='bot'){
       const wrap = document.createElement('div');
       wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
@@ -459,7 +482,6 @@
       thread.appendChild(wrap);
       scrollToBottom();
     }
-
     function addBubbleHTML(html, who='bot'){
       const wrap = document.createElement('div');
       wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
@@ -472,7 +494,6 @@
       thread.appendChild(wrap);
       scrollToBottom();
     }
-
     function sanitize(s){ return String(s||'').replace(/[\u0000-\u001F<>]/g,'').trim(); }
 
     function toggleWidget(){
@@ -481,113 +502,84 @@
       bubble.style.display = show ? 'none' : 'flex';
       if (show) setTimeout(()=>input?.focus(), 80);
     }
-
     bubble.addEventListener('click', toggleWidget);
     closeB.addEventListener('click', toggleWidget);
     document.getElementById('open-demo-widget')?.addEventListener('click', () => {
-      toggleWidget(); onOpen();
+      if (panel.style.display !== 'flex') toggleWidget();
+      onOpen();
     });
 
-    // ===== Guided Yoga Flow =====
-    // Steps: 1 intro -> 2 name -> 3 choose class -> 4 choose time -> 5 email -> 6 phone -> 7 confirm
+    // ===== Simple intent helpers
+    const classNames = Object.keys(CLASS_OPTIONS);
+    function findClassIn(text){
+      const t = text.toLowerCase();
+      return classNames.find(c => t.includes(c.toLowerCase()));
+    }
+    function isAvailIntent(t){ return /avail|time|slot|open/i.test(t); }
+    function isPriceIntent(t){ return /price|cost|how much|rate/i.test(t); }
+    function isCancelIntent(t){ return /cancel|cancellation|refund/i.test(t); }
+    function isServiceAreaIntent(t){ return /service|where|location|area|address/i.test(t); }
+    function isParkingIntent(t){ return /park|parking|garage/i.test(t); }
+    function isBringIntent(t){ return /bring|mat|what do i need/i.test(t); }
+    function isMembershipIntent(t){ return /member|membership|class pack|unlimited/i.test(t); }
+    function isBookNowIntent(t){ return /book|schedule|sign me up|register/i.test(t); }
+
+    // ===== Booking state machine
+    // Steps: 0 idle -> 1 ask name -> 2 class -> 3 time -> 4 email -> 5 phone -> 6 confirm
     const state = { step: 0, name: '', classType: '', time: '', email: '', phone: '' };
 
-    // Different availability per class
-    const CLASS_OPTIONS = {
-      "Puppy Yoga": [
-        "Tue 6:30 PM",
-        "Thu 5:00 PM",
-        "Sat 10:00 AM"
-      ],
-      "Beginner Flow": [
-        "Mon 7:00 AM",
-        "Wed 12:00 PM",
-        "Fri 6:00 PM"
-      ],
-      "Power Vinyasa": [
-        "Tue 7:00 AM",
-        "Thu 6:00 PM",
-        "Sun 9:00 AM"
-      ],
-      "Restorative": [
-        "Mon 8:00 PM",
-        "Wed 8:00 PM",
-        "Sat 4:00 PM"
-      ]
-    };
-
-    const STUDIO_ADDRESS = "Sunrise Yoga Studio — 123 Harmony Ave, Suite 201, Brooklyn, NY 11211";
-
-    function startYogaDemo(){
-      state.step = 1;
-      addBubble("👋 Hi! I’m your AI assistant for Sunrise Yoga Studio.");
-      addBubble("I can help you book a class in seconds. First, what’s your name?");
-    }
-
     function classChips(){
-      const keys = Object.keys(CLASS_OPTIONS);
-      return `
-        <div class="mt-1">
-          ${keys.map(k => `<button class="chip chip-class" data-class="${k}">${k}</button>`).join(' ')}
-        </div>
-      `;
+      return `<div class="mt-1">
+        ${classNames.map(k => `<button class="chip chip-class" data-class="${k}">${k}</button>`).join(' ')}
+      </div>`;
     }
-
     function timeChips(type){
       const times = CLASS_OPTIONS[type] || [];
-      return `
-        <div class="mt-1">
-          ${times.map(t => `<button class="chip chip-time" data-time="${t}">${t}</button>`).join(' ')}
-        </div>
-      `;
+      return `<div class="mt-1">
+        ${times.map(t => `<button class="chip chip-time" data-time="${t}">${t}</button>`).join(' ')}
+      </div>`;
     }
-
+    function actionChips(){
+      return `<div class="mt-2">
+        <button class="chip chip-start">Book now</button>
+        <button class="chip chip-reset">Reset</button>
+      </div>`;
+    }
     function bindClassChips(){
       document.querySelectorAll('.chip-class').forEach(btn=>{
-        btn.onclick = () => {
-          input.value = btn.getAttribute('data-class');
-          sendNow();
-        };
+        btn.onclick = () => { input.value = btn.getAttribute('data-class'); sendNow(); };
       });
     }
-
     function bindTimeChips(){
       document.querySelectorAll('.chip-time').forEach(btn=>{
-        btn.onclick = () => {
-          input.value = btn.getAttribute('data-time');
-          sendNow();
-        };
+        btn.onclick = () => { input.value = btn.getAttribute('data-time'); sendNow(); };
       });
     }
+    function bindActionChips(){
+      document.querySelector('.chip-start')?.addEventListener('click', startBooking);
+      document.querySelector('.chip-reset')?.addEventListener('click', resetDemo);
+    }
 
+    // Validation
     function validEmail(e){
       const s = String(e||'').trim();
       const at = s.indexOf('@');
       const dot = s.lastIndexOf('.');
       return at > 0 && dot > at + 1 && dot < s.length - 1;
     }
-
-    function normalizeDigits(str){
-      return (str || '').replace(/\D+/g,'');
-    }
-
+    function normalizeDigits(str){ return (str||'').replace(/\D+/g,''); }
     function validPhone(p){
-      const digits = normalizeDigits(p);
-      // Accept 10-15 digits to cover national & simple international formats
-      return digits.length >= 10 && digits.length <= 15;
+      const d = normalizeDigits(p);
+      return d.length >= 10 && d.length <= 15;
     }
-
     function formatPhone(p){
       const d = normalizeDigits(p);
-      if (d.length === 10) {
-        return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
-      }
+      if (d.length === 10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
       return p;
     }
 
-    // ===== ICS helpers =====
+    // ICS helpers
     const DAY_INDEX = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 };
-
     function nextDateFor(dayAbbrev){
       const today = new Date();
       const target = DAY_INDEX[dayAbbrev];
@@ -598,36 +590,30 @@
       d.setHours(0,0,0,0);
       return d;
     }
-
-    function parseTime12h(str){ // "6:30 PM" -> {h, m}
+    function parseTime12h(str){
       const m = str.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)/i);
       if (!m) return null;
-      let h = parseInt(m[1],10);
-      const mm = parseInt(m[2] || '0', 10);
+      let h = parseInt(m[1],10), mm = parseInt(m[2]||'0',10);
       const ap = m[3].toUpperCase();
       if (ap === 'PM' && h !== 12) h += 12;
       if (ap === 'AM' && h === 12) h = 0;
       return {h, m:mm};
     }
-
-    function yyyymmddHHMMSS(d){ // local time formatted
+    function yyyymmddHHMMSS(d){
       const pad = n => String(n).padStart(2,'0');
       return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
     }
-
     function createICS({ name, classType, time, address }){
-      // time like "Tue 6:30 PM"
       const parts = time.split(' ');
       const day = parts[0];
-      const timeStr = parts.slice(1).join(' '); // "6:30 PM"
+      const timeStr = parts.slice(1).join(' ');
       const date = nextDateFor(day);
       const hm = parseTime12h(timeStr);
       if (!date || !hm) return null;
 
       const start = new Date(date);
       start.setHours(hm.h, hm.m, 0, 0);
-      const end = new Date(start);
-      end.setMinutes(end.getMinutes() + 60); // 60-min class
+      const end = new Date(start); end.setMinutes(end.getMinutes() + 60);
 
       const dtstamp = yyyymmddHHMMSS(new Date());
       const dtstart = yyyymmddHHMMSS(start);
@@ -645,17 +631,15 @@
         `DTSTAMP:${dtstamp}`,
         `DTSTART:${dtstart}`,
         `DTEND:${dtend}`,
-        `SUMMARY:${classType} — Sunrise Yoga Studio`,
+        `SUMMARY:${classType} — ${STUDIO_NAME}`,
         `LOCATION:${address}`,
         `DESCRIPTION:Class for ${name}. Booked via BookerPilot demo.`,
         "END:VEVENT",
         "END:VCALENDAR"
       ].join("\r\n");
 
-      const blob = new Blob([lines], { type: "text/calendar;charset=utf-8" });
-      return URL.createObjectURL(blob);
+      return URL.createObjectURL(new Blob([lines], { type: "text/calendar;charset=utf-8" }));
     }
-
     function addConfirmActions(urlICS){
       const html = `
         <div class="mt-2 flex flex-col sm:flex-row gap-2">
@@ -666,121 +650,192 @@
       addBubbleHTML(html);
     }
 
+    // ===== Demo boot + flows
+    function resetDemo(){
+      state.step = 0; state.name = state.classType = state.time = state.email = state.phone = '';
+      addBubble("↩️ Demo reset. Ask me anything or say “book” to start a booking.");
+      addBubbleHTML(`<div class="mt-1">
+        <button class="chip chip-start">Book now</button>
+        <button class="chip chip-reset">Reset</button>
+      </div>`);
+      bindActionChips();
+    }
+    function startIntro(){
+      addBubble(`Hello! I’m your AI assistant for ${STUDIO_NAME}. I can answer questions or book you into a class.`);
+      addBubbleHTML(`<div class="mt-1">
+        <button class="chip chip-start">Book now</button>
+        <button class="chip chip-reset">Reset</button>
+        <div class="mt-2 text-sm text-gray-700">Try asking about: availability, pricing, cancellation, what to bring, parking, memberships.</div>
+      </div>`);
+      bindActionChips();
+    }
+    function startBooking(){
+      state.step = 1;
+      addBubble("Great — let’s get you booked. What’s your name?");
+    }
+
+    // ===== Handle user message
     async function sendNow(){
       const q = sanitize(input.value);
       if (!q) return;
-
       addBubble(q, 'user');
       input.value = '';
 
-      // Step 1: ask name
-      if (state.step === 1){
-        state.name = q;
-        state.step = 2;
-        addBubble(`Great to meet you, ${state.name}! What type of class are you looking for today?`);
-        addBubbleHTML(classChips());
-        bindClassChips();
-        return;
-      }
+      // If we’re in the booking flow, continue steps
+      if (state.step > 0) return runBookingStep(q);
 
-      // Step 2: choose class
-      if (state.step === 2){
-        const chosen = q in CLASS_OPTIONS ? q : Object.keys(CLASS_OPTIONS).find(k => k.toLowerCase() === q.toLowerCase());
-        if (!chosen){
-          addBubble("I didn’t catch that class type. Here are some options you can tap:");
-          addBubbleHTML(classChips());
-          bindClassChips();
-          return;
-        }
-        state.classType = chosen;
-        state.step = 3;
-        addBubble(`Excellent choice — **${state.classType}**. Here are current openings:`);
-        addBubbleHTML(timeChips(state.classType));
-        bindTimeChips();
-        return;
-      }
+      // Otherwise, handle FAQ/intents first
+      const lower = q.toLowerCase();
+      const maybeClass = findClassIn(q);
 
-      // Step 3: choose time
-      if (state.step === 3){
-        const times = CLASS_OPTIONS[state.classType] || [];
-        if (!times.includes(q)){
-          addBubble("That time isn’t available for this class. Please choose one of the options:");
-          addBubbleHTML(timeChips(state.classType));
-          bindTimeChips();
-          return;
-        }
-        state.time = q;
-        state.step = 4;
-        addBubble(`Almost done! What’s the best email for your confirmation?`);
-        return;
-      }
-
-      // Step 4: email (validate has "@" and ".")
-      if (state.step === 4){
-        if (!validEmail(q)){
-          addBubble(`Hmm, that doesn’t look like a valid email. Please include an "@" and a "." (e.g., name@example.com).`);
-          return;
-        }
-        state.email = q;
-        state.step = 5;
-        addBubble(`Thanks! What phone number should we use for a quick reminder text?`);
-        return;
-      }
-
-      // Step 5: phone (validate 10–15 digits)
-      if (state.step === 5){
-        if (!validPhone(q)){
-          addBubble(`That phone number seems off. Please enter a standard number (10–15 digits). You can include spaces, dashes, or parentheses.`);
-          return;
-        }
-        state.phone = formatPhone(q);
-        state.step = 6;
-
-        // Confirmation
-        addBubble(`✅ You’re booked, ${state.name}!`);
-        addBubbleHTML(`
-          <div>
-            <div><strong>Class:</strong> ${state.classType}</div>
-            <div><strong>Time:</strong> ${state.time}</div>
-            <div><strong>Location:</strong> ${STUDIO_ADDRESS}</div>
-            <div><strong>Confirmation sent to:</strong> ${state.email}</div>
-            <div><strong>Reminder to:</strong> ${state.phone}</div>
-          </div>
-        `);
-
-        // Create ICS and action buttons
-        const icsURL = createICS({ name: state.name, classType: state.classType, time: state.time, address: STUDIO_ADDRESS });
-        if (icsURL){
-          addConfirmActions(icsURL);
+      if (isAvailIntent(q)) {
+        if (maybeClass) {
+          const times = CLASS_OPTIONS[maybeClass].join(", ");
+          addBubble(`${maybeClass} availability: ${times}.`);
         } else {
-          addBubble("(Calendar file couldn’t be generated — but you’re all set!)");
+          addBubble("Here are our current openings by class:");
+          classNames.forEach(c => addBubble(`${c}: ${CLASS_OPTIONS[c].join(", ")}`));
         }
-
-        addBubble(`We’ll reach out if anything changes. You’ll also receive calendar reminders so nothing slips through the cracks.`);
-        addBubble(`By the way — once AI is enabled for your business, we’ll answer FAQs from your guidelines, place bookings directly on your calendar (and the customer’s), send reminders automatically, and accept payments on your website.`);
-        state.step = 0; // reset for another run
+        addBubble("Would you like to book a spot?");
+        addBubbleHTML(actionChips()); bindActionChips();
+        return;
+      }
+      if (isPriceIntent(q)) {
+        if (maybeClass) {
+          addBubble(`${maybeClass} is ${PRICES[maybeClass]}.`);
+        } else {
+          const lines = classNames.map(c => `${c}: ${PRICES[c]}`).join(" • ");
+          addBubble(`Pricing — ${lines}.`);
+        }
+        addBubble("Ready to grab a time?");
+        addBubbleHTML(actionChips()); bindActionChips();
+        return;
+      }
+      if (isCancelIntent(q)) {
+        addBubble(FAQ.cancellation);
+        addBubbleHTML(actionChips()); bindActionChips();
+        return;
+      }
+      if (isServiceAreaIntent(q)) {
+        addBubble(`${FAQ.serviceArea} Our studio is at: ${STUDIO_ADDRESS}`);
+        addBubbleHTML(actionChips()); bindActionChips();
+        return;
+      }
+      if (isParkingIntent(q)) {
+        addBubble(FAQ.parking);
+        addBubbleHTML(actionChips()); bindActionChips();
+        return;
+      }
+      if (isBringIntent(q)) {
+        addBubble(FAQ.bring);
+        addBubbleHTML(actionChips()); bindActionChips();
+        return;
+      }
+      if (isMembershipIntent(q)) {
+        addBubble(FAQ.memberships);
+        addBubbleHTML(actionChips()); bindActionChips();
+        return;
+      }
+      if (isBookNowIntent(q)) {
+        startBooking();
         return;
       }
 
-      // If not started / finished, (re)start
-      if (state.step === 0){
-        startYogaDemo();
+      // If none matched: helpful fallback
+      addBubble("I can help with availability, pricing, policies, and more — or we can book now.");
+      addBubbleHTML(actionChips()); bindActionChips();
+    }
+
+    // ===== Booking stepper
+    function runBookingStep(q){
+      switch (state.step) {
+        case 1: { // name
+          state.name = q;
+          state.step = 2;
+          addBubble(`Nice to meet you, ${state.name}! Which class would you like?`);
+          addBubbleHTML(classChips()); bindClassChips();
+          break;
+        }
+        case 2: { // class
+          const chosen = (q in CLASS_OPTIONS) ? q : classNames.find(k => k.toLowerCase() === q.toLowerCase());
+          if (!chosen){
+            addBubble("I didn’t catch that. Please choose one:");
+            addBubbleHTML(classChips()); bindClassChips();
+            return;
+          }
+          state.classType = chosen;
+          state.step = 3;
+          addBubble(`Excellent — ${state.classType}. Here are the next openings:`);
+          addBubbleHTML(timeChips(state.classType)); bindTimeChips();
+          break;
+        }
+        case 3: { // time
+          const times = CLASS_OPTIONS[state.classType] || [];
+          if (!times.includes(q)){
+            addBubble("That time isn’t available for this class. Choose one of these:");
+            addBubbleHTML(timeChips(state.classType)); bindTimeChips();
+            return;
+          }
+          state.time = q;
+          state.step = 4;
+          addBubble("Great! What’s the best email for your confirmation?");
+          break;
+        }
+        case 4: { // email
+          if (!validEmail(q)){
+            addBubble(`That doesn’t look like a valid email. Please include an "@" and a "." (e.g., name@example.com).`);
+            return;
+          }
+          state.email = q;
+          state.step = 5;
+          addBubble("Thanks! What phone number should we use for a quick reminder text?");
+          break;
+        }
+        case 5: { // phone
+          if (!validPhone(q)){
+            addBubble(`That number seems off. Please enter a standard phone number (10–15 digits). You can include spaces, dashes, or parentheses.`);
+            return;
+          }
+          state.phone = formatPhone(q);
+          state.step = 6;
+
+          // Confirm
+          addBubble(`✅ You’re booked, ${state.name}!`);
+          addBubbleHTML(`
+            <div>
+              <div><strong>Class:</strong> ${state.classType}</div>
+              <div><strong>Time:</strong> ${state.time}</div>
+              <div><strong>Location:</strong> ${STUDIO_ADDRESS}</div>
+              <div><strong>Confirmation sent to:</strong> ${state.email}</div>
+              <div><strong>Reminder to:</strong> ${state.phone}</div>
+            </div>
+          `);
+
+          const icsURL = createICS({ name: state.name, classType: state.classType, time: state.time, address: STUDIO_ADDRESS });
+          if (icsURL) addConfirmActions(icsURL);
+
+          addBubble("We’ll reach out if anything changes. You’ll also get calendar reminders so nothing slips through the cracks.");
+          addBubble("With AI enabled for your business, we’ll answer FAQs from your guidelines, put bookings directly on your calendar (and the customer’s), send reminders, and accept payments on your site.");
+          state.step = 0;
+          addBubbleHTML(actionChips()); bindActionChips();
+          break;
+        }
       }
     }
 
-    // Wire input
-    send.addEventListener('click', sendNow);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendNow(); }});
-
-    // Boot the demo when widget first opens
+    // Boot the demo
     let booted = false;
     function onOpen(){
       if (!booted){
         booted = true;
-        setTimeout(startYogaDemo, 200);
+        setTimeout(()=>{ startIntro(); }, 200);
       }
     }
     bubble.addEventListener('click', onOpen, { once: true });
+
+    // Wire input
+    send.addEventListener('click', sendNow);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendNow(); }});
   </script>
 </body>
 </html>
