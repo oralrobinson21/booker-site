@@ -22,7 +22,7 @@
     html { scroll-behavior: smooth; }
     [id] { scroll-margin-top: 80px; }
 
-    /* Wave gradient animation (your requested style) */
+    /* Wave gradient animation */
     .gradient-bg {
       background: linear-gradient(135deg,
         #1e3a8a 0%,
@@ -74,6 +74,16 @@
     }
     .chip:hover { background:#f9fafb; }
     .chip:active { transform: scale(.98); }
+
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:.6rem .9rem; border-radius:.5rem; font-weight:600;
+      border:1px solid transparent; cursor:pointer;
+    }
+    .btn-primary { background:#4F46E5; color:#fff; }
+    .btn-primary:hover { background:#4338ca; }
+    .btn-light { background:#fff; border-color:#e5e7eb; color:#111827; }
+    .btn-light:hover { background:#f9fafb; }
   </style>
 </head>
 <body class="font-sans antialiased text-gray-900">
@@ -421,6 +431,9 @@
     AOS.init({ duration: 700, once: true });
     feather.replace();
 
+    // ===== Config: Stripe Pay-Deposit link used in chat confirmation
+    const DEPOSIT_URL = "https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03"; // replace with your booking/deposit link if different
+
     // ===== DOM
     const bubble = document.getElementById('widget-bubble');
     const panel  = document.getElementById('widget-panel');
@@ -471,10 +484,12 @@
 
     bubble.addEventListener('click', toggleWidget);
     closeB.addEventListener('click', toggleWidget);
-    document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
+    document.getElementById('open-demo-widget')?.addEventListener('click', () => {
+      toggleWidget(); onOpen();
+    });
 
     // ===== Guided Yoga Flow =====
-    // Steps: 1 intro -> 2 name -> 3 choose class -> 4 choose time (varies by class) -> 5 email -> 6 phone -> 7 confirm
+    // Steps: 1 intro -> 2 name -> 3 choose class -> 4 choose time -> 5 email -> 6 phone -> 7 confirm
     const state = { step: 0, name: '', classType: '', time: '', email: '', phone: '' };
 
     // Different availability per class
@@ -570,6 +585,87 @@
       return p;
     }
 
+    // ===== ICS helpers =====
+    const DAY_INDEX = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 };
+
+    function nextDateFor(dayAbbrev){
+      const today = new Date();
+      const target = DAY_INDEX[dayAbbrev];
+      if (target == null) return null;
+      const diff = (target - today.getDay() + 7) % 7 || 7; // next occurrence (skip today)
+      const d = new Date(today);
+      d.setDate(today.getDate() + diff);
+      d.setHours(0,0,0,0);
+      return d;
+    }
+
+    function parseTime12h(str){ // "6:30 PM" -> {h, m}
+      const m = str.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)/i);
+      if (!m) return null;
+      let h = parseInt(m[1],10);
+      const mm = parseInt(m[2] || '0', 10);
+      const ap = m[3].toUpperCase();
+      if (ap === 'PM' && h !== 12) h += 12;
+      if (ap === 'AM' && h === 12) h = 0;
+      return {h, m:mm};
+    }
+
+    function yyyymmddHHMMSS(d){ // local time formatted
+      const pad = n => String(n).padStart(2,'0');
+      return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+    }
+
+    function createICS({ name, classType, time, address }){
+      // time like "Tue 6:30 PM"
+      const parts = time.split(' ');
+      const day = parts[0];
+      const timeStr = parts.slice(1).join(' '); // "6:30 PM"
+      const date = nextDateFor(day);
+      const hm = parseTime12h(timeStr);
+      if (!date || !hm) return null;
+
+      const start = new Date(date);
+      start.setHours(hm.h, hm.m, 0, 0);
+      const end = new Date(start);
+      end.setMinutes(end.getMinutes() + 60); // 60-min class
+
+      const dtstamp = yyyymmddHHMMSS(new Date());
+      const dtstart = yyyymmddHHMMSS(start);
+      const dtend   = yyyymmddHHMMSS(end);
+      const uid = `${Date.now()}-${Math.random().toString(36).slice(2)}@bookerpilot`;
+
+      const lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//BookerPilot//YogaDemo//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "BEGIN:VEVENT",
+        `UID:${uid}`,
+        `DTSTAMP:${dtstamp}`,
+        `DTSTART:${dtstart}`,
+        `DTEND:${dtend}`,
+        `SUMMARY:${classType} — Sunrise Yoga Studio`,
+        `LOCATION:${address}`,
+        `DESCRIPTION:Class for ${name}. Booked via BookerPilot demo.`,
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].join("\r\n");
+
+      const blob = new Blob([lines], { type: "text/calendar;charset=utf-8" });
+      return URL.createObjectURL(blob);
+    }
+
+    function addConfirmActions(urlICS){
+      const html = `
+        <div class="mt-2 flex flex-col sm:flex-row gap-2">
+          <a href="${DEPOSIT_URL}" target="_blank" rel="noopener" class="btn btn-primary w-full sm:w-auto">Pay Deposit</a>
+          <a href="${urlICS}" download="SunriseYogaBooking.ics" class="btn btn-light w-full sm:w-auto">Add to Calendar (.ics)</a>
+        </div>
+      `;
+      addBubbleHTML(html);
+    }
+
     async function sendNow(){
       const q = sanitize(input.value);
       if (!q) return;
@@ -619,7 +715,7 @@
         return;
       }
 
-      // Step 4: email
+      // Step 4: email (validate has "@" and ".")
       if (state.step === 4){
         if (!validEmail(q)){
           addBubble(`Hmm, that doesn’t look like a valid email. Please include an "@" and a "." (e.g., name@example.com).`);
@@ -631,7 +727,7 @@
         return;
       }
 
-      // Step 5: phone
+      // Step 5: phone (validate 10–15 digits)
       if (state.step === 5){
         if (!validPhone(q)){
           addBubble(`That phone number seems off. Please enter a standard number (10–15 digits). You can include spaces, dashes, or parentheses.`);
@@ -651,7 +747,16 @@
             <div><strong>Reminder to:</strong> ${state.phone}</div>
           </div>
         `);
-        addBubble(`We’ll reach out if anything changes. You’ll also receive calendar invites and reminders so nothing slips through the cracks.`);
+
+        // Create ICS and action buttons
+        const icsURL = createICS({ name: state.name, classType: state.classType, time: state.time, address: STUDIO_ADDRESS });
+        if (icsURL){
+          addConfirmActions(icsURL);
+        } else {
+          addBubble("(Calendar file couldn’t be generated — but you’re all set!)");
+        }
+
+        addBubble(`We’ll reach out if anything changes. You’ll also receive calendar reminders so nothing slips through the cracks.`);
         addBubble(`By the way — once AI is enabled for your business, we’ll answer FAQs from your guidelines, place bookings directly on your calendar (and the customer’s), send reminders automatically, and accept payments on your website.`);
         state.step = 0; // reset for another run
         return;
