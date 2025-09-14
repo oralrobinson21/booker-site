@@ -65,7 +65,7 @@
       bottom: calc(2rem + 80px);
       right: 2rem;
       width: 400px; max-width: 92vw;
-      height: 520px;
+      height: 560px;
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
@@ -109,7 +109,10 @@
       <div class="flex justify-between h-16">
         <div class="flex items-center">
           <div class="flex-shrink-0 flex items-center">
-            <i data-feather="calendar" class="h-7 w-7 text-indigo-600"></i>
+            <!-- Inline logo -->
+            <svg class="h-7 w-7 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 12l20-6-6 20-4-8-8-4z" />
+            </svg>
             <span class="ml-2 text-xl font-bold text-indigo-600">BookerPilot</span>
           </div>
         </div>
@@ -131,7 +134,10 @@
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl" data-aos="fade-up">
         Turn your website into a 24/7 salesperson
       </h1>
-      <p class="mt-6 max-w-3xl mx-auto text-xl text-indigo-100" data-aos="fade-up" data-aos-delay="100">
+      <p class="mt-4 text-lg text-indigo-100" data-aos="fade-up" data-aos-delay="50">
+        <strong>Anything that needs booking needs a pilot.</strong>
+      </p>
+      <p class="mt-3 max-w-3xl mx-auto text-xl text-indigo-100" data-aos="fade-up" data-aos-delay="100">
         Add one line of code. Get more bookings, reduce no-shows, and grow your local service business.
       </p>
       <div class="mt-10 flex justify-center gap-4" data-aos="fade-up" data-aos-delay="150">
@@ -534,23 +540,41 @@
     <i data-feather="message-square"></i>
   </div>
 
-  <!-- WIDGET PANEL (kept simple demo) -->
+  <!-- WIDGET PANEL -->
   <div id="widget-panel" class="widget-panel">
     <div class="bg-indigo-600 text-white p-4">
       <div class="flex justify-between items-center">
-        <h3 class="font-medium">Your Business</h3>
+        <h3 class="font-medium flex items-center gap-2">
+          <svg class="h-5 w-5 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12l20-6-6 20-4-8-8-4z"/></svg>
+          BookerPilot — <span id="bp-slug" class="opacity-90"></span>
+        </h3>
         <button id="close-widget" class="text-white hover:text-indigo-200"><i data-feather="x"></i></button>
       </div>
     </div>
+
     <div class="flex-1 p-4 overflow-y-auto">
       <div id="chat-thread" class="space-y-3">
         <div class="flex justify-start">
           <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100 text-gray-800">
-            Hi there! I’m your AI assistant. Ask me anything — pricing, availability, policies, or “How can you help my nail business?”
+            Hi there! I’m your AI assistant. Ask pricing, services, policies — or anything general.
           </div>
         </div>
       </div>
+
+      <!-- Quick Book -->
+      <div class="mt-4 border-t pt-4">
+        <h4 class="text-sm font-semibold text-gray-800 mb-2">Quick Book</h4>
+        <div class="space-y-2">
+          <select id="qb-service" class="w-full border rounded-md px-3 py-2 text-sm"></select>
+          <input id="qb-start" type="datetime-local" class="w-full border rounded-md px-3 py-2 text-sm" />
+          <input id="qb-name"  type="text" placeholder="Customer name" class="w-full border rounded-md px-3 py-2 text-sm" />
+          <textarea id="qb-notes" rows="2" placeholder="Notes (optional)" class="w-full border rounded-md px-3 py-2 text-sm"></textarea>
+          <button id="qb-book" class="w-full bg-indigo-600 text-white rounded-md py-2 text-sm hover:bg-indigo-700">Book</button>
+          <p id="qb-out" class="text-xs text-gray-600"></p>
+        </div>
+      </div>
     </div>
+
     <div class="border-t border-gray-200 p-3">
       <div class="flex items-center">
         <input id="chat-input" type="text" placeholder="Type your question…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
@@ -605,8 +629,6 @@
     <input type="hidden" name="_subject" value="Join Waitlist" />
     <input type="hidden" name="_captcha"  value="false" />
     <input type="hidden" name="_template" value="table" />
-    <!-- Tip: if you use FormSubmit’s autoresponse, you can add: -->
-    <!-- <input type="hidden" name="_autoresponse" value="Thanks for joining the waitlist! Please reply to confirm your email." /> -->
     <input type="hidden" name="_next"     value="https://bookerpilot.com/#home" />
     <input type="hidden" name="name">
     <input type="hidden" name="email">
@@ -641,6 +663,12 @@
       thankYouMsg: "Thanks! We’ve received your info. Please check your inbox and verify your email so we can reach back out.",
       redirectDelayMs: 1500
     };
+
+    // ===== Read business slug & API base from URL (e.g., ?slug=sunrise-yoga&api=http://localhost:3001)
+    const url = new URL(location.href);
+    const BUSINESS_SLUG = (url.searchParams.get('slug') || 'sunrise-yoga').trim();
+    const API_BASE = (url.searchParams.get('api') || 'http://localhost:3001').replace(/\/+$/,'');
+    document.getElementById('bp-slug').textContent = BUSINESS_SLUG;
 
     // ===== DOM refs
     const pullHandle   = document.getElementById('pull-handle');
@@ -714,7 +742,7 @@
     document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
     window.addEventListener('keydown', e => { if (e.key === 'Escape') panel.style.display === 'flex' && toggleWidget(); });
 
-    // Simple demo chat
+    // ===== AI Chat wired to your API (/api/ask)
     function addBubble(text, who='bot') {
       const wrap = document.createElement('div');
       wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
@@ -731,14 +759,99 @@
       if (sc) sc.scrollTop = sc.scrollHeight;
     }
     function sanitize(s) { return String(s || '').replace(/[\u0000-\u001F<>]/g, '').trim(); }
-    send.addEventListener('click', () => {
+
+    async function askAI(q) {
+      try {
+        const r = await fetch(`${API_BASE}/api/ask`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ q, businessSlug: BUSINESS_SLUG })
+        });
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.error || 'AI error');
+        return j.answer || '…';
+      } catch (e) {
+        console.warn('AI ask failed:', e?.message);
+        return "Thanks! (Demo mode) In production this connects to our AI and answers from your business data.";
+      }
+    }
+
+    async function onSend() {
       const q = sanitize(input.value);
       if (!q) return;
       addBubble(q, 'user');
       input.value = '';
-      setTimeout(() => addBubble("Thanks! In production this connects to our AI and answers from your business data.", 'bot'), 600);
-    });
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send.click(); }});
+      addBubble('Thinking…', 'bot');
+      const botBubble = thread.lastElementChild.querySelector('div');
+      const ans = await askAI(q);
+      botBubble.textContent = ans;
+    }
+    send.addEventListener('click', onSend);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); onSend(); }});
+
+    // ===== Quick Book wired to your API (/api/services, /api/bookings)
+    const $svc = document.getElementById('qb-service');
+    const $start = document.getElementById('qb-start');
+    const $name = document.getElementById('qb-name');
+    const $notes = document.getElementById('qb-notes');
+    const $book = document.getElementById('qb-book');
+    const $out = document.getElementById('qb-out');
+
+    async function loadServices() {
+      try {
+        $svc.innerHTML = '<option value="">Loading services…</option>';
+        const r = await fetch(`${API_BASE}/api/services?slug=${encodeURIComponent(BUSINESS_SLUG)}`);
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.error || 'Failed to load services');
+        $svc.innerHTML = '';
+        (j.services || []).forEach(s => {
+          const opt = document.createElement('option');
+          const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
+          opt.value = s.id;
+          opt.textContent = `${s.name} — ${price}`;
+          $svc.appendChild(opt);
+        });
+        if (!$start.value) {
+          const now = new Date();
+          now.setMinutes(now.getMinutes() + 60);
+          const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
+          $start.value = iso;
+        }
+      } catch (e) {
+        console.warn('Services failed:', e?.message);
+        $svc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
+      }
+    }
+
+    async function makeBooking() {
+      const serviceId = $svc.value;
+      const startsVal = $start.value;
+      const customer_name = $name.value.trim();
+      const notes = ($notes.value || '').trim() || null;
+
+      if (!serviceId || !startsVal || !customer_name) {
+        $out.textContent = 'Please pick a service, a start time, and enter your name.'; return;
+      }
+      $out.textContent = 'Booking…';
+      try {
+        const r = await fetch(`${API_BASE}/api/bookings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            businessSlug: BUSINESS_SLUG,
+            serviceId,
+            starts_at: new Date(startsVal).toISOString(),
+            customer_name,
+            notes
+          })
+        });
+        const j = await r.json();
+        $out.textContent = r.ok ? `Booked! Confirmation id: ${j.id}` : (j.error || 'Error');
+      } catch (e) {
+        $out.textContent = 'Network error';
+      }
+    }
+    $book.addEventListener('click', makeBooking);
 
     // ===== Utilities
     function collectAndValidate(formEl, msgEl) {
@@ -773,7 +886,6 @@
 
     function goHomeAfter(ms=CONFIG.redirectDelayMs) {
       setTimeout(() => {
-        // Smoothly scroll to top / home
         window.location.hash = '#home';
         window.scrollTo({ top: 0, behavior: 'smooth' });
         closeWaitlist();
@@ -784,7 +896,6 @@
       const payload = mirrorToHidden(fd);
       try {
         await fetch(hiddenForm.action, { method: 'POST', body: payload, mode: 'no-cors' });
-        // success UX
         msgEl.textContent = "";
         showToast(CONFIG.thankYouMsg);
         goHomeAfter();
@@ -811,6 +922,9 @@
       if (!fd) return;
       await submitWaitlist(fd, wlModalMsg);
     });
+
+    // ===== Kickoff
+    loadServices();
   </script>
 </body>
 </html>
