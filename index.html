@@ -2,25 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
   <title>Booker.ai - AI Booking Widget for Local Services</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- AOS (fade in) -->
+  <!-- AOS (fade-in on scroll) -->
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
   <!-- Feather Icons -->
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
   <style>
-    /* Smooth anchor scroll + avoid nav overlap */
+    /* ===== Global layout hardening (no sideways scroll) ===== */
+    html, body { max-width: 100%; overflow-x: hidden; }
+    *, *::before, *::after { box-sizing: border-box; }
+    img, svg, video { max-width: 100%; height: auto; display: block; }
     html { scroll-behavior: smooth; }
     [id] { scroll-margin-top: 80px; }
 
-    /* Animated gradient (wave style you shared) */
+    /* ===== Animated gradient background ===== */
     .gradient-bg {
       background: linear-gradient(135deg,
         #1e3a8a 0%,
@@ -38,7 +44,7 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Widget bubble/panel (kept if you want the demo chat later) */
+    /* ===== Widget UI ===== */
     .widget-bubble {
       position: fixed;
       bottom: 2rem;
@@ -50,9 +56,9 @@
       color: white;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      box-shadow: 0 10px 25px -5px rgba(79,70,229,0.4);
+      box-shadow: 0 10px 25px -5px rgba(79,70,229,0.40);
       z-index: 1000;
-      transition: transform .25s ease;
+      transition: transform .2s ease;
     }
     .widget-bubble:hover { transform: scale(1.06); }
 
@@ -60,8 +66,8 @@
       position: fixed;
       bottom: calc(2rem + 80px);
       right: 2rem;
-      width: 400px; max-width: 93vw;
-      height: 520px;
+      width: 420px; max-width: 93vw;
+      height: 560px;
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
@@ -70,16 +76,15 @@
       flex-direction: column;
       z-index: 1000;
     }
-
     @media (max-width: 640px) {
       .widget-bubble { bottom: 1rem; right: 1rem; }
       .widget-panel  { bottom: calc(1rem + 80px); right: 1rem; }
     }
 
-    /* Pricing waitlist helpers (blur only Pricing grid) */
+    /* ===== Waitlist overlay (blur only pricing grid) ===== */
     .pricing-wrap { position: relative; }
-    .waitlist-overlay { position:absolute; inset:0; z-index:20; background:rgba(255,255,255,.6); backdrop-filter: blur(6px); }
-    .waitlist-modal { position:absolute; inset:0; z-index:30; display:flex; align-items:center; justify-content:center; padding:1rem; }
+    .waitlist-overlay { position: absolute; inset: 0; z-index: 20; background: rgba(255,255,255,.65); backdrop-filter: blur(6px); }
+    .waitlist-modal { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 1rem; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -99,9 +104,8 @@
           <a href="#features" class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Features</a>
           <a href="#pricing"  class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Pricing</a>
           <a href="#faq"       class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">FAQ</a>
-          <a href="#contact"   class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
+          <a href="#contact"   class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Join Waitlist</a>
           <a href="#"          class="text-indigo-600 hover:text-indigo-800">Log In</a>
-          <!-- Keep trial button for buyers; add small waitlist link below in Pricing -->
           <a href="https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03" target="_blank" rel="noopener"
              class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700">Get Started</a>
         </div>
@@ -128,7 +132,8 @@
           Start free trial — Pro
         </a>
       </div>
-      <p class="mt-4 text-indigo-100 text-sm opacity-90">Prefer to be notified when plans open up?
+      <p class="mt-4 text-indigo-100 text-sm opacity-90">
+        Prefer to be notified when plans open up?
         <a href="#pricing" class="underline underline-offset-2">Join the waitlist in Pricing ↓</a>
       </p>
     </div>
@@ -166,7 +171,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">AI Chat & FAQ</h3>
             <p class="mt-2 text-base text-gray-500">
-              Answer questions instantly: pricing, policies, services, and more — trained on your guidelines.
+              Answers pricing, policies, services — using your guidelines — then books the appointment.
             </p>
           </div>
         </div>
@@ -180,7 +185,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Real-time Availability</h3>
             <p class="mt-2 text-base text-gray-500">
-              Sync your calendar, offer time slots, collect details, and auto-confirm.
+              Show time slots, collect details, auto-confirm. Syncs to your calendar and your customers’.
             </p>
           </div>
         </div>
@@ -194,7 +199,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Secure Payments</h3>
             <p class="mt-2 text-base text-gray-500">
-              Take deposits via Stripe to reduce no-shows. PCI compliant — no extra work.
+              Reduce no-shows with Stripe deposits — fully PCI compliant.
             </p>
           </div>
         </div>
@@ -208,7 +213,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Reminders & Follow-ups</h3>
             <p class="mt-2 text-base text-gray-500">
-              Automatic SMS/email confirmations, reminders, and reschedule links.
+              Automatic SMS/email confirmations, reminders, and rescheduling.
             </p>
           </div>
         </div>
@@ -216,7 +221,7 @@
     </div>
   </section>
 
-  <!-- DEMO (keep your demo call-to-action; plug your widget if desired) -->
+  <!-- DEMO -->
   <section id="demo" class="py-16 bg-gray-50 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center mb-12">
@@ -252,10 +257,10 @@
 
         <div class="relative" data-aos="fade-left">
           <div class="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Demo Widget</h3>
-            <p class="text-gray-600 mb-4">Ask about pricing, availability, policies — then book in-chat.</p>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Yoga Studio Demo</h3>
+            <p class="text-gray-600 mb-4">Ask anything (pricing, classes, mats?) — the assistant will answer, then guide you to book.</p>
             <button id="open-demo-widget"
-              class="mt-2 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              class="w-full bg-indigo-600 border border-transparent rounded-md py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Open Demo Widget
             </button>
           </div>
@@ -274,7 +279,6 @@
         </p>
       </div>
 
-      <!-- Only this grid will blur when waitlist opens -->
       <div id="pricing-wrap" class="pricing-wrap mt-12 grid sm:grid-cols-2 gap-6 lg:max-w-4xl lg:mx-auto">
         <!-- Starter -->
         <div class="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200" data-aos="fade-up">
@@ -290,7 +294,7 @@
               Start free trial
             </a>
             <button type="button" data-plan="Starter"
-               class="js-open-wl mt-2 w-full text-indigo-600 text-sm underline underline-offset-2">Prefer to join the waitlist?</button>
+              class="js-open-wl mt-2 w-full text-indigo-600 text-sm underline underline-offset-2">Prefer to join the waitlist?</button>
           </div>
           <div class="pt-6 pb-8 px-6">
             <h4 class="text-xs font-medium text-gray-900 tracking-wide uppercase">What's included</h4>
@@ -322,7 +326,7 @@
               Start free trial
             </a>
             <button type="button" data-plan="Pro"
-               class="js-open-wl mt-2 w-full text-indigo-600 text-sm underline underline-offset-2">Prefer to join the waitlist?</button>
+              class="js-open-wl mt-2 w-full text-indigo-600 text-sm underline underline-offset-2">Prefer to join the waitlist?</button>
           </div>
           <div class="pt-6 pb-8 px-6">
             <h4 class="text-xs font-medium text-gray-900 tracking-wide uppercase">What's included</h4>
@@ -336,10 +340,9 @@
           </div>
         </div>
 
-        <!-- Waitlist OVERLAY (blur just pricing) -->
+        <!-- Waitlist OVERLAY + MODAL (targets only pricing grid) -->
         <div id="waitlist-overlay" class="waitlist-overlay hidden" aria-hidden="true"></div>
 
-        <!-- Waitlist MODAL -->
         <div id="waitlist-modal" class="waitlist-modal hidden" role="dialog" aria-modal="true" aria-labelledby="wl-title">
           <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-6">
             <div class="flex items-start justify-between">
@@ -351,7 +354,6 @@
             <p class="mt-1 text-sm text-gray-600">We’ll email you when <span id="wl-plan" class="font-medium">the plan</span> has spots or promos. You can also opt into our newsletter.</p>
 
             <form id="waitlist-form" action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="mt-5 space-y-3" novalidate>
-              <!-- Force inbox subject -->
               <input type="hidden" name="_subject" value="Join Waitlist">
               <input type="hidden" name="_captcha" value="false">
               <input type="hidden" name="_next" value="https://bookerpilot.com/index.html#pricing">
@@ -411,7 +413,7 @@
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="100">
           <dt class="text-lg leading-6 font-medium text-gray-900">How does the AI work?</dt>
-          <dd class="mt-2 text-base text-gray-600">It answers from the information you provide (FAQs, services, pricing) and can safely handle free-form questions.</dd>
+          <dd class="mt-2 text-base text-gray-600">It answers from the information you provide (FAQs, services, pricing), handles free-form questions safely, and books in-chat.</dd>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="200">
@@ -421,29 +423,20 @@
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="300">
           <dt class="text-lg leading-6 font-medium text-gray-900">How do payments work?</dt>
-          <dd class="mt-2 text-base text-gray-600">We use Stripe for secure payments. Customers pay deposits through your Stripe account.</dd>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="400">
-          <dt class="text-lg leading-6 font-medium text-gray-900">What if I need more bookings?</dt>
-          <dd class="mt-2 text-base text-gray-600">Upgrade anytime. Additional bookings are $1 each after your plan limit.</dd>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="500">
-          <dt class="text-lg leading-6 font-medium text-gray-900">Can I cancel anytime?</dt>
-          <dd class="mt-2 text-base text-gray-600">Absolutely. No contracts — cancel online in seconds.</dd>
+          <dd class="mt-2 text-base text-gray-600">Stripe handles secure payments. Deposits reduce no-shows; funds go to your account.</dd>
         </div>
       </dl>
     </div>
   </section>
 
-  <!-- CONTACT (repurposed as “Join Waitlist”) -->
+  <!-- CONTACT => “Join Waitlist” -->
   <section id="contact" class="bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div class="lg:text-center mb-10">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Join Waitlist</h2>
         <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Want early access or promos?</p>
-        <p class="mt-4 max-w-2xl text-lg text-gray-500 mx-auto">Drop your info and we’ll keep you posted. Or email us directly at
+        <p class="mt-4 max-w-2xl text-lg text-gray-500 mx-auto">
+          Drop your info and we’ll keep you posted. Or email
           <a class="text-indigo-600 underline" href="mailto:bookerpilot@outlook.com?subject=Join%20Waitlist">bookerpilot@outlook.com</a>.
         </p>
       </div>
@@ -510,30 +503,36 @@
     </div>
   </footer>
 
-  <!-- (Optional) WIDGET BUBBLE — hook your demo widget here if you want -->
-  <div id="widget-bubble" class="widget-bubble" title="Chat with BookerPilot" style="display:none;">
+  <!-- WIDGET BUBBLE (Yoga demo) -->
+  <div id="widget-bubble" class="widget-bubble" title="Chat with BookerPilot">
     <i data-feather="message-square"></i>
   </div>
-  <div id="widget-panel" class="widget-panel" style="display:none;">
+
+  <!-- WIDGET PANEL (Yoga demo flow + FAQ → funnel back to booking) -->
+  <div id="widget-panel" class="widget-panel" role="dialog" aria-modal="true" aria-label="Yoga Studio Assistant">
     <div class="bg-indigo-600 text-white p-4">
       <div class="flex justify-between items-center">
-        <h3 class="font-medium">Demo Assistant</h3>
-        <button id="close-widget" class="text-white hover:text-indigo-200"><i data-feather="x"></i></button>
+        <h3 class="font-medium">Lotus Flow Yoga</h3>
+        <button id="close-widget" class="text-white hover:text-indigo-200" aria-label="Close">
+          <i data-feather="x"></i>
+        </button>
       </div>
     </div>
+
     <div class="flex-1 p-4 overflow-y-auto">
-      <div class="space-y-3" id="demo-thread">
+      <div id="chat-thread" class="space-y-3">
         <div class="flex justify-start">
           <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100 text-gray-800">
-            Hi there! I’m your AI assistant. Ask me anything — pricing, availability, policies — and I can book you in.
+            Hi! I’m your AI assistant for Lotus Flow Yoga. I can answer questions about pricing, classes, gear, or parking — and book you in. What are you looking for today?
           </div>
         </div>
       </div>
     </div>
+
     <div class="border-t border-gray-200 p-3">
       <div class="flex items-center">
-        <input id="demo-input" type="text" placeholder="Type your question…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-        <button id="demo-send" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+        <input id="chat-input" type="text" placeholder="Ask a question or say 'book a class'…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+        <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
           <i data-feather="send"></i>
         </button>
       </div>
@@ -542,17 +541,21 @@
 
   <!-- JS -->
   <script>
-    // Libraries
-    AOS.init({ duration: 700, once: true });
-    if (window.feather && typeof feather.replace === 'function') feather.replace();
+    // Init libs
+    window.addEventListener('load', () => {
+      AOS.init({ duration: 700, once: true });
+      if (window.feather && typeof feather.replace === 'function') feather.replace();
+    });
 
-    // ===== Waitlist logic (Pricing modal) =====
+    /* =========================
+       Waitlist (Pricing modal)
+       ========================= */
     const pricingWrap   = document.getElementById('pricing-wrap');
-    const overlay       = document.getElementById('waitlist-overlay');
-    const modal         = document.getElementById('waitlist-modal');
-    const closeBtn      = document.getElementById('waitlist-close');
-    const planOut       = document.getElementById('wl-plan');
-    const planInput     = document.getElementById('wl-plan-input');
+    const wlOverlay     = document.getElementById('waitlist-overlay');
+    const wlModal       = document.getElementById('waitlist-modal');
+    const wlClose       = document.getElementById('waitlist-close');
+    const wlPlanOut     = document.getElementById('wl-plan');
+    const wlPlanInput   = document.getElementById('wl-plan-input');
     const wlForm        = document.getElementById('waitlist-form');
     const wlEmail1      = document.getElementById('wl-email');
     const wlEmail2      = document.getElementById('wl-email2');
@@ -562,70 +565,59 @@
     const wlSuccess     = document.getElementById('wl-success');
 
     function openWaitlist(plan){
-      planOut.textContent = `${plan} plan`;
-      planInput.value = plan;
-      overlay.classList.remove('hidden');
-      modal.classList.remove('hidden');
+      wlPlanOut.textContent = `${plan} plan`;
+      wlPlanInput.value = plan;
+      wlOverlay.classList.remove('hidden');
+      wlModal.classList.remove('hidden');
     }
     function closeWaitlist(){
-      overlay.classList.add('hidden');
-      modal.classList.add('hidden');
+      wlOverlay.classList.add('hidden');
+      wlModal.classList.add('hidden');
       wlSuccess.classList.add('hidden');
       wlEmailErr.classList.add('hidden');
       wlPhoneErr.classList.add('hidden');
       wlForm.reset();
     }
-    function hasValidEmail(v){
-      const s = String(v||'').trim();
+    function validEmail(s){
+      s = String(s||'').trim();
       const at = s.indexOf('@'), dot = s.lastIndexOf('.');
-      return at > 0 && dot > at+1 && dot < s.length - 1;
+      return at > 0 && dot > at + 1 && dot < s.length - 1;
     }
-    function normalizeDigits(s){ return (s||'').replace(/\D+/g, ''); }
-    function hasValidPhone(v){
-      if (!v) return true; // optional
-      const d = normalizeDigits(v);
-      return d.length >= 10 && d.length <= 15;
-    }
+    function nums(s){ return (s||'').replace(/\D+/g, ''); }
+    function validPhone(s){ const d = nums(s); return !s || (d.length >= 10 && d.length <= 15); }
 
-    // Clicking price number opens waitlist
     document.querySelectorAll('.price-trigger').forEach(el=>{
       el.addEventListener('click', ()=> openWaitlist(el.getAttribute('data-plan') || 'Starter'));
     });
-    // “Prefer to join the waitlist?” link
     document.querySelectorAll('.js-open-wl').forEach(el=>{
       el.addEventListener('click', ()=> openWaitlist(el.getAttribute('data-plan') || 'Starter'));
     });
-
-    overlay.addEventListener('click', closeWaitlist);
-    closeBtn.addEventListener('click', closeWaitlist);
-    window.addEventListener('keydown', e => { if (e.key === 'Escape' && !overlay.classList.contains('hidden')) closeWaitlist(); });
-
-    wlForm.addEventListener('submit', (e)=>{
+    wlOverlay.addEventListener('click', closeWaitlist);
+    wlClose.addEventListener('click', closeWaitlist);
+    window.addEventListener('keydown', e=>{ if (e.key === 'Escape' && !wlOverlay.classList.contains('hidden')) closeWaitlist(); });
+    wlForm.addEventListener('submit', e=>{
       let ok = true;
-      if (!hasValidEmail(wlEmail1.value) || wlEmail1.value.trim() !== wlEmail2.value.trim()){
+      if (!validEmail(wlEmail1.value) || wlEmail1.value.trim() !== wlEmail2.value.trim()){
         wlEmailErr.classList.remove('hidden'); ok = false;
-      } else {
-        wlEmailErr.classList.add('hidden');
-      }
-      if (!hasValidPhone(wlPhone.value)){
+      } else wlEmailErr.classList.add('hidden');
+      if (!validPhone(wlPhone.value)){
         wlPhoneErr.classList.remove('hidden'); ok = false;
-      } else {
-        wlPhoneErr.classList.add('hidden');
-      }
-      if (!ok) { e.preventDefault(); return; }
-      wlSuccess.classList.remove('hidden');
+      } else wlPhoneErr.classList.add('hidden');
+      if (!ok) e.preventDefault(); else wlSuccess.classList.remove('hidden');
     });
 
-    // ===== Contact Waitlist (footer form) =====
-    const cwForm     = document.getElementById('contact-wl');
-    const cwEmail1   = document.getElementById('cw-email');
-    const cwEmail2   = document.getElementById('cw-email2');
-    const cwErr      = document.getElementById('cw-email-err');
-    const cwSuccess  = document.getElementById('cw-success');
+    /* =========================
+       Contact Waitlist section
+       ========================= */
+    const cwForm    = document.getElementById('contact-wl');
+    const cwEmail1  = document.getElementById('cw-email');
+    const cwEmail2  = document.getElementById('cw-email2');
+    const cwErr     = document.getElementById('cw-email-err');
+    const cwSuccess = document.getElementById('cw-success');
 
-    cwForm.addEventListener('submit', (e)=>{
+    cwForm.addEventListener('submit', e=>{
       const match = cwEmail1.value.trim() === cwEmail2.value.trim();
-      const format = hasValidEmail(cwEmail1.value);
+      const format = validEmail(cwEmail1.value);
       if (!match || !format) {
         cwErr.classList.remove('hidden');
         e.preventDefault();
@@ -635,26 +627,43 @@
       }
     });
 
-    // ===== Demo widget (optional; leave hidden unless you hook your AI) =====
-    const bubble = document.getElementById('widget-bubble');
-    const panel  = document.getElementById('widget-panel');
-    const closeW = document.getElementById('close-widget');
-    const openDemo = document.getElementById('open-demo-widget');
-    const demoInput = document.getElementById('demo-input');
-    const demoSend  = document.getElementById('demo-send');
-    const demoThread= document.getElementById('demo-thread');
+    /* =========================
+       Yoga Demo Chat Assistant
+       - Answers FAQs briefly
+       - Funnels to booking
+       - Booking flow:
+         Name → Class → Time → Email/Phone → Confirm
+       ========================= */
+    const bubble   = document.getElementById('widget-bubble');
+    const panel    = document.getElementById('widget-panel');
+    const closeW   = document.getElementById('close-widget');
+    const input    = document.getElementById('chat-input');
+    const sendBtn  = document.getElementById('send-btn');
+    const thread   = document.getElementById('chat-thread');
 
-    function toggleWidget() {
-      if (!panel || !bubble) return;
-      const show = panel.style.display !== 'flex';
-      panel.style.display = show ? 'flex' : 'none';
-      bubble.style.display = show ? 'none' : 'flex';
-      if (show) setTimeout(()=> demoInput?.focus(), 60);
-    }
-    openDemo?.addEventListener('click', toggleWidget);
-    closeW?.addEventListener('click', toggleWidget);
+    const CLASSES = [
+      { id: 'vinyasa', label: 'Vinyasa Flow', price: 22, times: ['Tue 7:00 AM','Thu 6:00 PM','Sat 10:30 AM'] },
+      { id: 'yin',     label: 'Yin & Restore', price: 20, times: ['Mon 8:00 PM','Wed 7:30 PM'] },
+      { id: 'hot',     label: 'Hot Power',     price: 24, times: ['Mon 6:00 AM','Fri 6:00 PM'] },
+      { id: 'puppy',   label: 'Puppy Yoga',    price: 28, times: ['Sun 11:00 AM'] }
+    ];
+    const STUDIO = {
+      name: 'Lotus Flow Yoga',
+      address: '415 Meadow Ave, Suite 2B, Brooklyn, NY',
+      policies: {
+        cancel: 'Free cancellation up to 12 hours before class.',
+        gear: 'Mats/props available. Bring water; towels for Hot Power.'
+      }
+    };
 
-    function addDemoBubble(text, who='bot') {
+    const STATE = {
+      mode: 'idle',  // idle | booking_name | booking_class | booking_time | booking_contact | done
+      booking: { name: '', cls: null, time: '', email: '', phone: '' }
+    };
+
+    function sanitize(s){ return String(s||'').replace(/[\u0000-\u001F<>]/g,'').trim(); }
+
+    function addBubble(text, who='bot', asHTML=false) {
       const wrap = document.createElement('div');
       wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
       const b = document.createElement('div');
@@ -663,21 +672,194 @@
           ? 'rounded-tr-none bg-indigo-600 text-white'
           : 'rounded-tl-none bg-gray-100 text-gray-800'
       }`;
-      b.textContent = text;
+      if (asHTML) b.innerHTML = text; else b.textContent = text;
       wrap.appendChild(b);
-      demoThread.appendChild(wrap);
-      const sc = panel?.querySelector('.overflow-y-auto');
+      thread.appendChild(wrap);
+      const sc = panel.querySelector('.overflow-y-auto');
       if (sc) sc.scrollTop = sc.scrollHeight;
     }
-    function sendDemo() {
-      const v = (demoInput?.value || '').trim();
-      if (!v) return;
-      addDemoBubble(v, 'user');
-      demoInput.value = '';
-      setTimeout(()=> addDemoBubble('Thanks! This demo can be wired to your AI to answer FAQs, show availability, and book with Stripe deposits.'), 500);
+
+    function toggleWidget(){
+      const show = panel.style.display !== 'flex';
+      panel.style.display = show ? 'flex' : 'none';
+      bubble.style.display = show ? 'none' : 'flex';
+      if (show) setTimeout(()=> input?.focus(), 60);
     }
-    demoSend?.addEventListener('click', sendDemo);
-    demoInput?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendDemo(); }});
+
+    bubble.addEventListener('click', toggleWidget);
+    closeW.addEventListener('click', toggleWidget);
+    document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
+    window.addEventListener('keydown', e => { if (e.key === 'Escape' && panel.style.display==='flex') toggleWidget(); });
+
+    function askForName() {
+      STATE.mode = 'booking_name';
+      addBubble("Beautiful — let’s get you booked. What’s your first and last name?");
+    }
+    function askForClass() {
+      STATE.mode = 'booking_class';
+      let list = CLASSES.map(c=>`<button data-class="${c.id}" class="clsBtn inline-block mt-2 mr-2 bg-white border border-indigo-600 text-indigo-700 text-sm px-3 py-1 rounded-md hover:bg-indigo-50">${c.label} — $${c.price}</button>`).join('');
+      addBubble(`Great, ${STATE.booking.name}! Which class would you like?<br>${list}`, 'bot', true);
+      thread.querySelectorAll('.clsBtn').forEach(btn=>{
+        btn.addEventListener('click', ()=> {
+          const id = btn.getAttribute('data-class');
+          STATE.booking.cls = CLASSES.find(c=>c.id===id);
+          askForTime();
+        });
+      });
+    }
+    function askForTime() {
+      STATE.mode = 'booking_time';
+      const c = STATE.booking.cls;
+      let list = c.times.map(t=>`<button data-time="${t}" class="timeBtn inline-block mt-2 mr-2 bg-indigo-600 text-white text-sm px-3 py-1 rounded-md hover:bg-indigo-700">${t}</button>`).join('');
+      addBubble(`Excellent choice: <strong>${c.label}</strong>. Pick a time:<br>${list}`, 'bot', true);
+      thread.querySelectorAll('.timeBtn').forEach(btn=>{
+        btn.addEventListener('click', ()=> {
+          STATE.booking.time = btn.getAttribute('data-time');
+          askForContact();
+        });
+      });
+    }
+    function askForContact() {
+      STATE.mode = 'booking_contact';
+      addBubble("Almost done — what’s your email and phone? You can type like this: <em>email@example.com, (555) 555-1234</em>", 'bot', true);
+    }
+    function confirmBooking() {
+      STATE.mode = 'done';
+      const b = STATE.booking;
+      addBubble(
+        `You’re all set, ${b.name}! 🎉<br>
+         <strong>${STUDIO.name}</strong><br>
+         Class: <strong>${b.cls.label}</strong> on <strong>${b.time}</strong><br>
+         Location: ${STUDIO.address}<br>
+         Confirmation sent to: <strong>${b.email}</strong><br>
+         If anything changes, we’ll reach out. You’ll get reminders before class.`, 'bot', true
+      );
+      addBubble(
+        "With full integration enabled, the AI will answer any service question using your guidelines, add bookings directly to your calendar (and your customers’), send reminders, and accept payment right on your site.",
+        'bot'
+      );
+    }
+
+    function routeFAQ(q) {
+      const s = q.toLowerCase();
+      if (s.includes('price') || s.includes('cost') || s.includes('$')) {
+        addBubble("Drop-in classes start at $20–$28 depending on style. Class packs and memberships available.");
+        return true;
+      }
+      if (s.includes('mat') || s.includes('gear') || s.includes('towel')) {
+        addBubble(STUDIO.policies.gear);
+        return true;
+      }
+      if (s.includes('cancel')) {
+        addBubble(STUDIO.policies.cancel);
+        return true;
+      }
+      if (s.includes('park') || s.includes('parking')) {
+        addBubble("Street parking is available on Meadow Ave after 6pm; nearby lot on 4th & Cedar.");
+        return true;
+      }
+      if (s.includes('address') || s.includes('where')) {
+        addBubble(`We’re at ${STUDIO.address}.`);
+        return true;
+      }
+      return false;
+    }
+
+    function validEmailFormat(v){ v = (v||'').trim(); const at=v.indexOf('@'), dot=v.lastIndexOf('.'); return at>0 && dot>at+1 && dot<v.length-1; }
+    function digitsOnly(s){ return (s||'').replace(/\D+/g,''); }
+    function validPhoneFormat(v){ const d = digitsOnly(v); return d.length >= 10 && d.length <= 15; }
+
+    function handleUserSubmit(textRaw){
+      const text = sanitize(textRaw);
+      if (!text) return;
+      addBubble(text, 'user');
+
+      // Passive FAQ answers any time
+      const answered = routeFAQ(text);
+
+      // Detect booking intent from free text
+      if (STATE.mode === 'idle' && (text.toLowerCase().includes('book') || text.toLowerCase().includes('class'))) {
+        askForName();
+        return;
+      }
+
+      switch (STATE.mode) {
+        case 'idle':
+          if (!answered) {
+            addBubble("I can help book you too — say “book a class” to start!");
+          }
+          break;
+
+        case 'booking_name': {
+          // Save name if it has at least 2 words
+          if (text.split(' ').length >= 2) {
+            STATE.booking.name = text;
+            askForClass();
+          } else {
+            addBubble("Please share your first and last name (e.g., “Alex Rivera”).");
+          }
+          break;
+        }
+
+        case 'booking_class': {
+          // If they typed instead of clicking
+          const match = CLASSES.find(c => text.toLowerCase().includes(c.id) || text.toLowerCase().includes(c.label.toLowerCase()));
+          if (match) {
+            STATE.booking.cls = match;
+            askForTime();
+          } else {
+            addBubble("You can tap a class above, or type one of: Vinyasa Flow, Yin & Restore, Hot Power, Puppy Yoga.");
+          }
+          break;
+        }
+
+        case 'booking_time': {
+          const c = STATE.booking.cls;
+          const timeMatch = c.times.find(t => text.toLowerCase().includes(t.toLowerCase()));
+          if (timeMatch) {
+            STATE.booking.time = timeMatch;
+            askForContact();
+          } else {
+            addBubble(`Please tap one of the times above (e.g., ${c.times.join(', ')}).`);
+          }
+          break;
+        }
+
+        case 'booking_contact': {
+          // Expect "email, phone"
+          const parts = text.split(',').map(s=>s.trim());
+          const email = parts[0] || '';
+          const phone = parts[1] || '';
+
+          if (!validEmailFormat(email)) {
+            addBubble("That email doesn’t look right. Please include “@” and “.” (e.g., name@example.com).");
+            return;
+          }
+          if (phone && !validPhoneFormat(phone)) {
+            addBubble("Phone should be 10–15 digits (you can include spaces or dashes). Try again: email, phone");
+            return;
+          }
+          STATE.booking.email = email;
+          STATE.booking.phone = phone;
+          confirmBooking();
+          break;
+        }
+
+        case 'done':
+          if (!answered) addBubble("All set! If you want to change anything, just say “book again”.");
+          if (text.toLowerCase().includes('book again')) {
+            STATE.mode = 'idle';
+            STATE.booking = { name:'', cls:null, time:'', email:'', phone:'' };
+            askForName();
+          }
+          break;
+      }
+    }
+
+    sendBtn.addEventListener('click', ()=> handleUserSubmit(input.value));
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); handleUserSubmit(input.value); input.value=''; }});
+    sendBtn.addEventListener('click', ()=> { input.value=''; });
+
   </script>
 </body>
 </html>
