@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
   <title>Booker.ai - AI Booking Widget for Local Services</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- AOS -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <!-- AOS (fade in) -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
   <!-- Feather Icons -->
@@ -19,7 +22,7 @@
     html { scroll-behavior: smooth; }
     [id] { scroll-margin-top: 80px; }
 
-    /* Wave gradient animation */
+    /* Wave gradient animation (your requested style) */
     .gradient-bg {
       background: linear-gradient(135deg,
         #1e3a8a 0%,
@@ -32,8 +35,8 @@
       animation: waveBackground 8s ease infinite;
     }
     @keyframes waveBackground {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
@@ -41,21 +44,21 @@
     .widget-bubble {
       position: fixed; bottom: 2rem; right: 2rem;
       width: 60px; height: 60px; border-radius: 50%;
-      background: #4F46E5; color: white; z-index: 1000;
+      background: #4F46E5; color: white;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; box-shadow: 0 10px 25px -5px rgba(79,70,229,0.4);
-      transition: transform .25s ease;
+      z-index: 1000; transition: transform .25s ease;
     }
     .widget-bubble:hover { transform: scale(1.08); }
 
     .widget-panel {
       position: fixed; bottom: calc(2rem + 80px); right: 2rem;
-      width: 400px; max-width: 90vw; height: 520px; z-index: 1000;
+      width: 400px; max-width: 90vw; height: 520px;
       background: #fff; border-radius: 16px;
       box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
       overflow: hidden; display: none; flex-direction: column;
+      z-index: 1000;
     }
-
     @media (max-width: 640px) {
       .widget-bubble { bottom: 1rem; right: 1rem; }
       .widget-panel  { bottom: calc(1rem + 80px); right: 1rem; width: 92vw; }
@@ -64,11 +67,13 @@
     /* Chips */
     .chip {
       display:inline-block; margin:.25rem .3rem 0 0;
-      padding:.4rem .7rem; border-radius:9999px;
+      padding:.45rem .75rem; border-radius:9999px;
       border:1px solid #e5e7eb; background:#fff;
       font-size:.9rem; cursor:pointer;
+      transition: background .15s ease, transform .05s ease;
     }
     .chip:hover { background:#f9fafb; }
+    .chip:active { transform: scale(.98); }
   </style>
 </head>
 <body class="font-sans antialiased text-gray-900">
@@ -157,7 +162,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Real-time Availability</h3>
-            <p class="mt-2 text-base text-gray-500">Show your actual availability. No double bookings.</p>
+            <p class="mt-2 text-base text-gray-500">Offer suggested times and hold spots instantly.</p>
           </div>
         </div>
 
@@ -181,7 +186,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Text & Email Reminders</h3>
-            <p class="mt-2 text-base text-gray-500">Automatic confirmations and reminders.</p>
+            <p class="mt-2 text-base text-gray-500">Automatic confirmations and reminders for every booking.</p>
           </div>
         </div>
       </div>
@@ -225,12 +230,12 @@
 
         <div class="relative" data-aos="fade-left">
           <div class="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Demo: Ask the assistant</h3>
-            <p class="text-gray-600 mb-4">Try asking:</p>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Demo: Yoga Studio Booking</h3>
+            <p class="text-gray-600 mb-4">Ask the assistant to book a class:</p>
             <ul class="space-y-2 text-gray-700 text-sm">
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Do you have beginner yoga classes?”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Book me for tomorrow at 6 PM.”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“What’s your cancellation policy?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Book a beginner class tomorrow.”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Do you have Puppy Yoga this week?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“What times are available?”</span></li>
             </ul>
             <button id="open-demo-widget" class="mt-6 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Open Demo Widget
@@ -312,12 +317,12 @@
       <dl class="grid md:grid-cols-2 gap-6">
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up">
           <dt class="text-lg leading-6 font-medium text-gray-900">What types of businesses is this for?</dt>
-          <dd class="mt-2 text-base text-gray-600">Any local service business that takes appointments: cleaners, salons, tutors, handymen, personal trainers, pet groomers, and more.</dd>
+          <dd class="mt-2 text-base text-gray-600">Any local service business that takes appointments: yoga, salons, car dealerships, handymen, trainers, and more.</dd>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="100">
           <dt class="text-lg leading-6 font-medium text-gray-900">How does the AI work?</dt>
-          <dd class="mt-2 text-base text-gray-600">It answers from the information you provide and can guide bookings with suggested times.</dd>
+          <dd class="mt-2 text-base text-gray-600">After integration, the AI answers from your guidelines, books in your calendar, sends reminders, and can accept payments via your website.</dd>
         </div>
       </dl>
     </div>
@@ -398,9 +403,7 @@
     </div>
 
     <div class="flex-1 p-4 overflow-y-auto">
-      <div id="chat-thread" class="space-y-3">
-        <!-- Initial bot message inserted by JS -->
-      </div>
+      <div id="chat-thread" class="space-y-3"></div>
     </div>
 
     <div class="border-t border-gray-200 p-3">
@@ -414,11 +417,11 @@
   </div>
 
   <script>
-    // Init
+    // ===== Init libs
     AOS.init({ duration: 700, once: true });
     feather.replace();
 
-    // DOM
+    // ===== DOM
     const bubble = document.getElementById('widget-bubble');
     const panel  = document.getElementById('widget-panel');
     const closeB = document.getElementById('close-widget');
@@ -471,19 +474,63 @@
     document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
 
     // ===== Guided Yoga Flow =====
-    // Steps: 1 name -> 2 goal -> 3 time -> 4 email (validate) -> 5 confirm
-    const state = { step: 0, name: '', goal: '', time: '', email: '' };
+    // Steps: 1 intro -> 2 name -> 3 choose class -> 4 choose time (varies by class) -> 5 email -> 6 phone -> 7 confirm
+    const state = { step: 0, name: '', classType: '', time: '', email: '', phone: '' };
+
+    // Different availability per class
+    const CLASS_OPTIONS = {
+      "Puppy Yoga": [
+        "Tue 6:30 PM",
+        "Thu 5:00 PM",
+        "Sat 10:00 AM"
+      ],
+      "Beginner Flow": [
+        "Mon 7:00 AM",
+        "Wed 12:00 PM",
+        "Fri 6:00 PM"
+      ],
+      "Power Vinyasa": [
+        "Tue 7:00 AM",
+        "Thu 6:00 PM",
+        "Sun 9:00 AM"
+      ],
+      "Restorative": [
+        "Mon 8:00 PM",
+        "Wed 8:00 PM",
+        "Sat 4:00 PM"
+      ]
+    };
+
+    const STUDIO_ADDRESS = "Sunrise Yoga Studio — 123 Harmony Ave, Suite 201, Brooklyn, NY 11211";
 
     function startYogaDemo(){
       state.step = 1;
-      addBubble("👋 Hello! Welcome to Sunrise Yoga Studio.");
-      addBubble("I'm your booking assistant — what's your name?");
+      addBubble("👋 Hi! I’m your AI assistant for Sunrise Yoga Studio.");
+      addBubble("I can help you book a class in seconds. First, what’s your name?");
     }
 
-    function bindGoalChips(){
-      document.querySelectorAll('.chip-goal').forEach(btn=>{
+    function classChips(){
+      const keys = Object.keys(CLASS_OPTIONS);
+      return `
+        <div class="mt-1">
+          ${keys.map(k => `<button class="chip chip-class" data-class="${k}">${k}</button>`).join(' ')}
+        </div>
+      `;
+    }
+
+    function timeChips(type){
+      const times = CLASS_OPTIONS[type] || [];
+      return `
+        <div class="mt-1">
+          ${times.map(t => `<button class="chip chip-time" data-time="${t}">${t}</button>`).join(' ')}
+        </div>
+      `;
+    }
+
+    function bindClassChips(){
+      document.querySelectorAll('.chip-class').forEach(btn=>{
         btn.onclick = () => {
-          input.value = btn.getAttribute('data-goal');
+          input.value = btn.getAttribute('data-class');
           sendNow();
         };
       });
@@ -498,24 +545,29 @@
       });
     }
 
-    function timeOptions(){
-      const now = new Date();
-      const options = [];
-      for (let i=1;i<=3;i++){
-        const d = new Date(now.getFullYear(), now.getMonth(), now.getDate()+i);
-        const label = d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
-        const times = ['7:00 AM','12:00 PM','6:00 PM'];
-        options.push(`${label} ${times[i-1]}`);
-      }
-      return options;
-    }
-
     function validEmail(e){
       const s = String(e||'').trim();
       const at = s.indexOf('@');
       const dot = s.lastIndexOf('.');
-      // must contain '@' and '.', '.' must come after '@', neither can be first or last
       return at > 0 && dot > at + 1 && dot < s.length - 1;
+    }
+
+    function normalizeDigits(str){
+      return (str || '').replace(/\D+/g,'');
+    }
+
+    function validPhone(p){
+      const digits = normalizeDigits(p);
+      // Accept 10-15 digits to cover national & simple international formats
+      return digits.length >= 10 && digits.length <= 15;
+    }
+
+    function formatPhone(p){
+      const d = normalizeDigits(p);
+      if (d.length === 10) {
+        return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+      }
+      return p;
     }
 
     async function sendNow(){
@@ -525,69 +577,93 @@
       addBubble(q, 'user');
       input.value = '';
 
-      // Step 1: get name (user types their own)
+      // Step 1: ask name
       if (state.step === 1){
         state.name = q;
         state.step = 2;
-        addBubble(`Nice to meet you, ${state.name}! What are you looking for today?`);
-        addBubbleHTML(`
-          <div>
-            <button class="chip chip-goal" data-goal="Beginner Flow">Beginner Flow</button>
-            <button class="chip chip-goal" data-goal="Power Vinyasa">Power Vinyasa</button>
-            <button class="chip chip-goal" data-goal="Restorative">Restorative</button>
-          </div>
-        `);
-        bindGoalChips();
+        addBubble(`Great to meet you, ${state.name}! What type of class are you looking for today?`);
+        addBubbleHTML(classChips());
+        bindClassChips();
         return;
       }
 
-      // Step 2: capture goal
+      // Step 2: choose class
       if (state.step === 2){
-        state.goal = q;
+        const chosen = q in CLASS_OPTIONS ? q : Object.keys(CLASS_OPTIONS).find(k => k.toLowerCase() === q.toLowerCase());
+        if (!chosen){
+          addBubble("I didn’t catch that class type. Here are some options you can tap:");
+          addBubbleHTML(classChips());
+          bindClassChips();
+          return;
+        }
+        state.classType = chosen;
         state.step = 3;
-        addBubble(`Great! Here are a few class times for ${state.goal}:`);
-        const opts = timeOptions();
-        addBubbleHTML(`
-          <div>
-            ${opts.map(t=>`<button class="chip chip-time" data-time="${t}">${t}</button>`).join(' ')}
-          </div>
-        `);
+        addBubble(`Excellent choice — **${state.classType}**. Here are current openings:`);
+        addBubbleHTML(timeChips(state.classType));
         bindTimeChips();
         return;
       }
 
-      // Step 3: pick time
+      // Step 3: choose time
       if (state.step === 3){
+        const times = CLASS_OPTIONS[state.classType] || [];
+        if (!times.includes(q)){
+          addBubble("That time isn’t available for this class. Please choose one of the options:");
+          addBubbleHTML(timeChips(state.classType));
+          bindTimeChips();
+          return;
+        }
         state.time = q;
         state.step = 4;
-        addBubble(`Awesome — last step! What's the best email to confirm your spot?`);
+        addBubble(`Almost done! What’s the best email for your confirmation?`);
         return;
       }
 
-      // Step 4: email with validation
+      // Step 4: email
       if (state.step === 4){
         if (!validEmail(q)){
-          addBubble(`Hmm, that email doesn’t look right. Please enter a valid email with an "@" and a "." (e.g., name@example.com).`);
-          return; // stay on step 4
+          addBubble(`Hmm, that doesn’t look like a valid email. Please include an "@" and a "." (e.g., name@example.com).`);
+          return;
         }
         state.email = q;
         state.step = 5;
-
-        // Confirmation and wrap-up
-        addBubble(`✅ All set, ${state.name}!`);
-        addBubble(`We’re holding a spot for **${state.goal}** on **${state.time}**. We'll send a confirmation to **${state.email}**, and we’ll reach back out if anything changes.`);
-        addBubble(`If you need to adjust or cancel, just reply to the confirmation email.`);
-        addBubble(`P.S. We can help any local business — yoga studios, salons, car dealerships, handymen, cleaners, you name it — or even help *your* business start taking bookings automatically. Want to try another example?`);
-        state.step = 0; // reset
+        addBubble(`Thanks! What phone number should we use for a quick reminder text?`);
         return;
       }
 
-      // If ended or not started, restart
+      // Step 5: phone
+      if (state.step === 5){
+        if (!validPhone(q)){
+          addBubble(`That phone number seems off. Please enter a standard number (10–15 digits). You can include spaces, dashes, or parentheses.`);
+          return;
+        }
+        state.phone = formatPhone(q);
+        state.step = 6;
+
+        // Confirmation
+        addBubble(`✅ You’re booked, ${state.name}!`);
+        addBubbleHTML(`
+          <div>
+            <div><strong>Class:</strong> ${state.classType}</div>
+            <div><strong>Time:</strong> ${state.time}</div>
+            <div><strong>Location:</strong> ${STUDIO_ADDRESS}</div>
+            <div><strong>Confirmation sent to:</strong> ${state.email}</div>
+            <div><strong>Reminder to:</strong> ${state.phone}</div>
+          </div>
+        `);
+        addBubble(`We’ll reach out if anything changes. You’ll also receive calendar invites and reminders so nothing slips through the cracks.`);
+        addBubble(`By the way — once AI is enabled for your business, we’ll answer FAQs from your guidelines, place bookings directly on your calendar (and the customer’s), send reminders automatically, and accept payments on your website.`);
+        state.step = 0; // reset for another run
+        return;
+      }
+
+      // If not started / finished, (re)start
       if (state.step === 0){
         startYogaDemo();
       }
     }
 
+    // Wire input
     send.addEventListener('click', sendNow);
     input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendNow(); }});
 
