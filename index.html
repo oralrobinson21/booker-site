@@ -1,95 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
   <title>Booker.ai - AI Booking Widget for Local Services</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- AOS + Feather -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <!-- AOS (fade in) -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <!-- Feather Icons -->
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
   <style>
-  /* Straight, animated gradient (left ↔ right), no “waves” */
-  .gradient-bg {
-    background: linear-gradient(90deg,
-      #1e3a8a 0%,
-      #1d4ed8 20%,
-      #3b82f6 40%,
-      #60a5fa 60%,
-      #93c5fd 80%,
-      #dbeafe 100%);
-    background-size: 300% 100%;
-    animation: panBackground 12s linear infinite;
-  }
+    /* Smooth anchor scroll + avoid nav overlap */
+    html { scroll-behavior: smooth; }
+    [id] { scroll-margin-top: 80px; }
 
-  @keyframes panBackground {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+    /* Straight, shifting gradient (no waves) */
+    .gradient-bg {
+      background: linear-gradient(
+        90deg,
+        #6b46c1 0%,
+        #5b6cfb 25%,
+        #3b82f6 50%,
+        #5b6cfb 75%,
+        #6b46c1 100%
+      );
+      background-size: 300% 100%;
+      animation: gradientShift 12s ease-in-out infinite;
+    }
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-  .widget-bubble {
-    position: fixed;
-    bottom: 2rem; right: 2rem;
-    width: 60px; height: 60px; border-radius: 50%;
-    background: #4F46E5; color: white;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
-    z-index: 1000; transition: transform .2s ease;
-  }
-  .widget-bubble:hover { transform: scale(1.1); }
+    /* Widget UI */
+    .widget-bubble {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 9999px;
+      background: #4F46E5;
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 10px 25px -5px rgba(79,70,229,0.35);
+      z-index: 1000;
+      transition: transform .2s ease;
+    }
+    .widget-bubble:hover { transform: scale(1.06); }
 
-  .widget-panel {
-    position: fixed; bottom: calc(2rem + 80px); right: 2rem;
-    width: 400px; max-width: 90vw; height: 500px;
-    background: white; border-radius: 16px; overflow: hidden;
-    display: none; flex-direction: column; z-index: 1000;
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
-  }
+    .widget-panel {
+      position: fixed;
+      bottom: calc(1.25rem + 70px);
+      right: 1.25rem;
+      width: 400px; max-width: 93vw;
+      height: 520px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+    }
 
-  @media (max-width: 640px) {
-    .widget-bubble { bottom: 1rem; right: 1rem; }
-    .widget-panel  { bottom: calc(1rem + 80px); right: 1rem; }
-  }
-
-  /* Keep your sticky header behavior */
-  .sticky-nav{ position: sticky; top: 0; z-index: 40; background:#fff; }
-  .sticky-nav.scrolled{ box-shadow: 0 8px 24px rgba(0,0,0,.06); }
-</style>
-
+    @media (max-width: 640px) {
+      .widget-bubble { bottom: .75rem; right: .75rem; }
+      .widget-panel  { bottom: calc(.75rem + 70px); right: .75rem; }
+    }
+  </style>
 </head>
-
 <body class="font-sans antialiased text-gray-900">
-
-  <!-- Navigation -->
-  <nav id="top-nav" class="bg-white shadow-sm sticky-nav">
+  <!-- NAV -->
+  <nav class="bg-white shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center">
           <div class="flex-shrink-0 flex items-center">
-            <i data-feather="calendar" class="h-8 w-8 text-indigo-600"></i>
+            <i data-feather="calendar" class="h-7 w-7 text-indigo-600"></i>
             <span class="ml-2 text-xl font-bold text-indigo-600">BookerPilot</span>
           </div>
         </div>
-        <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-8">
+        <div class="hidden sm:flex sm:items-center space-x-8">
           <a href="#features" class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Features</a>
           <a href="#pricing"  class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Pricing</a>
-          <a href="#faq"      class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">FAQ</a>
-          <a href="#contact"  class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
-          <a href="#"         class="text-indigo-600 hover:text-indigo-800">Log In</a>
-          <a href="#"         class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700">Get Started</a>
+          <a href="#faq"       class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">FAQ</a>
+          <a href="#contact"   class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
+          <a href="#"          class="text-indigo-600 hover:text-indigo-800">Log In</a>
+          <a href="#"          class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700">Get Started</a>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
+  <!-- HERO -->
   <header class="gradient-bg text-white">
     <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl" data-aos="fade-up">
@@ -98,7 +113,7 @@
       <p class="mt-6 max-w-3xl mx-auto text-xl text-indigo-100" data-aos="fade-up" data-aos-delay="100">
         Add one line of code. Get more bookings, reduce no-shows, and grow your local service business.
       </p>
-      <div class="mt-10 flex justify-center gap-4">
+      <div class="mt-10 flex justify-center gap-4" data-aos="fade-up" data-aos-delay="150">
         <a href="#" class="bg-white text-indigo-600 px-8 py-3 rounded-md font-medium hover:bg-gray-50">
           Start free trial — Starter
         </a>
@@ -109,7 +124,7 @@
     </div>
   </header>
 
-  <!-- Logo Cloud -->
+  <!-- LOGO CLOUD -->
   <section class="bg-gray-50 py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <p class="text-center text-sm font-semibold uppercase text-gray-500 tracking-wide">
@@ -121,7 +136,7 @@
     </div>
   </section>
 
-  <!-- Features Section -->
+  <!-- FEATURES -->
   <section id="features" class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center">
@@ -131,7 +146,7 @@
         </p>
       </div>
 
-      <div class="mt-10 space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+      <div class="mt-10 grid md:grid-cols-2 gap-8">
         <div class="flex" data-aos="fade-up">
           <div class="flex-shrink-0">
             <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
@@ -146,7 +161,7 @@
           </div>
         </div>
 
-        <div class="flex" data-aos="fade-up" data-aos-delay="80">
+        <div class="flex" data-aos="fade-up" data-aos-delay="100">
           <div class="flex-shrink-0">
             <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
               <i data-feather="clock"></i>
@@ -160,7 +175,7 @@
           </div>
         </div>
 
-        <div class="flex" data-aos="fade-up" data-aos-delay="160">
+        <div class="flex" data-aos="fade-up" data-aos-delay="200">
           <div class="flex-shrink-0">
             <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
               <i data-feather="credit-card"></i>
@@ -174,7 +189,7 @@
           </div>
         </div>
 
-        <div class="flex" data-aos="fade-up" data-aos-delay="240">
+        <div class="flex" data-aos="fade-up" data-aos-delay="300">
           <div class="flex-shrink-0">
             <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
               <i data-feather="smartphone"></i>
@@ -191,50 +206,54 @@
     </div>
   </section>
 
-  <!-- Demo Section -->
+  <!-- DEMO -->
   <section id="demo" class="py-16 bg-gray-50 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center mb-12">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Live Demo</h2>
-        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">Try it yourself</p>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">
+          Try it yourself
+        </p>
       </div>
 
       <div class="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
         <div class="relative mb-8 lg:mb-0" data-aos="fade-right">
           <h3 class="text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl">One-line installation</h3>
-          <p class="mt-3 text-lg text-gray-500">Add these two lines to your website and you're done. No coding required.</p>
-
+          <p class="mt-3 text-lg text-gray-500">
+            Add these two lines to your website and you're done. No coding required.
+          </p>
           <div class="mt-6 bg-gray-800 rounded-lg p-4 overflow-x-auto">
-<pre class="text-gray-200 text-sm"><code>&lt;script src="https://cdn.booker.ai/widget.js" async&gt;&lt;/script&gt;
+            <pre class="text-gray-200 text-sm"><code>&lt;script src="https://cdn.booker.ai/widget.js" async&gt;&lt;/script&gt;
 &lt;script&gt;
   window.BookerPilot = window.BookerPilot || function(){ (BookerPilot.q = BookerPilot.q || []).push(arguments); };
   BookerPilot("init", { business: "your-business-slug" });
 &lt;/script&gt;</code></pre>
           </div>
 
-          <div class="mt-8">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                  <i data-feather="zap"></i>
-                </div>
+          <div class="mt-8 flex">
+            <div class="flex-shrink-0">
+              <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                <i data-feather="zap"></i>
               </div>
-              <div class="ml-4">
-                <h4 class="text-lg leading-6 font-medium text-gray-900">Works everywhere</h4>
-                <p class="mt-2 text-base text-gray-500">Squarespace, Wix, WordPress, Shopify, or custom HTML sites. Just paste and go.</p>
-              </div>
+            </div>
+            <div class="ml-4">
+              <h4 class="text-lg leading-6 font-medium text-gray-900">Works everywhere</h4>
+              <p class="mt-2 text-base text-gray-500">
+                Squarespace, Wix, WordPress, Shopify, or custom HTML sites. Just paste and go.
+              </p>
             </div>
           </div>
         </div>
 
         <div class="relative" data-aos="fade-left">
           <div class="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Demo Business: Example Cleaning</h3>
-            <p class="text-gray-600 mb-6">Try asking:</p>
-            <ul class="space-y-3">
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-5 w-5 text-indigo-500"></i><span class="ml-2 text-gray-600">"How much for a 1 bedroom cleaning?"</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-5 w-5 text-indigo-500"></i><span class="ml-2 text-gray-600">"Do you service Brooklyn?"</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-5 w-5 text-indigo-500"></i><span class="ml-2 text-gray-600">"What's your cancellation policy?"</span></li>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Demo: Ask the assistant</h3>
+            <p class="text-gray-600 mb-4">Try asking:</p>
+            <ul class="space-y-2 text-gray-700 text-sm">
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“How can you help my nail business?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“What’s your cancellation policy?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Do you service Brooklyn?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Price for a 1 bedroom cleaning?”</span></li>
             </ul>
             <button id="open-demo-widget" class="mt-6 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Open Demo Widget
@@ -245,7 +264,7 @@
     </div>
   </section>
 
-  <!-- Pricing Section -->
+  <!-- PRICING -->
   <section id="pricing" class="bg-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center mb-12">
@@ -255,7 +274,7 @@
         </p>
       </div>
 
-      <div class="mt-12 sm:mt-16 sm:grid sm:grid-cols-2 sm:gap-6 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0">
+      <div class="mt-12 grid sm:grid-cols-2 gap-6 lg:max-w-4xl lg:mx-auto">
         <!-- Starter -->
         <div class="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200" data-aos="fade-up">
           <div class="p-6">
@@ -265,28 +284,26 @@
               <span class="text-base font-medium text-gray-500">/mo</span>
             </p>
             <p class="mt-4 text-sm text-gray-500">Perfect for solo entrepreneurs and small teams</p>
-            <a href="#" class="mt-8 block w-full bg-gray-800 border border-gray-800 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-gray-900">
-              Start free trial
-            </a>
+            <a href="#" class="mt-8 block w-full bg-gray-800 border border-gray-800 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-gray-900">Start free trial</a>
           </div>
           <div class="pt-6 pb-8 px-6">
             <h4 class="text-xs font-medium text-gray-900 tracking-wide uppercase">What's included</h4>
-            <ul class="mt-6 space-y-4">
-              <li class="flex items-start"><i data-feather="check" class="text-green-500 mr-2"></i><span class="text-sm text-gray-500">50 conversations/month</span></li>
-              <li class="flex items-start"><i data-feather="check" class="text-green-500 mr-2"></i><span class="text-sm text-gray-500">15 bookings/month</span></li>
-              <li class="flex items-start"><i data-feather="check" class="text-green-500 mr-2"></i><span class="text-sm text-gray-500">Email confirmations</span></li>
-              <li class="flex items-start"><i data-feather="check" class="text-green-500 mr-2"></i><span class="text-sm text-gray-500">Basic analytics</span></li>
+            <ul class="mt-6 space-y-4 text-sm text-gray-600">
+              <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>50 conversations/month</li>
+              <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>15 bookings/month</li>
+              <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>Email confirmations</li>
+              <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>Basic analytics</li>
             </ul>
           </div>
         </div>
 
         <!-- Pro -->
-        <div class="border border-indigo-500 rounded-lg shadow-sm divide-y divide-indigo-500" data-aos="fade-up" data-aos-delay="80">
+        <div class="border border-indigo-500 rounded-lg shadow-sm divide-y divide-indigo-500" data-aos="fade-up" data-aos-delay="100">
           <div class="p-6">
             <div class="flex justify-between items-start">
               <div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900">Pro</h3>
-                <p class="mt-1 text-sm text-indigo-700">Most popular</p>
+                <p class="mt-2 text-sm text-indigo-700">Most popular</p>
               </div>
             </div>
             <p class="mt-4">
@@ -294,18 +311,16 @@
               <span class="text-base font-medium text-gray-500">/mo</span>
             </p>
             <p class="mt-4 text-sm text-gray-500">For growing businesses that need more</p>
-            <a href="#" class="mt-8 block w-full bg-indigo-600 border border-indigo-600 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-indigo-700">
-              Start free trial
-            </a>
+            <a href="#" class="mt-8 block w-full bg-indigo-600 border border-indigo-600 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-indigo-700">Start free trial</a>
           </div>
           <div class="pt-6 pb-8 px-6">
             <h4 class="text-xs font-medium text-gray-900 tracking-wide uppercase">What's included</h4>
-            <ul class="mt-6 space-y-4">
-              <li class="flex items-start"><i data-feather="check" class="text-green-500 mr-2"></i><span class="text-sm text-gray-500">Unlimited conversations</span></li>
-              <li class="flex items-start"><i data-feather="check" class="text-green-500 mr-2"></i><span class="text-sm text-gray-500">100 bookings/month</span></li>
-              <li class="flex items-start"><i data-feather="check" class="text-green-500 mr-2"></i><span class="text-sm text-gray-500">Email &amp; SMS reminders</span></li>
-              <li class="flex items-start"><i data-feather="check" class="text-green-500 mr-2"></i><span class="text-sm text-gray-500">Advanced analytics</span></li>
-              <li class="flex items-start"><i data-feather="check" class="text-green-500 mr-2"></i><span class="text-sm text-gray-500">Membership upsells</span></li>
+            <ul class="mt-6 space-y-4 text-sm text-gray-600">
+              <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>Unlimited conversations</li>
+              <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>100 bookings/month</li>
+              <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>Email & SMS reminders</li>
+              <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>Advanced analytics</li>
+              <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>Membership upsells</li>
             </ul>
           </div>
         </div>
@@ -313,7 +328,7 @@
     </div>
   </section>
 
-  <!-- FAQ Section -->
+  <!-- FAQ -->
   <section id="faq" class="bg-gray-50 py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center mb-12">
@@ -321,65 +336,64 @@
         <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">Frequently asked questions</p>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-6">
+      <dl class="grid md:grid-cols-2 gap-6">
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">What types of businesses is this for?</h3>
-          <p class="mt-2 text-base text-gray-500">
-            Any local service business that takes appointments: cleaners, salons, tutors, handymen, personal trainers, pet groomers, and more.
-          </p>
+          <dt class="text-lg leading-6 font-medium text-gray-900">What types of businesses is this for?</dt>
+          <dd class="mt-2 text-base text-gray-600">Any local service business that takes appointments: cleaners, salons, tutors, handymen, personal trainers, pet groomers, and more.</dd>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="80">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">How does the AI work?</h3>
-          <p class="mt-2 text-base text-gray-500">
-            It only answers from the information you provide (FAQs, services, pricing). It won't make up answers or give advice outside your business.
-          </p>
+        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="100">
+          <dt class="text-lg leading-6 font-medium text-gray-900">How does the AI work?</dt>
+          <dd class="mt-2 text-base text-gray-600">It answers from the information you provide (FAQs, services, pricing) and can use OpenAI to handle free-form questions safely.</dd>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="160">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">Can I try before I pay?</h3>
-          <p class="mt-2 text-base text-gray-500">Yes! All plans include a 30-day free trial.</p>
+        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="200">
+          <dt class="text-lg leading-6 font-medium text-gray-900">Can I try before I pay?</dt>
+          <dd class="mt-2 text-base text-gray-600">Yes! All plans include a 30-day free trial.</dd>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="240">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">How do payments work?</h3>
-          <p class="mt-2 text-base text-gray-500">We use Stripe for secure payments. Customers pay deposits through your Stripe account (you'll need to connect it).</p>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="320">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">What if I need more bookings?</h3>
-          <p class="mt-2 text-base text-gray-500">You can upgrade anytime. Additional bookings are $1 each after your plan limit.</p>
+        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="300">
+          <dt class="text-lg leading-6 font-medium text-gray-900">How do payments work?</dt>
+          <dd class="mt-2 text-base text-gray-600">We use Stripe for secure payments. Customers pay deposits through your Stripe account (you’ll need to connect it).</dd>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="400">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">Can I cancel anytime?</h3>
-          <p class="mt-2 text-base text-gray-500">Absolutely. No contracts, cancel online in seconds.</p>
+          <dt class="text-lg leading-6 font-medium text-gray-900">What if I need more bookings?</dt>
+          <dd class="mt-2 text-base text-gray-600">You can upgrade anytime. Additional bookings are $1 each after your plan limit.</dd>
         </div>
-      </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="500">
+          <dt class="text-lg leading-6 font-medium text-gray-900">Can I cancel anytime?</dt>
+          <dd class="mt-2 text-base text-gray-600">Absolutely. No contracts, cancel online in seconds.</dd>
+        </div>
+      </dl>
     </div>
   </section>
 
-  <!-- Contact -->
+  <!-- CONTACT -->
   <section id="contact" class="bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div class="lg:text-center mb-10">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Contact Us</h2>
-        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Questions? We're here to help.</p>
-        <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">Fill out the form below and we'll reply to you shortly.</p>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Questions? We’re here to help.</p>
+        <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">Fill out the form below and we’ll reply to you shortly.</p>
       </div>
 
-      <form action="#" method="POST" class="max-w-2xl mx-auto space-y-4">
-        <input type="text" name="name" placeholder="Your Name" class="w-full border rounded-lg px-3 py-2" required>
-        <input type="email" name="email" placeholder="Your Email" class="w-full border rounded-lg px-3 py-2" required>
-        <textarea name="message" placeholder="Your Question or Message" class="w-full border rounded-lg px-3 py-2 h-32" required></textarea>
-        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 shadow">
-          Send Message
-        </button>
+      <form action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="max-w-2xl mx-auto space-y-4">
+        <input type="hidden" name="_next" value="https://bookerpilot.com/index.html#contact">
+        <input type="hidden" name="_subject" value="New Contact from BookerPilot Website">
+        <input type="hidden" name="_captcha" value="false">
+
+        <input type="text"   name="name"    placeholder="Your Name"               class="w-full border rounded-lg px-3 py-2" required>
+        <input type="email"  name="email"   placeholder="Your Email"              class="w-full border rounded-lg px-3 py-2" required>
+        <textarea            name="message" placeholder="Your Question or Message" class="w-full border rounded-lg px-3 py-2 h-32" required></textarea>
+
+        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 shadow">Send Message</button>
       </form>
     </div>
   </section>
 
-  <!-- CTA Section -->
+  <!-- CTA -->
   <section class="gradient-bg">
     <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
       <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl" data-aos="fade-right">
@@ -387,31 +401,23 @@
         <span class="block text-indigo-200">Start your free trial today.</span>
       </h2>
       <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0" data-aos="fade-left">
-        <div class="inline-flex rounded-md shadow">
-          <a href="#" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50">
-            Get started
-          </a>
-        </div>
-        <div class="ml-3 inline-flex rounded-md shadow">
-          <a href="#demo" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-500 bg-opacity-60 hover:bg-opacity-70">
-            Live demo
-          </a>
-        </div>
+        <a href="#" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50">Get started</a>
+        <a href="#demo" class="ml-3 inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-500 bg-opacity-60 hover:bg-opacity-70">Live demo</a>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- FOOTER -->
   <footer class="bg-white">
     <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
       <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
-        <div class="px-5 py-2"><a href="#"         class="text-base text-gray-500 hover:text-gray-900">Home</a></div>
-        <div class="px-5 py-2"><a href="#features" class="text-base text-gray-500 hover:text-gray-900">Features</a></div>
-        <div class="px-5 py-2"><a href="#pricing"  class="text-base text-gray-500 hover:text-gray-900">Pricing</a></div>
-        <div class="px-5 py-2"><a href="#faq"      class="text-base text-gray-500 hover:text-gray-900">FAQ</a></div>
-        <div class="px-5 py-2"><a href="#contact"  class="text-base text-gray-500 hover:text-gray-900">Contact</a></div>
-        <div class="px-5 py-2"><a href="#"         class="text-base text-gray-500 hover:text-gray-900">Privacy</a></div>
-        <div class="px-5 py-2"><a href="#"         class="text-base text-gray-500 hover:text-gray-900">Terms</a></div>
+        <a href="#"         class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Home</a>
+        <a href="#features" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Features</a>
+        <a href="#pricing"  class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Pricing</a>
+        <a href="#faq"      class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">FAQ</a>
+        <a href="#contact"  class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Contact</a>
+        <a href="#"         class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Privacy</a>
+        <a href="#"         class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Terms</a>
       </nav>
 
       <div class="mt-8 flex justify-center space-x-6">
@@ -423,12 +429,12 @@
     </div>
   </footer>
 
-  <!-- Widget Bubble -->
+  <!-- WIDGET BUBBLE -->
   <div id="widget-bubble" class="widget-bubble" title="Chat with BookerPilot">
     <i data-feather="message-square"></i>
   </div>
 
-  <!-- Widget Panel -->
+  <!-- WIDGET PANEL -->
   <div id="widget-panel" class="widget-panel">
     <div class="bg-indigo-600 text-white p-4">
       <div class="flex justify-between items-center">
@@ -438,18 +444,20 @@
         </button>
       </div>
     </div>
+
     <div class="flex-1 p-4 overflow-y-auto">
-      <div id="chat-list" class="space-y-4">
+      <div id="chat-thread" class="space-y-3">
         <div class="flex justify-start">
-          <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100">
-            <p class="text-gray-800">Hi there! I'm your AI assistant. Ask anything about pricing, availability, service areas, or bookings.</p>
+          <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100 text-gray-800">
+            Hi there! I’m your AI assistant. Ask me anything — pricing, availability, policies, or “How can you help my nail business?”
           </div>
         </div>
       </div>
     </div>
-    <div class="border-t border-gray-200 p-4">
+
+    <div class="border-t border-gray-200 p-3">
       <div class="flex items-center">
-        <input id="chat-input" type="text" placeholder="Type your question..." class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+        <input id="chat-input" type="text" placeholder="Type your question…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
         <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
           <i data-feather="send"></i>
         </button>
@@ -457,137 +465,110 @@
     </div>
   </div>
 
-  <!-- Supabase -->
+  <!-- Supabase JS -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
   <script>
-    // Init AOS + Feather
+    // ===== Init libs
     AOS.init({ duration: 700, once: true });
     if (window.feather && typeof feather.replace === 'function') feather.replace();
 
-    // Sticky shadow
-    (function(){
-      const nav = document.getElementById('top-nav');
-      const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 4);
-      onScroll(); window.addEventListener('scroll', onScroll);
-    })();
-
-    // ========= CONFIG =========
+    // ===== Config (EDIT these after deploying the function)
     const CONFIG = {
       businessName: 'Your Business',
       contactEmail: 'bookerpilot@outlook.com',
-      supabaseUrl: 'https://YOUR-PROJECT.supabase.co', // <-- replace
-      supabaseAnonKey: 'YOUR-ANON-KEY',                // <-- replace
-      typingSpeedMs: 18,
-      maxMessagesPerHour: 20
+
+      // TODO: put your Supabase project URL here (Settings > API > Project URL)
+      SUPABASE_URL: 'https://YOUR_PROJECT_REF.supabase.co',
+
+      // TODO: put your Supabase anon key here (Settings > API > anon public)
+      SUPABASE_ANON_KEY: 'YOUR-ANON-PUBLIC-KEY',
+
+      // Optional: a light prompt that nudges the AI answer tone
+      pitch: 'We help local service businesses book more jobs automatically, cut no-shows, and answer FAQs 24/7.'
     };
 
-    // ========= DOM refs =========
-    const $ = (s, r=document)=>r.querySelector(s);
-    const bubble    = $('#widget-bubble');
-    const panel     = $('#widget-panel');
-    const closeBtn  = $('#close-widget');
-    const titleEl   = $('#widget-title');
-    const inputEl   = $('#chat-input');
-    const sendBtn   = $('#send-btn');
-    const listEl    = $('#chat-list');
-    const scrollBox = panel.querySelector('.flex-1');
+    // ===== DOM
+    const bubble = document.getElementById('widget-bubble');
+    const panel  = document.getElementById('widget-panel');
+    const closeB = document.getElementById('close-widget');
+    const input  = document.getElementById('chat-input');
+    const send   = document.getElementById('send-btn');
+    const thread = document.getElementById('chat-thread');
+    const title  = document.getElementById('widget-title');
 
-    titleEl.textContent = CONFIG.businessName;
+    // Apply business name in header
+    if (title) title.textContent = CONFIG.businessName;
 
-    // Open/close
-    function openWidget(){ panel.style.display='flex'; bubble.style.display='none'; setTimeout(()=>inputEl?.focus(), 60); }
-    function closeWidget(){ panel.style.display='none'; bubble.style.display='flex'; }
-    bubble.addEventListener('click', openWidget);
-    closeBtn.addEventListener('click', closeWidget);
-    const demoBtn = document.getElementById('open-demo-widget');
-    if (demoBtn) demoBtn.addEventListener('click', openWidget);
-    window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeWidget(); });
+    // ===== Supabase client
+    if (!window.supabase) console.error('Missing supabase-js script');
+    const sb = window.supabase?.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
-    // UI helpers
-    function scrollToBottom(){ scrollBox.scrollTop = scrollBox.scrollHeight; }
-    function addBubble(text, who='bot'){
+    // ===== UI helpers
+    function addBubble(text, who='bot') {
       const wrap = document.createElement('div');
-      wrap.className = `flex ${who==='user'?'justify-end':'justify-start'}`;
-      const bub = document.createElement('div');
-      bub.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${who==='user' ? 'rounded-tr-none bg-indigo-600 text-white' : 'rounded-tl-none bg-gray-100 text-gray-800'}`;
-      bub.textContent = text;
-      wrap.appendChild(bub);
-      listEl.appendChild(wrap);
-      scrollToBottom();
-      return bub;
-    }
-    function typeInto(el, fullText, speed=CONFIG.typingSpeedMs){
-      el.textContent = '';
-      let i=0, s=String(fullText||'');
-      return new Promise(res=>{
-        (function tick(){
-          if(i >= s.length){ res(); return; }
-          el.textContent += s[i++]; scrollToBottom();
-          setTimeout(tick, speed);
-        })();
-      });
+      wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
+      const b = document.createElement('div');
+      b.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+        who === 'user'
+          ? 'rounded-tr-none bg-indigo-600 text-white'
+          : 'rounded-tl-none bg-gray-100 text-gray-800'
+      }`;
+      b.textContent = text;
+      wrap.appendChild(b);
+      thread.appendChild(wrap);
+      // scroll
+      const sc = panel.querySelector('.overflow-y-auto');
+      if (sc) sc.scrollTop = sc.scrollHeight;
     }
 
-    // ========= Supabase client =========
-    const sb = window.supabase?.createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey);
-    const SESSION = { id: crypto.randomUUID(), turns: [], count: 0, resetAt: Date.now() };
-
-    function checkLimit(){
-      const now = Date.now();
-      if (now - SESSION.resetAt > 3600_000){ SESSION.count = 0; SESSION.resetAt = now; }
-      if (SESSION.count >= CONFIG.maxMessagesPerHour) return `Demo limit reached (${CONFIG.maxMessagesPerHour}/hr). Please try later.`;
-      SESSION.count++; return null;
+    function sanitize(s) {
+      return String(s || '').replace(/[\u0000-\u001F<>]/g, '').trim();
     }
 
-    async function callEdge(userText){
+    // ===== Open/close widget
+    function toggleWidget() {
+      const show = panel.style.display !== 'flex';
+      panel.style.display = show ? 'flex' : 'none';
+      bubble.style.display = show ? 'none' : 'flex';
+      if (show) setTimeout(() => input?.focus(), 80);
+    }
+    bubble.addEventListener('click', toggleWidget);
+    closeB.addEventListener('click', toggleWidget);
+    document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') panel.style.display === 'flex' && toggleWidget(); });
+
+    // ===== Call Supabase Edge Function
+    async function askAI(userText) {
       if (!sb) throw new Error('Supabase client not initialized');
       const payload = {
         message: { text: userText, businessType: 'local services' },
-        history: SESSION.turns.slice(-10),
-        brand: { name: CONFIG.businessName, email: CONFIG.contactEmail },
-        meta: { page: location.pathname, ref: document.referrer?.slice(0,160)||'' }
+        brand:   { name: CONFIG.businessName, email: CONFIG.contactEmail, pitch: CONFIG.pitch },
+        history: [], // can send last N turns if you want memory
+        meta:    { page: location.pathname, ref: document.referrer?.slice(0,200) || '' }
       };
       const { data, error } = await sb.functions.invoke('ai-chat', { body: payload });
       if (error) throw error;
-      if (!data?.text) throw new Error('No text returned');
-      // hard-sanitize demo remnants
-      return String(data.text).replace(/\bacme\s+cleaning\b/gi, CONFIG.businessName);
+      if (!data?.text) throw new Error('No text returned from ai-chat');
+      return data.text.toString();
     }
 
-    function localFallback(q){
-      const t = String(q||'').toLowerCase();
-      if (/price|cost|how much/.test(t)) return 'We offer transparent pricing. Tell me your service type and size for an instant estimate.';
-      if (/avail|open|time|slot|schedule/.test(t)) return 'We’re open Mon–Sat, 8am–6pm. Tell me your preferred day and time, and I’ll check.';
-      if (/area|location|serve/.test(t)) return 'We serve Brooklyn, Queens, Manhattan, Bronx, and Staten Island.';
-      if (/cancel|reschedule|refund/.test(t)) return 'Free cancellation up to 24 hours before your appointment.';
-      return 'I can help with pricing, availability, service areas, booking, and policies. Ask me anything.';
-    }
-
-    async function send(){
-      const text = (inputEl.value || '').trim();
-      if (!text) return;
-
-      const limit = checkLimit();
-      addBubble(text,'user');
-      SESSION.turns.push({ role:'user', content:text });
-      inputEl.value = '';
-
-      const thinking = addBubble('Thinking…','bot');
-      try{
-        if (limit){ await typeInto(thinking, limit); return; }
-        const reply = await callEdge(text);
-        await typeInto(thinking, reply);
-        SESSION.turns.push({ role:'assistant', content: reply });
-      }catch(e){
-        const fallback = localFallback(text) + ` If you need help, email ${CONFIG.contactEmail}.`;
-        thinking.textContent = fallback;
-        SESSION.turns.push({ role:'assistant', content: fallback });
-        console.error(e);
+    // ===== Send flow
+    async function sendNow() {
+      const q = sanitize(input.value);
+      if (!q) return;
+      addBubble(q, 'user');
+      input.value = '';
+      try {
+        const a = await askAI(q);
+        addBubble(a, 'bot'); // No “Start trial / See pricing” buttons here — pure AI.
+      } catch (err) {
+        console.error(err);
+        addBubble("Sorry—our AI is busy right now. Please try again in a moment.", 'bot');
       }
     }
-
-    sendBtn.addEventListener('click', send);
-    inputEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); }});
+    send.addEventListener('click', sendNow);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendNow(); }});
   </script>
 </body>
 </html>
