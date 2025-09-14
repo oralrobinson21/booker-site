@@ -19,7 +19,7 @@
     html { scroll-behavior: smooth; }
     [id] { scroll-margin-top: 80px; }
 
-    /* Your wave gradient animation */
+    /* Wave gradient animation */
     .gradient-bg {
       background: linear-gradient(135deg,
         #1e3a8a 0%,
@@ -39,30 +39,21 @@
 
     /* Widget UI */
     .widget-bubble {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      background: #4F46E5; color: white;
+      position: fixed; bottom: 2rem; right: 2rem;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: #4F46E5; color: white; z-index: 1000;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; z-index: 1000;
-      box-shadow: 0 10px 25px -5px rgba(79,70,229,0.4);
-      transition: all .3s ease;
+      cursor: pointer; box-shadow: 0 10px 25px -5px rgba(79,70,229,0.4);
+      transition: transform .25s ease;
     }
-    .widget-bubble:hover { transform: scale(1.1); }
+    .widget-bubble:hover { transform: scale(1.08); }
 
     .widget-panel {
-      position: fixed;
-      bottom: calc(2rem + 80px);
-      right: 2rem;
-      width: 400px; max-width: 90vw;
-      height: 520px;
-      background: white;
-      border-radius: 16px;
+      position: fixed; bottom: calc(2rem + 80px); right: 2rem;
+      width: 400px; max-width: 90vw; height: 520px; z-index: 1000;
+      background: #fff; border-radius: 16px;
       box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-      overflow: hidden; display: none;
-      flex-direction: column; z-index: 1000;
+      overflow: hidden; display: none; flex-direction: column;
     }
 
     @media (max-width: 640px) {
@@ -326,17 +317,7 @@
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="100">
           <dt class="text-lg leading-6 font-medium text-gray-900">How does the AI work?</dt>
-          <dd class="mt-2 text-base text-gray-600">It answers from the information you provide (FAQs, services, pricing) and can guide bookings with suggested times.</dd>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="200">
-          <dt class="text-lg leading-6 font-medium text-gray-900">Can I try before I pay?</dt>
-          <dd class="mt-2 text-base text-gray-600">Yes! All plans include a 30-day free trial.</dd>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="300">
-          <dt class="text-lg leading-6 font-medium text-gray-900">How do payments work?</dt>
-          <dd class="mt-2 text-base text-gray-600">We use Stripe for secure payments. You’ll connect your Stripe account.</dd>
+          <dd class="mt-2 text-base text-gray-600">It answers from the information you provide and can guide bookings with suggested times.</dd>
         </div>
       </dl>
     </div>
@@ -424,7 +405,7 @@
 
     <div class="border-t border-gray-200 p-3">
       <div class="flex items-center">
-        <input id="chat-input" type="text" placeholder="Type your message…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+        <input id="chat-input" type="text" placeholder="Type your message…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500" autocomplete="off">
         <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
           <i data-feather="send"></i>
         </button>
@@ -490,30 +471,13 @@
     document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
 
     // ===== Guided Yoga Flow =====
-    // States: 1 ask name -> 2 ask goal -> 3 pick time -> 4 ask email -> 5 confirm
+    // Steps: 1 name -> 2 goal -> 3 time -> 4 email (validate) -> 5 confirm
     const state = { step: 0, name: '', goal: '', time: '', email: '' };
 
     function startYogaDemo(){
       state.step = 1;
       addBubble("👋 Hello! Welcome to Sunrise Yoga Studio.");
       addBubble("I'm your booking assistant — what's your name?");
-      addBubbleHTML(`
-        <div>
-          <button class="chip chip-name">Alex</button>
-          <button class="chip chip-name">Jordan</button>
-          <button class="chip chip-name">Taylor</button>
-        </div>
-      `);
-      bindNameChips();
-    }
-
-    function bindNameChips(){
-      document.querySelectorAll('.chip-name').forEach(btn=>{
-        btn.onclick = () => {
-          input.value = btn.textContent.trim();
-          sendNow();
-        };
-      });
     }
 
     function bindGoalChips(){
@@ -536,7 +500,6 @@
 
     function timeOptions(){
       const now = new Date();
-      // Make three options over the next 3 days at sensible times
       const options = [];
       for (let i=1;i<=3;i++){
         const d = new Date(now.getFullYear(), now.getMonth(), now.getDate()+i);
@@ -547,15 +510,22 @@
       return options;
     }
 
+    function validEmail(e){
+      const s = String(e||'').trim();
+      const at = s.indexOf('@');
+      const dot = s.lastIndexOf('.');
+      // must contain '@' and '.', '.' must come after '@', neither can be first or last
+      return at > 0 && dot > at + 1 && dot < s.length - 1;
+    }
+
     async function sendNow(){
       const q = sanitize(input.value);
       if (!q) return;
 
-      // Add user bubble
       addBubble(q, 'user');
       input.value = '';
 
-      // Flow handling
+      // Step 1: get name (user types their own)
       if (state.step === 1){
         state.name = q;
         state.step = 2;
@@ -571,6 +541,7 @@
         return;
       }
 
+      // Step 2: capture goal
       if (state.step === 2){
         state.goal = q;
         state.step = 3;
@@ -585,6 +556,7 @@
         return;
       }
 
+      // Step 3: pick time
       if (state.step === 3){
         state.time = q;
         state.step = 4;
@@ -592,18 +564,25 @@
         return;
       }
 
+      // Step 4: email with validation
       if (state.step === 4){
+        if (!validEmail(q)){
+          addBubble(`Hmm, that email doesn’t look right. Please enter a valid email with an "@" and a "." (e.g., name@example.com).`);
+          return; // stay on step 4
+        }
         state.email = q;
         state.step = 5;
+
+        // Confirmation and wrap-up
         addBubble(`✅ All set, ${state.name}!`);
-        addBubble(`We’re holding a spot for **${state.goal}** on **${state.time}**. We'll send a confirmation to **${state.email}** — and reach back out if anything changes.`);
+        addBubble(`We’re holding a spot for **${state.goal}** on **${state.time}**. We'll send a confirmation to **${state.email}**, and we’ll reach back out if anything changes.`);
         addBubble(`If you need to adjust or cancel, just reply to the confirmation email.`);
-        addBubble(`P.S. We can help any local business — salons, car dealerships, handymen, cleaners, you name it — or even help *your* business start taking bookings automatically. Want to try another example?`);
-        state.step = 0; // end
+        addBubble(`P.S. We can help any local business — yoga studios, salons, car dealerships, handymen, cleaners, you name it — or even help *your* business start taking bookings automatically. Want to try another example?`);
+        state.step = 0; // reset
         return;
       }
 
-      // If the flow ended or hasn't started, start it again
+      // If ended or not started, restart
       if (state.step === 0){
         startYogaDemo();
       }
@@ -612,17 +591,14 @@
     send.addEventListener('click', sendNow);
     input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendNow(); }});
 
-    // Start the demo the first time the widget opens
+    // Boot the demo when widget first opens
     let booted = false;
     function onOpen(){
       if (!booted){
         booted = true;
-        // greet and show example path
         setTimeout(startYogaDemo, 200);
       }
     }
-
-    // open/close controls
     bubble.addEventListener('click', onOpen, { once: true });
   </script>
 </body>
