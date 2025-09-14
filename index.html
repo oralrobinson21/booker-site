@@ -42,7 +42,7 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Widget UI (kept lightweight) */
+    /* Widget UI */
     .widget-bubble {
       position: fixed;
       bottom: 2rem;
@@ -80,39 +80,29 @@
     }
 
     /* “Pull-to-reveal” features sheet */
-    .reveal-wrap {
-      position: relative;
-      overflow: hidden;
-    }
-    .reveal-mask {
-      position: relative;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .6s cubic-bezier(.4,0,.2,1);
-    }
+    .reveal-wrap { position: relative; overflow: hidden; }
+    .reveal-mask { position: relative; max-height: 0; overflow: hidden; transition: max-height .6s cubic-bezier(.4,0,.2,1); }
     .reveal-handle {
-      position: relative;
-      margin: -12px auto 0;
-      width: 120px;
-      height: 32px;
-      background: #e5e7eb;
-      border-radius: 9999px 9999px 0 0;
-      box-shadow: 0 -4px 16px rgba(0,0,0,.06) inset;
-      cursor: pointer;
+      position: relative; margin: -12px auto 0; width: 120px; height: 32px;
+      background: #e5e7eb; border-radius: 9999px 9999px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,.06) inset; cursor: pointer;
     }
     .reveal-handle::after {
-      content: "";
-      position: absolute;
-      left: 50%; top: 50%;
-      transform: translate(-50%,-50%);
-      width: 36px; height: 4px; border-radius: 9999px;
-      background: #9ca3af;
+      content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: 36px; height: 4px; border-radius: 9999px; background: #9ca3af;
     }
-    .reveal-open .reveal-mask { max-height: 1800px; } /* big enough for added tiles */
+    .reveal-open .reveal-mask { max-height: 1800px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: 24px; background: #111827; color: #fff;
+      padding: .75rem 1rem; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,.2);
+      z-index: 9999; display: none;
+    }
+    .toast.show { display: block; }
   </style>
 </head>
-<body class="font-sans antialiased text-gray-900">
-
+<body class="font-sans antialiased text-gray-900" id="home">
   <!-- NAV -->
   <nav class="bg-white shadow-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -128,7 +118,7 @@
           <a href="#pricing"  class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Pricing</a>
           <a href="#faq"       class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">FAQ</a>
           <a href="#contact"   class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
-          <a href="#"          class="text-indigo-600 hover:text-indigo-800">Log In</a>
+          <a href="#"          class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Log In</a>
           <a href="#pricing"   class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700">Get Started</a>
         </div>
       </div>
@@ -177,7 +167,7 @@
         </p>
       </div>
 
-      <!-- First 4 tiles (original) -->
+      <!-- First 4 tiles -->
       <div class="mt-10 grid md:grid-cols-2 gap-8">
         <div class="flex" data-aos="fade-up">
           <div class="flex-shrink-0">
@@ -240,10 +230,9 @@
       <div class="reveal-wrap mt-10">
         <div id="pull-handle" class="reveal-handle" title="Pull to reveal more features"></div>
 
-        <!-- Hidden area (unfold) -->
+        <!-- Hidden area -->
         <div id="reveal-mask" class="reveal-mask">
           <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Add more enterprise-level tiles -->
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
               <div class="flex-shrink-0">
                 <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
@@ -398,7 +387,6 @@
               <span class="text-base font-medium text-gray-500">/mo</span>
             </p>
             <p class="mt-4 text-sm text-gray-500">Perfect for solo entrepreneurs and small teams</p>
-            <!-- STRIPE_READY: flips to STRIPE.Starter on launch -->
             <button type="button" data-plan="Starter"
               class="js-open-wl mt-8 block w-full bg-gray-800 border border-gray-800 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-gray-900">
               Start free trial — Join Waitlist
@@ -429,7 +417,6 @@
               <span class="text-base font-medium text-gray-500">/mo</span>
             </p>
             <p class="mt-4 text-sm text-gray-500">For growing businesses that need more</p>
-            <!-- STRIPE_READY: flips to STRIPE.Pro on launch -->
             <button type="button" data-plan="Pro"
               class="js-open-wl mt-8 block w-full bg-indigo-600 border border-indigo-600 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-indigo-700">
               Start free trial — Join Waitlist
@@ -490,17 +477,20 @@
       <div class="lg:text-center mb-10">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Join the Waitlist</h2>
         <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Be first to try Booker.ai</p>
-        <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">We’ll confirm your email and keep you posted. You can also opt into occasional product updates.</p>
+        <p class="mt-3 text-gray-700">Join the waitlist to see what’s coming next—launch updates, early access, and a free 30-day trial.</p>
       </div>
 
-      <!-- The in-page waitlist form -->
-      <form id="waitlist-page-form" class="max-w-2xl mx-auto space-y-4">
+      <!-- In-page waitlist form -->
+      <form id="waitlist-page-form" class="max-w-2xl mx-auto space-y-4" autocomplete="off">
         <div class="grid sm:grid-cols-2 gap-3">
-          <input type="text"   name="name"     placeholder="Your Name"  class="w-full border rounded-lg px-3 py-2" required>
-          <input type="email"  name="email"    placeholder="you@example.com" class="w-full border rounded-lg px-3 py-2" required>
+          <input type="text"   name="name"     placeholder="Your Name"  class="w-full border rounded-lg px-3 py-2"
+                 required oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
+          <input type="email"  name="email"    placeholder="you@example.com" class="w-full border rounded-lg px-3 py-2"
+                 required oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
         </div>
         <div class="grid sm:grid-cols-2 gap-3">
-          <input type="text"   name="company"  placeholder="Business / Company (optional)" class="w-full border rounded-lg px-3 py-2">
+          <input type="text"   name="company"  placeholder="Business / Company (optional)" class="w-full border rounded-lg px-3 py-2"
+                 oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
           <select name="plan"  class="w-full border rounded-lg px-3 py-2">
             <option value="Starter">Starter</option>
             <option value="Pro">Pro</option>
@@ -544,7 +534,7 @@
     <i data-feather="message-square"></i>
   </div>
 
-  <!-- WIDGET PANEL (simple demo, untouched flow) -->
+  <!-- WIDGET PANEL (kept simple demo) -->
   <div id="widget-panel" class="widget-panel">
     <div class="bg-indigo-600 text-white p-4">
       <div class="flex justify-between items-center">
@@ -577,30 +567,24 @@
     <div class="relative mx-auto mt-20 w-[92vw] max-w-lg">
       <div class="bg-white rounded-xl shadow-xl overflow-hidden">
         <div class="p-5 border-b flex items-center justify-between">
-          <h3 class="text-lg font-semibold">Join Waitlist</h3>
+          <h3 class="text-lg font-semibold">Join the waitlist</h3>
           <button id="wl-close" class="text-gray-400 hover:text-gray-600"><i data-feather="x"></i></button>
         </div>
 
-        <!-- Pricing overlay note (blurred price hint) -->
-        <div class="px-5 pt-4">
-          <div class="relative rounded-lg border bg-gray-50 p-4">
-            <div class="blur-sm select-none pointer-events-none">
-              <p class="text-gray-700 font-medium">You selected: <span id="wl-plan-label">Starter</span> — <span>$49 / $99</span></p>
-              <p class="text-gray-500 text-sm mt-1">Full pricing & checkout will be available at launch.</p>
-            </div>
-            <p class="text-sm text-gray-500 mt-2">Join the waitlist to reserve your spot and get launch access.</p>
-          </div>
-        </div>
-
-        <form id="waitlist-modal-form" class="p-5 space-y-3">
+        <form id="waitlist-modal-form" class="p-5 space-y-3" autocomplete="off">
+          <p class="text-sm text-gray-700">Join the waitlist to see what’s coming next—launch updates, early access, and a free 30-day trial.</p>
           <input type="hidden" name="plan" id="wl-plan" value="Starter" />
           <div class="grid sm:grid-cols-2 gap-3">
-            <input type="text"   name="name"     placeholder="Your Name"        class="w-full border rounded-lg px-3 py-2" required>
-            <input type="email"  name="email"    placeholder="you@example.com"  class="w-full border rounded-lg px-3 py-2" required>
+            <input type="text"   name="name"     placeholder="Your Name"        class="w-full border rounded-lg px-3 py-2"
+                   required oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
+            <input type="email"  name="email"    placeholder="you@example.com"  class="w-full border rounded-lg px-3 py-2"
+                   required oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
           </div>
           <div class="grid sm:grid-cols-2 gap-3">
-            <input type="tel"    name="phone"    placeholder="Phone (optional)" class="w-full border rounded-lg px-3 py-2">
-            <input type="text"   name="company"  placeholder="Business (optional)" class="w-full border rounded-lg px-3 py-2">
+            <input type="tel"    name="phone"    placeholder="Phone (optional)" class="w-full border rounded-lg px-3 py-2"
+                   oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
+            <input type="text"   name="company"  placeholder="Business (optional)" class="w-full border rounded-lg px-3 py-2"
+                   oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
           </div>
           <label class="inline-flex items-center text-sm text-gray-600">
             <input type="checkbox" name="newsletter" class="mr-2">
@@ -613,12 +597,17 @@
     </div>
   </div>
 
-  <!-- Hidden HTML form for FormSubmit fallback (kept just in case) -->
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Hidden FormSubmit fallback -->
   <form id="hidden-form" action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="hidden">
     <input type="hidden" name="_subject" value="Join Waitlist" />
     <input type="hidden" name="_captcha"  value="false" />
     <input type="hidden" name="_template" value="table" />
-    <input type="hidden" name="_next"     value="https://bookerpilot.com/index.html#contact" />
+    <!-- Tip: if you use FormSubmit’s autoresponse, you can add: -->
+    <!-- <input type="hidden" name="_autoresponse" value="Thanks for joining the waitlist! Please reply to confirm your email." /> -->
+    <input type="hidden" name="_next"     value="https://bookerpilot.com/#home" />
     <input type="hidden" name="name">
     <input type="hidden" name="email">
     <input type="hidden" name="phone">
@@ -627,7 +616,7 @@
     <input type="hidden" name="plan">
   </form>
 
-  <!-- Supabase (optional demo code used earlier) -->
+  <!-- Supabase (optional placeholder for future AI) -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <script>
@@ -636,24 +625,24 @@
     if (window.feather && typeof feather.replace === 'function') feather.replace();
 
     // ===== Launch toggles =====
-    // Flip USE_WAITLIST to false when you're ready to sell (routes to Stripe).
-    const LAUNCH = { USE_WAITLIST: true };
+    const LAUNCH = { USE_WAITLIST: true }; // set to false later to enable Stripe
 
     // ===== Stripe (kept for launch) =====
-    // Keep your checkout links here (do not delete).
     const STRIPE = {
       Starter: "https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03",
       Pro:     "https://buy.stripe.com/6oU3cu4Khacj6O81cv43S04"
     };
 
-    // ===== Config for client-side validations/messages
+    // ===== Config for validation + UX
     const CONFIG = {
       emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
       phoneRegex: /^\+?[0-9\s().-]{7,}$/,
-      waitlistMailbox: "bookerpilot@outlook.com"
+      waitlistMailbox: "bookerpilot@outlook.com",
+      thankYouMsg: "Thanks! We’ve received your info. Please check your inbox and verify your email so we can reach back out.",
+      redirectDelayMs: 1500
     };
 
-    // ===== DOM
+    // ===== DOM refs
     const pullHandle   = document.getElementById('pull-handle');
     const revealMask   = document.getElementById('reveal-mask');
     const collapseMore = document.getElementById('collapse-more');
@@ -661,7 +650,6 @@
     const modal        = document.getElementById('wl-modal');
     const wlClose      = document.getElementById('wl-close');
     const wlPlanInput  = document.getElementById('wl-plan');
-    const wlPlanLabel  = document.getElementById('wl-plan-label');
     const wlModalForm  = document.getElementById('waitlist-modal-form');
     const wlModalMsg   = document.getElementById('wl-modal-msg');
 
@@ -669,8 +657,9 @@
     const wlPageMsg    = document.getElementById('wl-page-msg');
 
     const hiddenForm   = document.getElementById('hidden-form');
+    const toast        = document.getElementById('toast');
 
-    // ===== Pull-to-reveal behavior
+    // ===== Pull-to-reveal
     let revealOpen = false;
     function openReveal() {
       document.querySelector('.reveal-wrap').classList.add('reveal-open');
@@ -699,12 +688,12 @@
 
     function openWaitlist(plan) {
       wlPlanInput.value = plan;
-      wlPlanLabel.textContent = plan;
       modal.classList.remove('hidden');
       setTimeout(() => { document.querySelector('#waitlist-modal-form input[name="name"]').focus(); }, 50);
     }
-    wlClose.addEventListener('click', () => modal.classList.add('hidden'));
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+    function closeWaitlist() { modal.classList.add('hidden'); }
+    wlClose.addEventListener('click', closeWaitlist);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeWaitlist(); });
 
     // ===== Widget open/close
     const bubble = document.getElementById('widget-bubble');
@@ -725,7 +714,7 @@
     document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
     window.addEventListener('keydown', e => { if (e.key === 'Escape') panel.style.display === 'flex' && toggleWidget(); });
 
-    // ===== Minimal chat demo (kept)
+    // Simple demo chat
     function addBubble(text, who='bot') {
       const wrap = document.createElement('div');
       wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
@@ -747,11 +736,11 @@
       if (!q) return;
       addBubble(q, 'user');
       input.value = '';
-      setTimeout(() => addBubble("Thanks for asking! In production, this connects to our AI assistant that answers from your business data.", 'bot'), 600);
+      setTimeout(() => addBubble("Thanks! In production this connects to our AI and answers from your business data.", 'bot'), 600);
     });
     input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send.click(); }});
 
-    // ===== UTIL: Build FormData payload + client validation
+    // ===== Utilities
     function collectAndValidate(formEl, msgEl) {
       const fd = new FormData(formEl);
       const name  = (fd.get('name')  || '').toString().trim();
@@ -766,26 +755,39 @@
       return fd;
     }
 
-    // ===== Submit to FormSubmit via fetch (prevents “Form should POST” page)
-    async function sendToFormSubmit(fd, msgEl) {
-      // Copy into the hidden form so field names match exactly
+    function mirrorToHidden(fd) {
       hiddenForm.elements['name'].value      = fd.get('name')      || '';
       hiddenForm.elements['email'].value     = fd.get('email')     || '';
       hiddenForm.elements['phone'].value     = fd.get('phone')     || '';
       hiddenForm.elements['company'].value   = fd.get('company')   || '';
       hiddenForm.elements['newsletter'].value= fd.get('newsletter')? 'Yes':'No';
       hiddenForm.elements['plan'].value      = fd.get('plan')      || 'N/A';
+      return new FormData(hiddenForm);
+    }
 
-      const hf = new FormData(hiddenForm);
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function goHomeAfter(ms=CONFIG.redirectDelayMs) {
+      setTimeout(() => {
+        // Smoothly scroll to top / home
+        window.location.hash = '#home';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        closeWaitlist();
+      }, ms);
+    }
+
+    async function submitWaitlist(fd, msgEl) {
+      const payload = mirrorToHidden(fd);
       try {
-        const res = await fetch(hiddenForm.action, {
-          method: 'POST',
-          body: hf,
-          mode: 'no-cors' // FormSubmit accepts POST; no-cors avoids navigation
-        });
-        // We can't read the response in no-cors; assume success.
-        msgEl.textContent = "Thanks! Please check your inbox for a confirmation. We’ll notify you at launch.";
-        msgEl.className = "text-sm text-green-600";
+        await fetch(hiddenForm.action, { method: 'POST', body: payload, mode: 'no-cors' });
+        // success UX
+        msgEl.textContent = "";
+        showToast(CONFIG.thankYouMsg);
+        goHomeAfter();
         return true;
       } catch (e) {
         msgEl.textContent = "Hmm, something went wrong. Please try again or email " + CONFIG.waitlistMailbox;
@@ -794,20 +796,20 @@
       }
     }
 
-    // In-page waitlist form submit
+    // In-page waitlist submit
     pageForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = collectAndValidate(pageForm, wlPageMsg);
       if (!fd) return;
-      await sendToFormSubmit(fd, wlPageMsg);
+      await submitWaitlist(fd, wlPageMsg);
     });
 
-    // Modal waitlist form submit
+    // Modal waitlist submit
     wlModalForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = collectAndValidate(wlModalForm, wlModalMsg);
       if (!fd) return;
-      await sendToFormSubmit(fd, wlModalMsg);
+      await submitWaitlist(fd, wlModalMsg);
     });
   </script>
 </body>
