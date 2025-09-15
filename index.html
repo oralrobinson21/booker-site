@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
   <title>BookerPilot — Anything that needs booking needs a pilot.</title>
 
-  <!-- Tailwind -->
+  <!-- Tailwind (keep blocking for first-paint styles) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- AOS (fade in) -->
+  <!-- AOS (fade in) + Feather (defer so they don't block) -->
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-  <!-- Feather Icons -->
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" defer></script>
 
   <style>
     html { scroll-behavior: smooth; }
@@ -25,8 +26,7 @@
       background: linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 20%,#3b82f6 40%,#60a5fa 60%,#93c5fd 80%,#dbeafe 100%);
       background-size: 200% 200%;
       animation: waveBackground 8s ease infinite;
-      position: relative; overflow: hidden;
-      color: #fff;
+      position: relative; overflow: hidden; color: #fff;
     }
     @keyframes waveBackground {
       0% { background-position: 0% 50%; }
@@ -34,7 +34,7 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Reusable clouds */
+    /* Clouds */
     .clouds-stage, .hero-clouds-stage { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
     .clouds-stage svg, .hero-clouds-stage svg { position:absolute; opacity:.35; }
     .cloud { animation: drift linear infinite; filter: blur(.2px); }
@@ -107,13 +107,21 @@
 
     @media (prefers-reduced-motion: reduce) { .cloud, .sky-cloud, .plane, .banner, .hero-banner { animation: none !important; } }
 
-    /* Small utility */
+    /* Utilities */
     .muted { color: #6b7280; }
     .card { background:#fff; border:1px solid #e5e7eb; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.06); padding: 16px; }
     .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
     th, td { padding: 8px 6px; border-bottom: 1px solid #eee; text-align: left; }
     .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:12px; }
+    /* Toast */
+    .toast {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: 24px; background: #111827; color: #fff;
+      padding: .75rem 1rem; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,.2);
+      z-index: 9999; display: none;
+    }
+    .toast.show { display: block; }
   </style>
 </head>
 <body class="font-sans antialiased" id="home">
@@ -129,7 +137,7 @@
         </div>
         <div class="hidden sm:flex sm:items-center space-x-8">
           <a href="#features" class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Features</a>
-          <a href="#pricing"  class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium price-scroll">Pricing</a>
+          <a href="#pricing"  class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium" data-open-wl data-plan="Starter">Pricing</a>
           <a href="#faq"       class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">FAQ</a>
           <a href="#contact"   class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
           <a href="#pricing"   data-open-wl data-plan="Starter" class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700">Get Started</a>
@@ -168,9 +176,9 @@
     <!-- plane tail -->
     <svg class="hero-plane" viewBox="0 0 260 120" aria-hidden="true">
       <g fill="#1f2937">
-        <polygon points="40,60 15,30 12,58" fill="#111827"/>  <!-- tail fin -->
-        <rect x="40" y="52" width="210" height="10" rx="4" fill="#334155"/> <!-- tail boom -->
-        <polygon points="90,55 56,38 52,48" fill="#1f2937"/>  <!-- stab -->
+        <polygon points="40,60 15,30 12,58" fill="#111827"/>
+        <rect x="40" y="52" width="210" height="10" rx="4" fill="#334155"/>
+        <polygon points="90,55 56,38 52,48" fill="#1f2937"/>
       </g>
       <line x1="250" y1="57" x2="270" y2="75" stroke="#111827" stroke-width="2" />
     </svg>
@@ -289,7 +297,7 @@
           </div>
           <div class="mt-8 flex">
             <div class="flex-shrink-0"><div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white"><i data-feather="zap"></i></div></div>
-            <div class="ml-4"><h4 class="text-lg leading-6 font-medium text-gray-900">Works everywhere</h4><p class="mt-2 text-base text-gray-500">Squarespace, Wix, WordPress, Shopify, or custom HTML sites. Just paste and go.</p></div>
+            <div class="ml-4"><h4 class="text-lg leading-6 font-medium">Works everywhere</h4><p class="mt-2 text-base text-gray-500">Squarespace, Wix, WordPress, Shopify, or custom HTML sites. Just paste and go.</p></div>
           </div>
         </div>
 
@@ -410,7 +418,7 @@
             </div>
             <p class="mt-4"><span class="text-4xl font-extrabold">$49</span><span class="text-base text-gray-500">/mo</span></p>
             <p class="mt-4 text-sm text-gray-500">Perfect for solo entrepreneurs and small teams</p>
-            <button type="button" data-plan="Starter" class="js-open-wl mt-8 block w-full bg-gray-800 border border-gray-800 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-gray-900">Start free trial — Join Waitlist</button>
+            <a href="#pricing" data-open-wl data-plan="Starter" class="js-open-wl mt-8 block w-full bg-gray-800 border border-gray-800 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-gray-900">Start free trial — Join Waitlist</a>
           </div>
           <div class="pt-6 pb-8 px-6">
             <h4 class="text-xs font-medium tracking-wide uppercase">What's included</h4>
@@ -435,7 +443,7 @@
             </div>
             <p class="mt-4"><span class="text-4xl font-extrabold">$99</span><span class="text-base text-gray-500">/mo</span></p>
             <p class="mt-4 text-sm text-gray-500">For growing businesses that need more</p>
-            <button type="button" data-plan="Pro" class="js-open-wl mt-8 block w-full bg-indigo-600 border border-indigo-600 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-indigo-700">Start free trial — Join Waitlist</button>
+            <a href="#pricing" data-open-wl data-plan="Pro" class="js-open-wl mt-8 block w-full bg-indigo-600 border border-indigo-600 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-indigo-700">Start free trial — Join Waitlist</a>
           </div>
           <div class="pt-6 pb-8 px-6">
             <h4 class="text-xs font-medium tracking-wide uppercase">What's included</h4>
@@ -519,7 +527,7 @@
       <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
         <a href="#" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Home</a>
         <a href="#features" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Features</a>
-        <a href="#pricing" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900 price-scroll">Pricing</a>
+        <a href="#pricing" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900" data-open-wl data-plan="Starter">Pricing</a>
         <a href="#faq" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">FAQ</a>
         <a href="#contact" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Contact</a>
         <a href="#" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Privacy</a>
@@ -625,361 +633,387 @@
     <input type="hidden" name="name"><input type="hidden" name="email"><input type="hidden" name="phone"><input type="hidden" name="company"><input type="hidden" name="newsletter"><input type="hidden" name="plan">
   </form>
 
-  <!-- Supabase (kept available) -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <!-- Supabase (kept available for future) -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2" defer></script>
 
+  <!-- MAIN APP SCRIPT (wrapped to prevent white page) -->
   <script>
-    // ===== Init libs
-    AOS.init({ duration: 700, once: true });
-    if (window.feather && typeof feather.replace === 'function') feather.replace();
+    window.addEventListener('DOMContentLoaded', function () {
+      // ===== Init libs (guarded)
+      try { if (window.AOS) AOS.init({ duration: 700, once: true }); } catch(e){}
+      try { if (window.feather && typeof feather.replace === 'function') feather.replace(); } catch(e){}
 
-    // ===== Read config from URL
-    const url = new URL(location.href);
-    const BUSINESS_SLUG = (url.searchParams.get('slug') || 'sunrise-yoga').trim();
-    const API_BASE = (url.searchParams.get('api') || 'http://localhost:3001').replace(/\/+$/,'');
-    const IS_ADMIN = url.searchParams.get('admin') === '1';
-    document.getElementById('bp-slug').textContent = BUSINESS_SLUG;
+      // ===== Read config from URL
+      const url = new URL(location.href);
+      const BUSINESS_SLUG = (url.searchParams.get('slug') || 'sunrise-yoga').trim();
+      const API_BASE = (url.searchParams.get('api') || 'http://localhost:3001').replace(/\/+$/,'');
+      const IS_ADMIN = url.searchParams.get('admin') === '1';
+      const slugSpan = document.getElementById('bp-slug'); if (slugSpan) slugSpan.textContent = BUSINESS_SLUG;
 
-    // ===== Remove any legacy placeholder note if present
-    (function removeLegacy() {
-      const BAD = ['AI will be enabled in the next step', 'I’ll check your question against your business info'];
-      document.querySelectorAll('body *').forEach(el => {
-        const t = (el.textContent||'').trim();
-        if (!t) return;
-        if (BAD.some(x => t.includes(x))) {
-          let target = el;
-          for (let i=0;i<4 && target && target.parentElement;i++){
-            if (/^(SECTION|DIV|ARTICLE)$/i.test(target.tagName)) break;
-            target = target.parentElement;
+      // ===== Remove legacy placeholder note if present
+      (function removeLegacy() {
+        const BAD = ['AI will be enabled in the next step', 'I’ll check your question against your business info'];
+        document.querySelectorAll('body *').forEach(el => {
+          const t = (el.textContent||'').trim();
+          if (!t) return;
+          if (BAD.some(x => t.includes(x))) {
+            let target = el;
+            for (let i=0;i<4 && target && target.parentElement;i++){
+              if (/^(SECTION|DIV|ARTICLE)$/i.test(target.tagName)) break;
+              target = target.parentElement;
+            }
+            (target || el).remove();
           }
-          (target || el).remove();
+        });
+      })();
+
+      // ===== Pull-to-reveal
+      const pullHandle = document.getElementById('pull-handle');
+      const revealMask = document.getElementById('reveal-mask');
+      const collapseMore = document.getElementById('collapse-more');
+      let revealOpen = false;
+      function openReveal() { document.querySelector('.reveal-wrap').classList.add('reveal-open'); revealOpen = true; }
+      function closeReveal() { document.querySelector('.reveal-wrap').classList.remove('reveal-open'); revealOpen = false; revealMask.scrollTop = 0; }
+      if (pullHandle) pullHandle.addEventListener('click', () => (revealOpen ? closeReveal() : openReveal()));
+      if (collapseMore) collapseMore.addEventListener('click', closeReveal);
+
+      // ===== Widget open/close
+      const bubble = document.getElementById('widget-bubble');
+      const panel  = document.getElementById('widget-panel');
+      const closeB = document.getElementById('close-widget');
+      const input  = document.getElementById('chat-input');
+      const send   = document.getElementById('send-btn');
+      const thread = document.getElementById('chat-thread');
+
+      function toggleWidget() {
+        const show = panel.style.display !== 'flex';
+        panel.style.display = show ? 'flex' : 'none';
+        bubble.style.display = show ? 'none' : 'flex';
+        if (show) setTimeout(() => input?.focus(), 80);
+      }
+      bubble?.addEventListener('click', toggleWidget);
+      closeB?.addEventListener('click', toggleWidget);
+      document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
+      window.addEventListener('keydown', e => { if (e.key === 'Escape' && panel.style.display === 'flex') toggleWidget(); });
+
+      // ===== Chat helpers
+      function addBubble(text, who='bot') {
+        const wrap = document.createElement('div');
+        wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
+        const b = document.createElement('div');
+        b.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${who === 'user' ? 'rounded-tr-none bg-indigo-600 text-white' : 'rounded-tl-none bg-gray-100 text-gray-800'}`;
+        b.textContent = text;
+        wrap.appendChild(b);
+        thread.appendChild(wrap);
+        const sc = panel.querySelector('.overflow-y-auto'); if (sc) sc.scrollTop = sc.scrollHeight;
+      }
+      const sanitize = s => String(s || '').replace(/[\u0000-\u001F<>]/g, '').trim();
+
+      async function askAI(q) {
+        try {
+          const r = await fetch(`${API_BASE}/api/ask`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ q, businessSlug: BUSINESS_SLUG })
+          });
+          const j = await r.json();
+          if (!r.ok) throw new Error(j.error || 'AI error');
+          return j.answer || '…';
+        } catch (e) {
+          console.warn('AI ask failed:', e?.message);
+          return "Thanks! (Demo mode) In production this connects to our AI and answers from your business data.";
         }
+      }
+      async function onSend() {
+        const q = sanitize(input.value);
+        if (!q) return;
+        addBubble(q, 'user');
+        input.value = '';
+        addBubble('Thinking…', 'bot');
+        const botBubble = thread.lastElementChild.querySelector('div');
+        const ans = await askAI(q);
+        botBubble.textContent = ans;
+      }
+      send?.addEventListener('click', onSend);
+      input?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); onSend(); }});
+
+      // ===== Main Ask (page)
+      const $q = document.getElementById('q');
+      const $ask = document.getElementById('ask');
+      const $a = document.getElementById('a');
+      async function mainAsk() {
+        const q = sanitize($q.value);
+        if (!q) { $a.textContent = 'Type a question first.'; return; }
+        $a.textContent = 'Thinking…';
+        const ans = await askAI(q);
+        $a.textContent = ans;
+      }
+      $ask?.addEventListener('click', mainAsk);
+      $q?.addEventListener('keydown', e => { if (e.key === 'Enter') mainAsk(); });
+
+      // ===== Load services + Booking (page)
+      const $svc = document.getElementById('svc');
+      const $starts = document.getElementById('starts');
+      const $cust = document.getElementById('cust');
+      const $notes = document.getElementById('notes');
+      const $bookBtn = document.getElementById('bookBtn');
+      const $bookOut = document.getElementById('bookOut');
+
+      async function loadServicesMain() {
+        try {
+          if ($svc) $svc.innerHTML = '<option value="">Loading services…</option>';
+          const r = await fetch(`${API_BASE}/api/services?slug=${encodeURIComponent(BUSINESS_SLUG)}`);
+          const j = await r.json();
+          if ($svc) {
+            $svc.innerHTML = '';
+            (j.services || []).forEach(s => {
+              const opt = document.createElement('option');
+              const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
+              opt.value = s.id; opt.textContent = `${s.name} — ${price}`; $svc.appendChild(opt);
+            });
+          }
+          if ($starts && !$starts.value) {
+            const now = new Date(); now.setMinutes(now.getMinutes() + 60);
+            const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
+            $starts.value = iso;
+          }
+        } catch (e) {
+          if ($svc) $svc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
+        }
+      }
+
+      async function bookMain() {
+        const serviceId = $svc?.value;
+        const startsVal = $starts?.value;
+        const customer_name = ($cust?.value || '').trim();
+        const notes = ($notes?.value || '').trim() || null;
+        if (!serviceId || !startsVal || !customer_name) { if ($bookOut) $bookOut.textContent = 'Please fill service, start time, and name.'; return; }
+        if ($bookOut) $bookOut.textContent = 'Booking…';
+        try {
+          const r = await fetch(`${API_BASE}/api/bookings`, {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ businessSlug: BUSINESS_SLUG, serviceId, starts_at: new Date(startsVal).toISOString(), customer_name, notes })
+          });
+          const j = await r.json();
+          if ($bookOut) $bookOut.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
+        } catch (e) { if ($bookOut) $bookOut.textContent = 'Network error'; }
+      }
+      $bookBtn?.addEventListener('click', bookMain);
+
+      // ===== Widget Quick Book
+      const wsvc = document.getElementById('qb-service');
+      const wstart = document.getElementById('qb-start');
+      const wname = document.getElementById('qb-name');
+      const wnotes = document.getElementById('qb-notes');
+      const wbook = document.getElementById('qb-book');
+      const wout = document.getElementById('qb-out');
+
+      async function loadServicesWidget() {
+        try {
+          if (wsvc) wsvc.innerHTML = '<option value="">Loading services…</option>';
+          const r = await fetch(`${API_BASE}/api/services?slug=${encodeURIComponent(BUSINESS_SLUG)}`);
+          const j = await r.json();
+          if (wsvc) {
+            wsvc.innerHTML = '';
+            (j.services || []).forEach(s => {
+              const opt = document.createElement('option');
+              const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
+              opt.value = s.id; opt.textContent = `${s.name} — ${price}`; wsvc.appendChild(opt);
+            });
+          }
+          if (wstart && !wstart.value) {
+            const now = new Date(); now.setMinutes(now.getMinutes() + 60);
+            const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
+            wstart.value = iso;
+          }
+        } catch (e) {
+          if (wsvc) wsvc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
+        }
+      }
+
+      async function bookWidget() {
+        const serviceId = wsvc?.value;
+        const startsVal = wstart?.value;
+        const customer_name = (wname?.value || '').trim();
+        const notes = (wnotes?.value || '').trim() || null;
+        if (!serviceId || !startsVal || !customer_name) { if (wout) wout.textContent='Fill service, start, and name.'; return; }
+        if (wout) wout.textContent = 'Booking…';
+        try {
+          const r = await fetch(`${API_BASE}/api/bookings`, {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ businessSlug: BUSINESS_SLUG, serviceId, starts_at: new Date(startsVal).toISOString(), customer_name, notes })
+          });
+          const j = await r.json();
+          if (wout) wout.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
+        } catch (e) { if (wout) wout.textContent = 'Network error'; }
+      }
+      wbook?.addEventListener('click', bookWidget);
+
+      // ===== Dashboard (dev) — ?admin=1
+      (function dashboard() {
+        const guard = document.getElementById('guard');
+        const dashContent = document.getElementById('dashContent');
+        if (!IS_ADMIN) return;
+        if (guard) guard.style.display = 'none';
+        if (dashContent) dashContent.style.display = 'block';
+
+        const $kpis = document.getElementById('kpis');
+        const $orders = document.getElementById('orders');
+        const $payments = document.getElementById('payments');
+
+        function fmtUSD(cents){ return '$' + (cents/100).toFixed(2); }
+
+        async function renderSummary() {
+          const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/summary`);
+          const j = await r.json();
+          if (!r.ok) { if ($kpis) $kpis.textContent = j.error || 'Error'; return; }
+          const k = j.kpis || {};
+          if ($kpis) $kpis.innerHTML = `
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="card"><div class="muted">Today</div><div class="text-xl">${k.todayBookings||0} bookings</div></div>
+              <div class="card"><div class="muted">7 days</div><div class="text-xl">${k.sevenDayBookings||0} bookings</div></div>
+              <div class="card"><div class="muted">Revenue (booked)</div><div class="text-xl">${fmtUSD(k.revenueCentsBooked||0)}</div></div>
+              <div class="card"><div class="muted">Revenue (paid)</div><div class="text-xl">${fmtUSD(k.revenueCentsPaid||0)}</div></div>
+            </div>
+          `;
+          drawLine(document.getElementById('chart'), (j.series||[]).map(s=>({ x:s.date, y:s.revenue_cents||0 })));
+        }
+
+        async function renderOrders() {
+          const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/orders?limit=50`);
+          const j = await r.json();
+          if (!r.ok) { if ($orders) $orders.textContent = j.error || 'Error'; return; }
+          const rows = j.orders || [];
+          if (!rows.length) { if ($orders) $orders.textContent = 'No orders yet.'; return; }
+          if ($orders) $orders.innerHTML = `
+            <table>
+              <thead><tr><th>When</th><th>Customer</th><th>Service</th><th class="text-right">Total</th><th>Status</th><th>Payment</th></tr></thead>
+              <tbody>
+                ${rows.map(r=>`
+                  <tr>
+                    <td>${new Date(r.starts_at).toLocaleString()}</td>
+                    <td>${r.customer_name || '—'}</td>
+                    <td>${r.service_name || '—'}</td>
+                    <td class="text-right">${r.total_cents!=null?fmtUSD(r.total_cents):'—'}</td>
+                    <td><span class="pill">${r.status}</span></td>
+                    <td><span class="pill">${r.payment_status}</span></td>
+                  </tr>
+                  ${r.notes ? `<tr><td colspan="6" class="muted">Notes: ${r.notes}</td></tr>`:''}
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+
+        async function renderPayments() {
+          const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/payments?limit=50`);
+          const j = await r.json();
+          if (!r.ok) { if ($payments) $payments.textContent = j.error || 'Error'; return; }
+          const rows = j.payments || [];
+          if (!rows.length) { if ($payments) $payments.textContent = 'No payments yet.'; return; }
+          if ($payments) $payments.innerHTML = `
+            <table>
+              <thead><tr><th>When</th><th>Provider</th><th>Status</th><th class="text-right">Amount</th></tr></thead>
+              <tbody>
+                ${rows.map(p=>`
+                  <tr>
+                    <td>${new Date(p.created_at).toLocaleString()}</td>
+                    <td>${p.provider}</td>
+                    <td><span class="pill">${p.status}</span></td>
+                    <td class="text-right">${fmtUSD(p.amount_cents||0)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+
+        function drawLine(canvas, points){
+          if (!canvas) return;
+          const ctx = canvas.getContext('2d');
+          const w = canvas.width = canvas.clientWidth;
+          const h = canvas.height = canvas.clientHeight;
+          ctx.clearRect(0,0,w,h);
+          if (!points.length) return;
+          const ys = points.map(p=>p.y);
+          const minY = 0; const maxY = Math.max(...ys, 1);
+          const pad = 24;
+          const stepX = (w - pad*2) / Math.max(1, points.length - 1);
+          ctx.beginPath();
+          points.forEach((p,i)=>{
+            const x = pad + i*stepX;
+            const y = h - pad - ( (p.y - minY) / (maxY - minY) ) * (h - pad*2);
+            if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+          });
+          ctx.lineWidth = 2; ctx.strokeStyle = '#2563eb'; ctx.stroke();
+          ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(pad, h-pad); ctx.lineTo(w-pad, h-pad); ctx.stroke();
+        }
+
+        renderSummary(); renderOrders(); renderPayments();
+      })();
+
+      // ===== Waitlist logic
+      const hiddenForm  = document.getElementById('hidden-form');
+      const pageForm    = document.getElementById('waitlist-page-form');
+      const wlPageMsg   = document.getElementById('wl-page-msg');
+      const modal       = document.getElementById('wl-modal');
+      const wlClose     = document.getElementById('wl-close');
+      const wlPlanInput = document.getElementById('wl-plan');
+      const wlModalForm = document.getElementById('waitlist-modal-form');
+      const wlModalMsg  = document.getElementById('wl-modal-msg');
+      const toast       = document.getElementById('toast');
+
+      const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; const phoneRegex=/^\+?[0-9\s().-]{7,}$/;
+      function showToast(text){ if(!toast) return; toast.textContent=text; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3000); }
+      function openWaitlist(plan){ if(!modal) return; if (wlPlanInput) wlPlanInput.value=plan||'Starter'; modal.classList.remove('hidden'); setTimeout(()=>{ const nameIn=document.querySelector('#waitlist-modal-form input[name="name"]'); nameIn && nameIn.focus(); },50); }
+      function closeWaitlist(){ modal?.classList.add('hidden'); }
+      wlClose?.addEventListener('click', closeWaitlist);
+      modal?.addEventListener('click', (e)=>{ if(e.target===modal) closeWaitlist(); });
+
+      function collectAndValidate(formEl, msgEl){
+        const fd = new FormData(formEl);
+        const name=(fd.get('name')||'').toString().trim(); const email=(fd.get('email')||'').toString().trim(); const phone=(fd.get('phone')||'').toString().trim();
+        if(!name){ if(msgEl) msgEl.textContent="Please enter your name."; return null; }
+        if(!emailRegex.test(email)){ if(msgEl) msgEl.textContent="Please enter a valid email."; return null; }
+        if(phone && !phoneRegex.test(phone)){ if(msgEl) msgEl.textContent="Please enter a valid phone number."; return null; }
+        if (msgEl) msgEl.textContent=""; return fd;
+      }
+      function mirrorToHidden(fd){
+        if (!hiddenForm) return new FormData();
+        ['name','email','phone','company','newsletter','plan'].forEach(k=>{
+          const v = fd.get(k);
+          if (hiddenForm.elements[k]) hiddenForm.elements[k].value = k==='newsletter' ? (v?'Yes':'No') : (v||'');
+        });
+        return new FormData(hiddenForm);
+      }
+      async function submitWaitlist(fd, msgEl){
+        try {
+          await fetch(hiddenForm.action, { method:'POST', body: mirrorToHidden(fd), mode:'no-cors' });
+          if (msgEl) msgEl.textContent="";
+          showToast("Thanks! Check your email for a confirmation.");
+          setTimeout(()=>{ const target=document.getElementById('pricing'); target && target.scrollIntoView({behavior:'smooth'}); closeWaitlist(); },1500);
+          return true;
+        } catch(e) {
+          if (msgEl){ msgEl.textContent = "Hmm, something went wrong. Please try again."; msgEl.className="text-sm text-red-600"; }
+          return false;
+        }
+      }
+      pageForm?.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(pageForm, wlPageMsg); if(!fd) return; await submitWaitlist(fd, wlPageMsg); });
+      wlModalForm?.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(wlModalForm, wlModalMsg); if(!fd) return; await submitWaitlist(fd, wlModalMsg); });
+
+      // Scroll to pricing then open modal for any CTA marked with [data-open-wl] or .js-open-wl
+      function scrollToPricingThenOpen(plan){
+        const target = document.getElementById('pricing'); if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+        setTimeout(()=>openWaitlist(plan), 400);
+      }
+      document.querySelectorAll('[data-open-wl], .js-open-wl').forEach(el=>{
+        el.addEventListener('click', (e)=>{ e.preventDefault(); const plan = el.getAttribute('data-plan') || 'Starter'; scrollToPricingThenOpen(plan); });
       });
-    })();
 
-    // ===== Widget open/close
-    const bubble = document.getElementById('widget-bubble');
-    const panel  = document.getElementById('widget-panel');
-    const closeB = document.getElementById('close-widget');
-    const input  = document.getElementById('chat-input');
-    const send   = document.getElementById('send-btn');
-    const thread = document.getElementById('chat-thread');
-
-    function toggleWidget() {
-      const show = panel.style.display !== 'flex';
-      panel.style.display = show ? 'flex' : 'none';
-      bubble.style.display = show ? 'none' : 'flex';
-      if (show) setTimeout(() => input?.focus(), 80);
-    }
-    bubble.addEventListener('click', toggleWidget);
-    closeB.addEventListener('click', toggleWidget);
-    document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
-    window.addEventListener('keydown', e => { if (e.key === 'Escape' && panel.style.display === 'flex') toggleWidget(); });
-
-    // ===== Chat helpers
-    function addBubble(text, who='bot') {
-      const wrap = document.createElement('div');
-      wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
-      const b = document.createElement('div');
-      b.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${who === 'user' ? 'rounded-tr-none bg-indigo-600 text-white' : 'rounded-tl-none bg-gray-100 text-gray-800'}`;
-      b.textContent = text;
-      wrap.appendChild(b);
-      thread.appendChild(wrap);
-      const sc = panel.querySelector('.overflow-y-auto'); if (sc) sc.scrollTop = sc.scrollHeight;
-    }
-    const sanitize = s => String(s || '').replace(/[\u0000-\u001F<>]/g, '').trim();
-
-    async function askAI(q) {
-      try {
-        const r = await fetch(`${API_BASE}/api/ask`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ q, businessSlug: BUSINESS_SLUG })
-        });
-        const j = await r.json();
-        if (!r.ok) throw new Error(j.error || 'AI error');
-        return j.answer || '…';
-      } catch (e) {
-        console.warn('AI ask failed:', e?.message);
-        return "Thanks! (Demo mode) In production this connects to our AI and answers from your business data.";
-      }
-    }
-    async function onSend() {
-      const q = sanitize(input.value);
-      if (!q) return;
-      addBubble(q, 'user');
-      input.value = '';
-      addBubble('Thinking…', 'bot');
-      const botBubble = thread.lastElementChild.querySelector('div');
-      const ans = await askAI(q);
-      botBubble.textContent = ans;
-    }
-    send.addEventListener('click', onSend);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); onSend(); }});
-
-    // ===== Main Ask (page)
-    const $q = document.getElementById('q');
-    const $ask = document.getElementById('ask');
-    const $a = document.getElementById('a');
-    async function mainAsk() {
-      const q = sanitize($q.value);
-      if (!q) { $a.textContent = 'Type a question first.'; return; }
-      $a.textContent = 'Thinking…';
-      const ans = await askAI(q);
-      $a.textContent = ans;
-    }
-    $ask.addEventListener('click', mainAsk);
-    $q.addEventListener('keydown', e => { if (e.key === 'Enter') mainAsk(); });
-
-    // ===== Load services + Booking (page)
-    const $svc = document.getElementById('svc');
-    const $starts = document.getElementById('starts');
-    const $cust = document.getElementById('cust');
-    const $notes = document.getElementById('notes');
-    const $bookBtn = document.getElementById('bookBtn');
-    const $bookOut = document.getElementById('bookOut');
-
-    async function loadServicesMain() {
-      try {
-        $svc.innerHTML = '<option value="">Loading services…</option>';
-        const r = await fetch(`${API_BASE}/api/services?slug=${encodeURIComponent(BUSINESS_SLUG)}`);
-        const j = await r.json();
-        $svc.innerHTML = '';
-        (j.services || []).forEach(s => {
-          const opt = document.createElement('option');
-          const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
-          opt.value = s.id; opt.textContent = `${s.name} — ${price}`; $svc.appendChild(opt);
-        });
-        if (!$starts.value) {
-          const now = new Date(); now.setMinutes(now.getMinutes() + 60);
-          const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
-          $starts.value = iso;
-        }
-      } catch (e) {
-        $svc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
-      }
-    }
-
-    async function bookMain() {
-      const serviceId = $svc.value;
-      const startsVal = $starts.value;
-      const customer_name = ($cust.value || '').trim();
-      const notes = ($notes.value || '').trim() || null;
-      if (!serviceId || !startsVal || !customer_name) { $bookOut.textContent = 'Please fill service, start time, and name.'; return; }
-      $bookOut.textContent = 'Booking…';
-      try {
-        const r = await fetch(`${API_BASE}/api/bookings`, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ businessSlug: BUSINESS_SLUG, serviceId, starts_at: new Date(startsVal).toISOString(), customer_name, notes })
-        });
-        const j = await r.json();
-        $bookOut.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
-      } catch (e) { $bookOut.textContent = 'Network error'; }
-    }
-    $bookBtn.addEventListener('click', bookMain);
-
-    // ===== Widget Quick Book
-    const wsvc = document.getElementById('qb-service');
-    const wstart = document.getElementById('qb-start');
-    const wname = document.getElementById('qb-name');
-    const wnotes = document.getElementById('qb-notes');
-    const wbook = document.getElementById('qb-book');
-    const wout = document.getElementById('qb-out');
-
-    async function loadServicesWidget() {
-      try {
-        wsvc.innerHTML = '<option value="">Loading services…</option>';
-        const r = await fetch(`${API_BASE}/api/services?slug=${encodeURIComponent(BUSINESS_SLUG)}`);
-        const j = await r.json();
-        wsvc.innerHTML = '';
-        (j.services || []).forEach(s => {
-          const opt = document.createElement('option');
-          const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
-          opt.value = s.id; opt.textContent = `${s.name} — ${price}`; wsvc.appendChild(opt);
-        });
-        if (!wstart.value) {
-          const now = new Date(); now.setMinutes(now.getMinutes() + 60);
-          const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
-          wstart.value = iso;
-        }
-      } catch (e) {
-        wsvc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
-      }
-    }
-
-    async function bookWidget() {
-      const serviceId = wsvc.value;
-      const startsVal = wstart.value;
-      const customer_name = (wname.value || '').trim();
-      const notes = (wnotes.value || '').trim() || null;
-      if (!serviceId || !startsVal || !customer_name) { wout.textContent='Fill service, start, and name.'; return; }
-      wout.textContent = 'Booking…';
-      try {
-        const r = await fetch(`${API_BASE}/api/bookings`, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ businessSlug: BUSINESS_SLUG, serviceId, starts_at: new Date(startsVal).toISOString(), customer_name, notes })
-        });
-        const j = await r.json();
-        wout.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
-      } catch (e) { wout.textContent = 'Network error'; }
-    }
-    wbook.addEventListener('click', bookWidget);
-
-    // ===== Dashboard (dev) — ?admin=1
-    (function dashboard() {
-      const guard = document.getElementById('guard');
-      const dashContent = document.getElementById('dashContent');
-      if (!IS_ADMIN) return;
-      guard.style.display = 'none';
-      dashContent.style.display = 'block';
-
-      const $kpis = document.getElementById('kpis');
-      const $orders = document.getElementById('orders');
-      const $payments = document.getElementById('payments');
-
-      function fmtUSD(cents){ return '$' + (cents/100).toFixed(2); }
-
-      async function renderSummary() {
-        const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/summary`);
-        const j = await r.json();
-        if (!r.ok) { $kpis.textContent = j.error || 'Error'; return; }
-        const k = j.kpis || {};
-        $kpis.innerHTML = `
-          <div class="grid sm:grid-cols-2 gap-3">
-            <div class="card"><div class="muted">Today</div><div class="text-xl">${k.todayBookings||0} bookings</div></div>
-            <div class="card"><div class="muted">7 days</div><div class="text-xl">${k.sevenDayBookings||0} bookings</div></div>
-            <div class="card"><div class="muted">Revenue (booked)</div><div class="text-xl">${fmtUSD(k.revenueCentsBooked||0)}</div></div>
-            <div class="card"><div class="muted">Revenue (paid)</div><div class="text-xl">${fmtUSD(k.revenueCentsPaid||0)}</div></div>
-          </div>
-        `;
-        drawLine(document.getElementById('chart'), (j.series||[]).map(s=>({ x:s.date, y:s.revenue_cents||0 })));
-      }
-
-      async function renderOrders() {
-        const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/orders?limit=50`);
-        const j = await r.json();
-        if (!r.ok) { $orders.textContent = j.error || 'Error'; return; }
-        const rows = j.orders || [];
-        if (!rows.length) { $orders.textContent = 'No orders yet.'; return; }
-        $orders.innerHTML = `
-          <table>
-            <thead><tr><th>When</th><th>Customer</th><th>Service</th><th class="text-right">Total</th><th>Status</th><th>Payment</th></tr></thead>
-            <tbody>
-              ${rows.map(r=>`
-                <tr>
-                  <td>${new Date(r.starts_at).toLocaleString()}</td>
-                  <td>${r.customer_name || '—'}</td>
-                  <td>${r.service_name || '—'}</td>
-                  <td class="text-right">${r.total_cents!=null?fmtUSD(r.total_cents):'—'}</td>
-                  <td><span class="pill">${r.status}</span></td>
-                  <td><span class="pill">${r.payment_status}</span></td>
-                </tr>
-                ${r.notes ? `<tr><td colspan="6" class="muted">Notes: ${r.notes}</td></tr>`:''}
-              `).join('')}
-            </tbody>
-          </table>
-        `;
-      }
-
-      async function renderPayments() {
-        const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/payments?limit=50`);
-        const j = await r.json();
-        if (!r.ok) { $payments.textContent = j.error || 'Error'; return; }
-        const rows = j.payments || [];
-        if (!rows.length) { $payments.textContent = 'No payments yet.'; return; }
-        $payments.innerHTML = `
-          <table>
-            <thead><tr><th>When</th><th>Provider</th><th>Status</th><th class="text-right">Amount</th></tr></thead>
-            <tbody>
-              ${rows.map(p=>`
-                <tr>
-                  <td>${new Date(p.created_at).toLocaleString()}</td>
-                  <td>${p.provider}</td>
-                  <td><span class="pill">${p.status}</span></td>
-                  <td class="text-right">${fmtUSD(p.amount_cents||0)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        `;
-      }
-
-      function drawLine(canvas, points){
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const w = canvas.width = canvas.clientWidth;
-        const h = canvas.height = canvas.clientHeight;
-        ctx.clearRect(0,0,w,h);
-        if (!points.length) return;
-        const ys = points.map(p=>p.y);
-        const minY = 0; const maxY = Math.max(...ys, 1);
-        const pad = 24;
-        const stepX = (w - pad*2) / Math.max(1, points.length - 1);
-        ctx.beginPath();
-        points.forEach((p,i)=>{
-          const x = pad + i*stepX;
-          const y = h - pad - ( (p.y - minY) / (maxY - minY) ) * (h - pad*2);
-          if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-        });
-        ctx.lineWidth = 2; ctx.strokeStyle = '#2563eb'; ctx.stroke();
-        ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(pad, h-pad); ctx.lineTo(w-pad, h-pad); ctx.stroke();
-      }
-
-      renderSummary(); renderOrders(); renderPayments();
-    })();
-
-    // ===== Waitlist logic
-    const hiddenForm  = document.getElementById('hidden-form');
-    const pageForm    = document.getElementById('waitlist-page-form');
-    const wlPageMsg   = document.getElementById('wl-page-msg');
-    const modal       = document.getElementById('wl-modal');
-    const wlClose     = document.getElementById('wl-close');
-    const wlPlanInput = document.getElementById('wl-plan');
-    const wlModalForm = document.getElementById('waitlist-modal-form');
-    const wlModalMsg  = document.getElementById('wl-modal-msg');
-    const toast       = document.getElementById('toast');
-
-    const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; const phoneRegex=/^\+?[0-9\s().-]{7,}$/;
-    function showToast(text){ toast.textContent=text; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3000); }
-    function openWaitlist(plan){ wlPlanInput.value=plan||'Starter'; modal.classList.remove('hidden'); setTimeout(()=>document.querySelector('#waitlist-modal-form input[name="name"]').focus(),50); }
-    function closeWaitlist(){ modal.classList.add('hidden'); }
-    wlClose?.addEventListener('click', closeWaitlist);
-    modal?.addEventListener('click', (e)=>{ if(e.target.id==='wl-modal') closeWaitlist(); });
-
-    function collectAndValidate(formEl, msgEl){
-      const fd = new FormData(formEl);
-      const name=(fd.get('name')||'').toString().trim(); const email=(fd.get('email')||'').toString().trim(); const phone=(fd.get('phone')||'').toString().trim();
-      if(!name){ msgEl.textContent="Please enter your name."; return null; }
-      if(!emailRegex.test(email)){ msgEl.textContent="Please enter a valid email."; return null; }
-      if(phone && !phoneRegex.test(phone)){ msgEl.textContent="Please enter a valid phone number."; return null; }
-      msgEl.textContent=""; return fd;
-    }
-    function mirrorToHidden(fd){
-      ['name','email','phone','company','newsletter','plan'].forEach(k=>{
-        const v = fd.get(k); if (hiddenForm.elements[k]) hiddenForm.elements[k].value = k==='newsletter' ? (v?'Yes':'No') : (v||'');
-      });
-      return new FormData(hiddenForm);
-    }
-    async function submitWaitlist(fd, msgEl){
-      try { await fetch(hiddenForm.action, { method:'POST', body: mirrorToHidden(fd), mode:'no-cors' }); msgEl.textContent=""; showToast("Thanks! Check your email for a confirmation."); setTimeout(()=>{ window.location.hash='#pricing'; closeWaitlist(); },1500); return true; }
-      catch(e){ msgEl.textContent = "Hmm, something went wrong. Please try again."; msgEl.className="text-sm text-red-600"; return false; }
-    }
-    pageForm.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(pageForm, wlPageMsg); if(!fd) return; await submitWaitlist(fd, wlPageMsg); });
-    wlModalForm.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(wlModalForm, wlModalMsg); if(!fd) return; await submitWaitlist(fd, wlModalMsg); });
-
-    // Scroll to pricing then open modal for any CTA marked with data-open-wl or .js-open-wl
-    function scrollToPricingThenOpen(plan){
-      const target = document.getElementById('pricing');
-      if (target) { target.scrollIntoView({ behavior:'smooth', block:'start' }); }
-      setTimeout(()=>openWaitlist(plan), 400);
-    }
-    document.querySelectorAll('[data-open-wl], .js-open-wl').forEach(el=>{
-      el.addEventListener('click', (e)=>{ e.preventDefault(); const plan = el.getAttribute('data-plan') || 'Starter'; scrollToPricingThenOpen(plan); });
+      // ===== Kick off
+      loadServicesMain();
+      loadServicesWidget();
     });
-
-    // ===== Kick off
-    loadServicesMain();
-    loadServicesWidget();
   </script>
 </body>
 </html>
