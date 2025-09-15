@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BookerPilot — Anything that needs booking needs a pilot.</title>
 
   <!-- Tailwind (keep blocking for first-paint styles) -->
@@ -115,12 +112,7 @@
     th, td { padding: 8px 6px; border-bottom: 1px solid #eee; text-align: left; }
     .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:12px; }
     /* Toast */
-    .toast {
-      position: fixed; left: 50%; transform: translateX(-50%);
-      bottom: 24px; background: #111827; color: #fff;
-      padding: .75rem 1rem; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,.2);
-      z-index: 9999; display: none;
-    }
+    .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 24px; background: #111827; color: #fff; padding: .75rem 1rem; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,.2); z-index: 9999; display: none; }
     .toast.show { display: block; }
   </style>
 </head>
@@ -167,10 +159,10 @@
 
     <!-- hero drifting clouds -->
     <div class="hero-clouds-stage" aria-hidden="true">
-      <svg class="cloud slow"  style="top:18%; left:10%; width:260px;"><use href="#bp-cloud"/></svg>
-      <svg class="cloud med"   style="top:36%; left:70%; width:300px;"><use href="#bp-cloud"/></svg>
-      <svg class="cloud fast"  style="top:62%; left:26%; width:220px;"><use href="#bp-cloud"/></svg>
-      <svg class="cloud med"   style="top:75%; left:85%; width:240px;"><use href="#bp-cloud"/></svg>
+      <svg class="cloud slow"  style="top:18%; left:10%; width:260px;"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
+      <svg class="cloud med"   style="top:36%; left:70%; width:300px;"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
+      <svg class="cloud fast"  style="top:62%; left:26%; width:220px;"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
+      <svg class="cloud med"   style="top:75%; left:85%; width:240px;"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
     </div>
 
     <!-- plane tail -->
@@ -227,11 +219,11 @@
   <!-- FEATURES with soft clouds BG -->
   <section id="features" class="py-12 bg-white relative">
     <div class="clouds-stage" aria-hidden="true">
-      <svg class="cloud slow"  style="top:12%; left:5%; width:220px;"><use href="#bp-cloud"/></svg>
-      <svg class="cloud med"   style="top:26%; left:65%; width:260px;"><use href="#bp-cloud"/></svg>
-      <svg class="cloud fast"  style="top:48%; left:20%; width:180px;"><use href="#bp-cloud"/></svg>
-      <svg class="cloud med"   style="top:70%; left:75%; width:210px;"><use href="#bp-cloud"/></svg>
-      <svg class="cloud slow"  style="top:82%; left:10%; width:240px;"><use href="#bp-cloud"/></svg>
+      <svg class="cloud slow"  style="top:12%; left:5%; width:220px;"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
+      <svg class="cloud med"   style="top:26%; left:65%; width:260px;"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
+      <svg class="cloud fast"  style="top:48%; left:20%; width:180px;"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
+      <svg class="cloud med"   style="top:70%; left:75%; width:210px;"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
+      <svg class="cloud slow"  style="top:82%; left:10%; width:240px;"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -384,9 +376,9 @@
       </div>
 
       <div class="airshow mb-8" aria-label="Animated sky with airplane towing banner">
-        <svg class="sky-cloud c1" width="260" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
-        <svg class="sky-cloud c2" width="320" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
-        <svg class="sky-cloud c3" width="280" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
+        <svg class="sky-cloud c1" width="260" viewBox="0 0 200 60"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
+        <svg class="sky-cloud c2" width="320" viewBox="0 0 200 60"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
+        <svg class="sky-cloud c3" width="280" viewBox="0 0 200 60"><use href="#bp-cloud" xlink:href="#bp-cloud"/></svg>
 
         <svg class="plane" viewBox="0 0 240 100" aria-hidden="true">
           <g fill="#1f2937">
@@ -638,6 +630,15 @@
 
   <!-- MAIN APP SCRIPT (wrapped to prevent white page) -->
   <script>
+    // Minimal global error surface so a JS error doesn't look like a "white page"
+    window.addEventListener('error', function (e) {
+      const toast = document.getElementById('toast');
+      if (toast && !toast.textContent) {
+        toast.textContent = 'Script error: ' + (e.message || 'See console');
+        toast.classList.add('show');
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', function () {
       // ===== Init libs (guarded)
       try { if (window.AOS) AOS.init({ duration: 700, once: true }); } catch(e){}
@@ -646,13 +647,13 @@
       // ===== Read config from URL
       const url = new URL(location.href);
       const BUSINESS_SLUG = (url.searchParams.get('slug') || 'sunrise-yoga').trim();
-      const API_BASE = (url.searchParams.get('api') || 'http://localhost:3001').replace(/\/+$/,'');
+      const API_BASE = (url.searchParams.get('api') || (location.origin.startsWith('http') ? location.origin : 'http://localhost:3001')).replace(/\/+$/,'');
       const IS_ADMIN = url.searchParams.get('admin') === '1';
       const slugSpan = document.getElementById('bp-slug'); if (slugSpan) slugSpan.textContent = BUSINESS_SLUG;
 
-      // ===== Remove legacy placeholder note if present
-      (function removeLegacy() {
-        const BAD = ['AI will be enabled in the next step', 'I’ll check your question against your business info'];
+      // ===== Remove legacy placeholder note if present (guarded)
+      try {
+        const BAD = ['AI will be enabled in the next step', 'I\'ll check your question against your business info'];
         document.querySelectorAll('body *').forEach(el => {
           const t = (el.textContent||'').trim();
           if (!t) return;
@@ -665,19 +666,20 @@
             (target || el).remove();
           }
         });
-      })();
+      } catch(e){}
 
       // ===== Pull-to-reveal
+      const wrap = document.querySelector('.reveal-wrap');
       const pullHandle = document.getElementById('pull-handle');
       const revealMask = document.getElementById('reveal-mask');
       const collapseMore = document.getElementById('collapse-more');
       let revealOpen = false;
-      function openReveal() { document.querySelector('.reveal-wrap').classList.add('reveal-open'); revealOpen = true; }
-      function closeReveal() { document.querySelector('.reveal-wrap').classList.remove('reveal-open'); revealOpen = false; revealMask.scrollTop = 0; }
-      if (pullHandle) pullHandle.addEventListener('click', () => (revealOpen ? closeReveal() : openReveal()));
-      if (collapseMore) collapseMore.addEventListener('click', closeReveal);
+      function openReveal() { wrap && wrap.classList.add('reveal-open'); revealOpen = true; }
+      function closeReveal() { wrap && wrap.classList.remove('reveal-open'); revealOpen = false; if (revealMask) revealMask.scrollTop = 0; }
+      pullHandle && pullHandle.addEventListener('click', () => (revealOpen ? closeReveal() : openReveal()));
+      collapseMore && collapseMore.addEventListener('click', closeReveal);
 
-      // ===== Widget open/close
+      // ===== Widget open/close (null-safe)
       const bubble = document.getElementById('widget-bubble');
       const panel  = document.getElementById('widget-panel');
       const closeB = document.getElementById('close-widget');
@@ -686,18 +688,20 @@
       const thread = document.getElementById('chat-thread');
 
       function toggleWidget() {
-        const show = panel.style.display !== 'flex';
+        if (!panel || !bubble) return;
+        const show = getComputedStyle(panel).display === 'none';
         panel.style.display = show ? 'flex' : 'none';
         bubble.style.display = show ? 'none' : 'flex';
-        if (show) setTimeout(() => input?.focus(), 80);
+        if (show) setTimeout(() => input && input.focus(), 80);
       }
-      bubble?.addEventListener('click', toggleWidget);
-      closeB?.addEventListener('click', toggleWidget);
-      document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
-      window.addEventListener('keydown', e => { if (e.key === 'Escape' && panel.style.display === 'flex') toggleWidget(); });
+      bubble && bubble.addEventListener('click', toggleWidget);
+      closeB && closeB.addEventListener('click', toggleWidget);
+      document.getElementById('open-demo-widget') && document.getElementById('open-demo-widget').addEventListener('click', toggleWidget);
+      window.addEventListener('keydown', e => { if (e.key === 'Escape' && panel && getComputedStyle(panel).display === 'flex') toggleWidget(); });
 
       // ===== Chat helpers
       function addBubble(text, who='bot') {
+        if (!thread) return;
         const wrap = document.createElement('div');
         wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
         const b = document.createElement('div');
@@ -705,7 +709,7 @@
         b.textContent = text;
         wrap.appendChild(b);
         thread.appendChild(wrap);
-        const sc = panel.querySelector('.overflow-y-auto'); if (sc) sc.scrollTop = sc.scrollHeight;
+        const sc = panel && panel.querySelector('.overflow-y-auto'); if (sc) sc.scrollTop = sc.scrollHeight;
       }
       const sanitize = s => String(s || '').replace(/[\u0000-\u001F<>]/g, '').trim();
 
@@ -719,36 +723,40 @@
           if (!r.ok) throw new Error(j.error || 'AI error');
           return j.answer || '…';
         } catch (e) {
-          console.warn('AI ask failed:', e?.message);
+          console.warn('AI ask failed:', e && e.message);
           return "Thanks! (Demo mode) In production this connects to our AI and answers from your business data.";
         }
       }
       async function onSend() {
+        if (!input) return;
         const q = sanitize(input.value);
         if (!q) return;
         addBubble(q, 'user');
         input.value = '';
         addBubble('Thinking…', 'bot');
-        const botBubble = thread.lastElementChild.querySelector('div');
+        // Replace the last bot bubble's text when answer arrives
+        const lastWrap = thread && thread.lastElementChild;
+        const botBubble = lastWrap && lastWrap.querySelector('div');
         const ans = await askAI(q);
-        botBubble.textContent = ans;
+        if (botBubble) botBubble.textContent = ans;
       }
-      send?.addEventListener('click', onSend);
-      input?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); onSend(); }});
+      send && send.addEventListener('click', onSend);
+      input && input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); onSend(); }});
 
       // ===== Main Ask (page)
       const $q = document.getElementById('q');
       const $ask = document.getElementById('ask');
       const $a = document.getElementById('a');
       async function mainAsk() {
+        if (!$q || !$a) return;
         const q = sanitize($q.value);
         if (!q) { $a.textContent = 'Type a question first.'; return; }
         $a.textContent = 'Thinking…';
         const ans = await askAI(q);
         $a.textContent = ans;
       }
-      $ask?.addEventListener('click', mainAsk);
-      $q?.addEventListener('keydown', e => { if (e.key === 'Enter') mainAsk(); });
+      $ask && $ask.addEventListener('click', mainAsk);
+      $q && $q.addEventListener('keydown', e => { if (e.key === 'Enter') mainAsk(); });
 
       // ===== Load services + Booking (page)
       const $svc = document.getElementById('svc');
@@ -759,45 +767,45 @@
       const $bookOut = document.getElementById('bookOut');
 
       async function loadServicesMain() {
+        if (!$svc) return;
         try {
-          if ($svc) $svc.innerHTML = '<option value="">Loading services…</option>';
+          $svc.innerHTML = '<option value="">Loading services…</option>';
           const r = await fetch(`${API_BASE}/api/services?slug=${encodeURIComponent(BUSINESS_SLUG)}`);
           const j = await r.json();
-          if ($svc) {
-            $svc.innerHTML = '';
-            (j.services || []).forEach(s => {
-              const opt = document.createElement('option');
-              const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
-              opt.value = s.id; opt.textContent = `${s.name} — ${price}`; $svc.appendChild(opt);
-            });
-          }
+          $svc.innerHTML = '';
+          (j.services || []).forEach(s => {
+            const opt = document.createElement('option');
+            const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
+            opt.value = s.id; opt.textContent = `${s.name} — ${price}`; $svc.appendChild(opt);
+          });
           if ($starts && !$starts.value) {
             const now = new Date(); now.setMinutes(now.getMinutes() + 60);
             const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
             $starts.value = iso;
           }
         } catch (e) {
-          if ($svc) $svc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
+          $svc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
         }
       }
 
       async function bookMain() {
-        const serviceId = $svc?.value;
-        const startsVal = $starts?.value;
-        const customer_name = ($cust?.value || '').trim();
-        const notes = ($notes?.value || '').trim() || null;
-        if (!serviceId || !startsVal || !customer_name) { if ($bookOut) $bookOut.textContent = 'Please fill service, start time, and name.'; return; }
-        if ($bookOut) $bookOut.textContent = 'Booking…';
+        if (!$svc || !$starts || !$cust || !$bookOut) return;
+        const serviceId = $svc.value;
+        const startsVal = $starts.value;
+        const customer_name = ($cust.value || '').trim();
+        const notes = ($notes && $notes.value || '').trim() || null;
+        if (!serviceId || !startsVal || !customer_name) { $bookOut.textContent = 'Please fill service, start time, and name.'; return; }
+        $bookOut.textContent = 'Booking…';
         try {
           const r = await fetch(`${API_BASE}/api/bookings`, {
             method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ businessSlug: BUSINESS_SLUG, serviceId, starts_at: new Date(startsVal).toISOString(), customer_name, notes })
           });
           const j = await r.json();
-          if ($bookOut) $bookOut.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
-        } catch (e) { if ($bookOut) $bookOut.textContent = 'Network error'; }
+          $bookOut.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
+        } catch (e) { $bookOut.textContent = 'Network error'; }
       }
-      $bookBtn?.addEventListener('click', bookMain);
+      $bookBtn && $bookBtn.addEventListener('click', bookMain);
 
       // ===== Widget Quick Book
       const wsvc = document.getElementById('qb-service');
@@ -808,51 +816,51 @@
       const wout = document.getElementById('qb-out');
 
       async function loadServicesWidget() {
+        if (!wsvc) return;
         try {
-          if (wsvc) wsvc.innerHTML = '<option value="">Loading services…</option>';
+          wsvc.innerHTML = '<option value="">Loading services…</option>';
           const r = await fetch(`${API_BASE}/api/services?slug=${encodeURIComponent(BUSINESS_SLUG)}`);
           const j = await r.json();
-          if (wsvc) {
-            wsvc.innerHTML = '';
-            (j.services || []).forEach(s => {
-              const opt = document.createElement('option');
-              const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
-              opt.value = s.id; opt.textContent = `${s.name} — ${price}`; wsvc.appendChild(opt);
-            });
-          }
+          wsvc.innerHTML = '';
+          (j.services || []).forEach(s => {
+            const opt = document.createElement('option');
+            const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
+            opt.value = s.id; opt.textContent = `${s.name} — ${price}`; wsvc.appendChild(opt);
+          });
           if (wstart && !wstart.value) {
             const now = new Date(); now.setMinutes(now.getMinutes() + 60);
             const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
             wstart.value = iso;
           }
         } catch (e) {
-          if (wsvc) wsvc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
+          wsvc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
         }
       }
 
       async function bookWidget() {
-        const serviceId = wsvc?.value;
-        const startsVal = wstart?.value;
-        const customer_name = (wname?.value || '').trim();
-        const notes = (wnotes?.value || '').trim() || null;
-        if (!serviceId || !startsVal || !customer_name) { if (wout) wout.textContent='Fill service, start, and name.'; return; }
-        if (wout) wout.textContent = 'Booking…';
+        if (!wsvc || !wstart || !wname || !wout) return;
+        const serviceId = wsvc.value;
+        const startsVal = wstart.value;
+        const customer_name = (wname.value || '').trim();
+        const notes = (wnotes && wnotes.value || '').trim() || null;
+        if (!serviceId || !startsVal || !customer_name) { wout.textContent='Fill service, start, and name.'; return; }
+        wout.textContent = 'Booking…';
         try {
           const r = await fetch(`${API_BASE}/api/bookings`, {
             method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ businessSlug: BUSINESS_SLUG, serviceId, starts_at: new Date(startsVal).toISOString(), customer_name, notes })
           });
           const j = await r.json();
-          if (wout) wout.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
-        } catch (e) { if (wout) wout.textContent = 'Network error'; }
+          wout.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
+        } catch (e) { wout.textContent = 'Network error'; }
       }
-      wbook?.addEventListener('click', bookWidget);
+      wbook && wbook.addEventListener('click', bookWidget);
 
       // ===== Dashboard (dev) — ?admin=1
       (function dashboard() {
         const guard = document.getElementById('guard');
         const dashContent = document.getElementById('dashContent');
-        if (!IS_ADMIN) return;
+        if (!url.searchParams.get('admin')) return; // only when param exists
         if (guard) guard.style.display = 'none';
         if (dashContent) dashContent.style.display = 'block';
 
@@ -863,68 +871,74 @@
         function fmtUSD(cents){ return '$' + (cents/100).toFixed(2); }
 
         async function renderSummary() {
-          const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/summary`);
-          const j = await r.json();
-          if (!r.ok) { if ($kpis) $kpis.textContent = j.error || 'Error'; return; }
-          const k = j.kpis || {};
-          if ($kpis) $kpis.innerHTML = `
-            <div class="grid sm:grid-cols-2 gap-3">
-              <div class="card"><div class="muted">Today</div><div class="text-xl">${k.todayBookings||0} bookings</div></div>
-              <div class="card"><div class="muted">7 days</div><div class="text-xl">${k.sevenDayBookings||0} bookings</div></div>
-              <div class="card"><div class="muted">Revenue (booked)</div><div class="text-xl">${fmtUSD(k.revenueCentsBooked||0)}</div></div>
-              <div class="card"><div class="muted">Revenue (paid)</div><div class="text-xl">${fmtUSD(k.revenueCentsPaid||0)}</div></div>
-            </div>
-          `;
-          drawLine(document.getElementById('chart'), (j.series||[]).map(s=>({ x:s.date, y:s.revenue_cents||0 })));
+          try {
+            const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/summary`);
+            const j = await r.json();
+            if (!r.ok) { if ($kpis) $kpis.textContent = j.error || 'Error'; return; }
+            const k = j.kpis || {};
+            if ($kpis) $kpis.innerHTML = `
+              <div class="grid sm:grid-cols-2 gap-3">
+                <div class="card"><div class="muted">Today</div><div class="text-xl">${k.todayBookings||0} bookings</div></div>
+                <div class="card"><div class="muted">7 days</div><div class="text-xl">${k.sevenDayBookings||0} bookings</div></div>
+                <div class="card"><div class="muted">Revenue (booked)</div><div class="text-xl">${fmtUSD(k.revenueCentsBooked||0)}</div></div>
+                <div class="card"><div class="muted">Revenue (paid)</div><div class="text-xl">${fmtUSD(k.revenueCentsPaid||0)}</div></div>
+              </div>
+            `;
+            drawLine(document.getElementById('chart'), (j.series||[]).map(s=>({ x:s.date, y:s.revenue_cents||0 })));
+          } catch (e) { if ($kpis) $kpis.textContent = 'Error loading summary'; }
         }
 
         async function renderOrders() {
-          const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/orders?limit=50`);
-          const j = await r.json();
-          if (!r.ok) { if ($orders) $orders.textContent = j.error || 'Error'; return; }
-          const rows = j.orders || [];
-          if (!rows.length) { if ($orders) $orders.textContent = 'No orders yet.'; return; }
-          if ($orders) $orders.innerHTML = `
-            <table>
-              <thead><tr><th>When</th><th>Customer</th><th>Service</th><th class="text-right">Total</th><th>Status</th><th>Payment</th></tr></thead>
-              <tbody>
-                ${rows.map(r=>`
-                  <tr>
-                    <td>${new Date(r.starts_at).toLocaleString()}</td>
-                    <td>${r.customer_name || '—'}</td>
-                    <td>${r.service_name || '—'}</td>
-                    <td class="text-right">${r.total_cents!=null?fmtUSD(r.total_cents):'—'}</td>
-                    <td><span class="pill">${r.status}</span></td>
-                    <td><span class="pill">${r.payment_status}</span></td>
-                  </tr>
-                  ${r.notes ? `<tr><td colspan="6" class="muted">Notes: ${r.notes}</td></tr>`:''}
-                `).join('')}
-              </tbody>
-            </table>
-          `;
+          try {
+            const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/orders?limit=50`);
+            const j = await r.json();
+            if (!r.ok) { if ($orders) $orders.textContent = j.error || 'Error'; return; }
+            const rows = j.orders || [];
+            if (!rows.length) { if ($orders) $orders.textContent = 'No orders yet.'; return; }
+            if ($orders) $orders.innerHTML = `
+              <table>
+                <thead><tr><th>When</th><th>Customer</th><th>Service</th><th class="text-right">Total</th><th>Status</th><th>Payment</th></tr></thead>
+                <tbody>
+                  ${rows.map(r=>`
+                    <tr>
+                      <td>${new Date(r.starts_at).toLocaleString()}</td>
+                      <td>${r.customer_name || '—'}</td>
+                      <td>${r.service_name || '—'}</td>
+                      <td class="text-right">${r.total_cents!=null?fmtUSD(r.total_cents):'—'}</td>
+                      <td><span class="pill">${r.status}</span></td>
+                      <td><span class="pill">${r.payment_status}</span></td>
+                    </tr>
+                    ${r.notes ? `<tr><td colspan="6" class="muted">Notes: ${r.notes}</td></tr>`:''}
+                  `).join('')}
+                </tbody>
+              </table>
+            `;
+          } catch (e) { if ($orders) $orders.textContent = 'Error loading orders'; }
         }
 
         async function renderPayments() {
-          const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/payments?limit=50`);
-          const j = await r.json();
-          if (!r.ok) { if ($payments) $payments.textContent = j.error || 'Error'; return; }
-          const rows = j.payments || [];
-          if (!rows.length) { if ($payments) $payments.textContent = 'No payments yet.'; return; }
-          if ($payments) $payments.innerHTML = `
-            <table>
-              <thead><tr><th>When</th><th>Provider</th><th>Status</th><th class="text-right">Amount</th></tr></thead>
-              <tbody>
-                ${rows.map(p=>`
-                  <tr>
-                    <td>${new Date(p.created_at).toLocaleString()}</td>
-                    <td>${p.provider}</td>
-                    <td><span class="pill">${p.status}</span></td>
-                    <td class="text-right">${fmtUSD(p.amount_cents||0)}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          `;
+          try {
+            const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/payments?limit=50`);
+            const j = await r.json();
+            if (!r.ok) { if ($payments) $payments.textContent = j.error || 'Error'; return; }
+            const rows = j.payments || [];
+            if (!rows.length) { if ($payments) $payments.textContent = 'No payments yet.'; return; }
+            if ($payments) $payments.innerHTML = `
+              <table>
+                <thead><tr><th>When</th><th>Provider</th><th>Status</th><th class="text-right">Amount</th></tr></thead>
+                <tbody>
+                  ${rows.map(p=>`
+                    <tr>
+                      <td>${new Date(p.created_at).toLocaleString()}</td>
+                      <td>${p.provider}</td>
+                      <td><span class="pill">${p.status}</span></td>
+                      <td class="text-right">${fmtUSD(p.amount_cents||0)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            `;
+          } catch (e) { if ($payments) $payments.textContent = 'Error loading payments'; }
         }
 
         function drawLine(canvas, points){
@@ -966,17 +980,17 @@
       const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; const phoneRegex=/^\+?[0-9\s().-]{7,}$/;
       function showToast(text){ if(!toast) return; toast.textContent=text; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3000); }
       function openWaitlist(plan){ if(!modal) return; if (wlPlanInput) wlPlanInput.value=plan||'Starter'; modal.classList.remove('hidden'); setTimeout(()=>{ const nameIn=document.querySelector('#waitlist-modal-form input[name="name"]'); nameIn && nameIn.focus(); },50); }
-      function closeWaitlist(){ modal?.classList.add('hidden'); }
-      wlClose?.addEventListener('click', closeWaitlist);
-      modal?.addEventListener('click', (e)=>{ if(e.target===modal) closeWaitlist(); });
+      function closeWaitlist(){ modal && modal.classList.add('hidden'); }
+      wlClose && wlClose.addEventListener('click', closeWaitlist);
+      modal && modal.addEventListener('click', (e)=>{ if(e.target===modal) closeWaitlist(); });
 
       function collectAndValidate(formEl, msgEl){
         const fd = new FormData(formEl);
         const name=(fd.get('name')||'').toString().trim(); const email=(fd.get('email')||'').toString().trim(); const phone=(fd.get('phone')||'').toString().trim();
-        if(!name){ if(msgEl) msgEl.textContent="Please enter your name."; return null; }
-        if(!emailRegex.test(email)){ if(msgEl) msgEl.textContent="Please enter a valid email."; return null; }
-        if(phone && !phoneRegex.test(phone)){ if(msgEl) msgEl.textContent="Please enter a valid phone number."; return null; }
-        if (msgEl) msgEl.textContent=""; return fd;
+        if(!name){ msgEl && (msgEl.textContent="Please enter your name."); return null; }
+        if(!emailRegex.test(email)){ msgEl && (msgEl.textContent="Please enter a valid email."); return null; }
+        if(phone && !phoneRegex.test(phone)){ msgEl && (msgEl.textContent="Please enter a valid phone number."); return null; }
+        msgEl && (msgEl.textContent=""); return fd;
       }
       function mirrorToHidden(fd){
         if (!hiddenForm) return new FormData();
@@ -988,18 +1002,20 @@
       }
       async function submitWaitlist(fd, msgEl){
         try {
+          if (!hiddenForm) throw new Error('Form missing');
           await fetch(hiddenForm.action, { method:'POST', body: mirrorToHidden(fd), mode:'no-cors' });
-          if (msgEl) msgEl.textContent="";
+          msgEl && (msgEl.textContent="");
           showToast("Thanks! Check your email for a confirmation.");
           setTimeout(()=>{ const target=document.getElementById('pricing'); target && target.scrollIntoView({behavior:'smooth'}); closeWaitlist(); },1500);
           return true;
         } catch(e) {
-          if (msgEl){ msgEl.textContent = "Hmm, something went wrong. Please try again."; msgEl.className="text-sm text-red-600"; }
+          msgEl && (msgEl.textContent = "Hmm, something went wrong. Please try again.");
+          msgEl && (msgEl.className="text-sm text-red-600");
           return false;
         }
       }
-      pageForm?.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(pageForm, wlPageMsg); if(!fd) return; await submitWaitlist(fd, wlPageMsg); });
-      wlModalForm?.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(wlModalForm, wlModalMsg); if(!fd) return; await submitWaitlist(fd, wlModalMsg); });
+      pageForm && pageForm.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(pageForm, wlPageMsg); if(!fd) return; await submitWaitlist(fd, wlPageMsg); });
+      wlModalForm && wlModalForm.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(wlModalForm, wlModalMsg); if(!fd) return; await submitWaitlist(fd, wlModalMsg); });
 
       // Scroll to pricing then open modal for any CTA marked with [data-open-wl] or .js-open-wl
       function scrollToPricingThenOpen(plan){
