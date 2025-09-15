@@ -18,24 +18,49 @@
   <style>
     html { scroll-behavior: smooth; }
     [id] { scroll-margin-top: 80px; }
-    body { overflow-x: hidden; }
+    body { overflow-x: hidden; color: #111827; }
 
     /* Gradient HERO */
     .gradient-bg {
-      background: linear-gradient(135deg,
-        #1e3a8a 0%,
-        #1d4ed8 20%,
-        #3b82f6 40%,
-        #60a5fa 60%,
-        #93c5fd 80%,
-        #dbeafe 100%);
+      background: linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 20%,#3b82f6 40%,#60a5fa 60%,#93c5fd 80%,#dbeafe 100%);
       background-size: 200% 200%;
       animation: waveBackground 8s ease infinite;
+      position: relative; overflow: hidden;
+      color: #fff;
     }
     @keyframes waveBackground {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
+    }
+
+    /* Reusable clouds */
+    .clouds-stage, .hero-clouds-stage { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+    .clouds-stage svg, .hero-clouds-stage svg { position:absolute; opacity:.35; }
+    .cloud { animation: drift linear infinite; filter: blur(.2px); }
+    .cloud.slow  { animation-duration: 110s; }
+    .cloud.med   { animation-duration: 70s; }
+    .cloud.fast  { animation-duration: 45s; }
+    .cloud:nth-child(odd) { animation-direction: reverse; }
+    @keyframes drift {
+      0%   { transform: translateX(-25vw) translateY(0px); }
+      50%  { transform: translateX(25vw)  translateY(-8px); }
+      100% { transform: translateX(-25vw) translateY(0px); }
+    }
+
+    /* HERO plane tail + flapping banner */
+    .hero-plane { position:absolute; right:-260px; top: 22%; width: 260px; z-index:1; }
+    .hero-banner {
+      position:absolute; right:-20px; top: 28%; width: 460px; z-index:1;
+      transform-origin: left center;
+      animation: bannerWave 2.8s ease-in-out infinite;
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,.15));
+    }
+    @keyframes bannerWave {
+      0%,100% { transform: translateY(0) skewX(0deg) rotate(0deg); }
+      25%     { transform: translateY(-1px) skewX(-2deg) rotate(-0.6deg); }
+      50%     { transform: translateY(0) skewX(0deg) rotate(0.4deg); }
+      75%     { transform: translateY(1px) skewX(2deg) rotate(-0.4deg); }
     }
 
     /* Widget UI */
@@ -56,95 +81,114 @@
       .widget-panel  { bottom: calc(1rem + 80px); right: 1rem; }
     }
 
-    /* Pull-to-reveal features sheet */
+    /* Pull-to-reveal in Features */
     .reveal-wrap { position: relative; overflow: hidden; }
     .reveal-mask { position: relative; max-height: 0; overflow: hidden; transition: max-height .6s cubic-bezier(.4,0,.2,1); }
     .reveal-handle {
       position: relative; margin: -12px auto 0; width: 120px; height: 32px; background: #e5e7eb; border-radius: 9999px 9999px 0 0;
       box-shadow: 0 -4px 16px rgba(0,0,0,.06) inset; cursor: pointer;
     }
-    .reveal-handle::after { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 36px; height: 4px; border-radius: 9999px; background: #9ca3af; }
+    .reveal-handle::after { content: ""; position: absolute; left:50%; top:50%; transform: translate(-50%,-50%); width:36px; height:4px; border-radius:9999px; background:#9ca3af; }
     .reveal-open .reveal-mask { max-height: 1800px; }
 
-    /* Toast */
-    .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 24px; background: #111827; color: #fff; padding: .75rem 1rem; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,.2); z-index: 9999; display: none; }
-    .toast.show { display: block; }
-
-    /* ===== Soft Cloud Layers (Features section) ===== */
-    .clouds-stage { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-    .clouds-stage svg { position: absolute; opacity: .35; filter: blur(0.2px); }
-    .cloud { animation: drift linear infinite; }
-    .cloud.slow  { animation-duration: 110s; }
-    .cloud.med   { animation-duration: 70s; }
-    .cloud.fast  { animation-duration: 45s; }
-    .cloud:nth-child(odd) { animation-direction: reverse; }
-    @keyframes drift {
-      0%   { transform: translateX(-25vw) translateY(0px); }
-      50%  { transform: translateX(25vw)  translateY(-8px); }
-      100% { transform: translateX(-25vw) translateY(0px); }
-    }
-    @media (prefers-reduced-motion: reduce) { .cloud { animation: none; } }
-
-    /* ===== Airshow (Pricing section) ===== */
-    .airshow {
-      position: relative; overflow: hidden; border-radius: 16px; background: linear-gradient(180deg, #e8f2ff, #ffffff); border: 1px solid #e5e7eb;
-    }
+    /* PRICING sky + airplane */
+    .airshow { position: relative; overflow: hidden; border-radius: 16px; background: linear-gradient(180deg, #e8f2ff, #ffffff); border: 1px solid #e5e7eb; }
     .sky-cloud { position:absolute; opacity:.28; }
     .sky-cloud.c1 { top:10%; left:-20vw; animation: skyMove 48s linear infinite; }
     .sky-cloud.c2 { top:30%; left:-30vw; animation: skyMove 60s linear infinite reverse; }
     .sky-cloud.c3 { top:65%; left:-25vw; animation: skyMove 54s linear infinite; }
     @keyframes skyMove { 0% { transform: translateX(0); } 100% { transform: translateX(120vw); } }
-    @media (prefers-reduced-motion: reduce) { .sky-cloud { animation: none; } }
 
-    .plane {
-      position:absolute; top: 38%; left: -30vw; width: 220px; animation: fly 22s linear infinite;
-      filter: drop-shadow(0 3px 6px rgba(0,0,0,.15));
-    }
-    .banner {
-      position:absolute; top: 42%; left: -30vw; height: 56px; animation: fly 22s linear infinite;
-    }
-    @keyframes fly {
-      0%   { transform: translateX(0) translateY(0); }
-      50%  { transform: translateX(80vw) translateY(-6px); }
-      100% { transform: translateX(160vw) translateY(0); }
-    }
-    @media (prefers-reduced-motion: reduce) { .plane, .banner { animation: none; left: 5%; } }
+    .plane { position:absolute; top: 38%; left: -30vw; width: 220px; animation: fly 22s linear infinite; filter: drop-shadow(0 3px 6px rgba(0,0,0,.15)); }
+    .banner { position:absolute; top: 42%; left: -30vw; height: 56px; animation: fly 22s linear infinite; }
+    @keyframes fly { 0% { transform: translateX(0) translateY(0); } 50% { transform: translateX(80vw) translateY(-6px); } 100% { transform: translateX(160vw) translateY(0); } }
 
-    .enterprise-badge {
-      display: inline-flex; align-items:center; gap:6px; background: #eef2ff; color:#3730a3; border:1px solid #c7d2fe;
-      padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
-    }
+    .enterprise-badge { display:inline-flex; align-items:center; gap:6px; background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+
+    @media (prefers-reduced-motion: reduce) { .cloud, .sky-cloud, .plane, .banner, .hero-banner { animation: none !important; } }
+
+    /* Small utility */
+    .muted { color: #6b7280; }
+    .card { background:#fff; border:1px solid #e5e7eb; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.06); padding: 16px; }
+    .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 8px 6px; border-bottom: 1px solid #eee; text-align: left; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:12px; }
   </style>
 </head>
-<body class="font-sans antialiased text-gray-900" id="home">
+<body class="font-sans antialiased" id="home">
   <!-- NAV -->
   <nav class="bg-white shadow-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center">
           <div class="flex-shrink-0 flex items-center">
-            <!-- Inline logo -->
-            <svg class="h-7 w-7 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M2 12l20-6-6 20-4-8-8-4z" />
-            </svg>
+            <svg class="h-7 w-7 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12l20-6-6 20-4-8-8-4z"/></svg>
             <span class="ml-2 text-xl font-bold text-indigo-600">BookerPilot</span>
           </div>
         </div>
         <div class="hidden sm:flex sm:items-center space-x-8">
           <a href="#features" class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Features</a>
-          <a href="#pricing"  class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Pricing</a>
+          <a href="#pricing"  class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium price-scroll">Pricing</a>
           <a href="#faq"       class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">FAQ</a>
           <a href="#contact"   class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
-          <a href="#"          class="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Log In</a>
-          <a href="#pricing"   class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700">Get Started</a>
+          <a href="#pricing"   data-open-wl data-plan="Starter" class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700">Get Started</a>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <header class="gradient-bg text-white">
-    <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
+  <!-- HERO with clouds + plane + flapping banner -->
+  <header class="gradient-bg">
+    <!-- cloud symbol defs -->
+    <svg width="0" height="0" style="position:absolute">
+      <defs>
+        <symbol id="bp-cloud" viewBox="0 0 200 60">
+          <g fill="#dbeafe">
+            <ellipse cx="40" cy="40" rx="40" ry="20"/>
+            <ellipse cx="90" cy="28" rx="50" ry="28"/>
+            <ellipse cx="140" cy="38" rx="42" ry="22"/>
+          </g>
+          <g fill="#cfe0ff" opacity=".9">
+            <ellipse cx="70" cy="40" rx="26" ry="12"/>
+            <ellipse cx="120" cy="32" rx="30" ry="14"/>
+          </g>
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- hero drifting clouds -->
+    <div class="hero-clouds-stage" aria-hidden="true">
+      <svg class="cloud slow"  style="top:18%; left:10%; width:260px;"><use href="#bp-cloud"/></svg>
+      <svg class="cloud med"   style="top:36%; left:70%; width:300px;"><use href="#bp-cloud"/></svg>
+      <svg class="cloud fast"  style="top:62%; left:26%; width:220px;"><use href="#bp-cloud"/></svg>
+      <svg class="cloud med"   style="top:75%; left:85%; width:240px;"><use href="#bp-cloud"/></svg>
+    </div>
+
+    <!-- plane tail -->
+    <svg class="hero-plane" viewBox="0 0 260 120" aria-hidden="true">
+      <g fill="#1f2937">
+        <polygon points="40,60 15,30 12,58" fill="#111827"/>  <!-- tail fin -->
+        <rect x="40" y="52" width="210" height="10" rx="4" fill="#334155"/> <!-- tail boom -->
+        <polygon points="90,55 56,38 52,48" fill="#1f2937"/>  <!-- stab -->
+      </g>
+      <line x1="250" y1="57" x2="270" y2="75" stroke="#111827" stroke-width="2" />
+    </svg>
+
+    <!-- flapping banner with logo + slogan -->
+    <div class="hero-banner" aria-hidden="true">
+      <svg viewBox="0 0 520 110">
+        <path d="M0,20 Q30,10 60,20 H500 q10,12 0,24 H60 Q30,34 0,44 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <g transform="translate(70,20)">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#78350f" stroke-width="2"><path d="M2 12l20-6-6 20-4-8-8-4z"/></svg>
+          <text x="28" y="17" font-size="16" font-weight="700" fill="#78350f">BookerPilot</text>
+        </g>
+        <text x="70" y="60" font-size="14" font-weight="700" fill="#92400e">Anything that needs booking needs a pilot.</text>
+        <text x="70" y="80" font-size="12" fill="#b45309">Enterprise-ready • AI • Payments • Automations</text>
+      </svg>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
       <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1 rounded-full" data-aos="fade-up">
         <span class="enterprise-badge" style="background:rgba(255,255,255,.9);border-color:#e5e7eb;color:#111;">
           <i data-feather="shield"></i> Enterprise-ready
@@ -153,19 +197,13 @@
       <h1 class="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl" data-aos="fade-up" data-aos-delay="50">
         Turn your website into a 24/7 salesperson
       </h1>
-      <p class="mt-4 text-lg text-indigo-100" data-aos="fade-up" data-aos-delay="80">
-        <strong>Anything that needs booking needs a pilot.</strong>
-      </p>
+      <p class="mt-4 text-lg text-indigo-100" data-aos="fade-up" data-aos-delay="80"><strong>Anything that needs booking needs a pilot.</strong></p>
       <p class="mt-3 max-w-3xl mx-auto text-xl text-indigo-100" data-aos="fade-up" data-aos-delay="120">
         Add one line of code. Get more bookings, reduce no-shows, and grow your local service business.
       </p>
       <div class="mt-10 flex justify-center gap-4" data-aos="fade-up" data-aos-delay="160">
-        <a href="#pricing" class="bg-white text-indigo-600 px-8 py-3 rounded-md font-medium hover:bg-gray-50">
-          Start free trial — Starter
-        </a>
-        <a href="#pricing" class="bg-indigo-600 text-white px-8 py-3 rounded-md font-medium hover:bg-indigo-700">
-          Start free trial — Pro
-        </a>
+        <a href="#pricing" data-open-wl data-plan="Starter" class="bg-white text-indigo-600 px-8 py-3 rounded-md font-medium hover:bg-gray-50">Start free trial — Starter</a>
+        <a href="#pricing" data-open-wl data-plan="Pro" class="bg-indigo-600 text-white px-8 py-3 rounded-md font-medium hover:bg-indigo-700">Start free trial — Pro</a>
       </div>
     </div>
   </header>
@@ -173,34 +211,14 @@
   <!-- LOGO CLOUD -->
   <section class="bg-gray-50 py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <p class="text-center text-sm font-semibold uppercase text-gray-500 tracking-wide">
-        Trusted by local businesses worldwide
-      </p>
-      <div class="mt-6 text-center text-gray-500">
-        Cleaning services • Salons • Tutors • Handymen • Personal trainers • Pet groomers
-      </div>
+      <p class="text-center text-sm font-semibold uppercase text-gray-500 tracking-wide">Trusted by local businesses worldwide</p>
+      <div class="mt-6 text-center text-gray-500">Cleaning services • Salons • Tutors • Handymen • Personal trainers • Pet groomers</div>
     </div>
   </section>
 
   <!-- FEATURES with soft clouds BG -->
   <section id="features" class="py-12 bg-white relative">
-    <!-- Cloud symbol defs + layer -->
     <div class="clouds-stage" aria-hidden="true">
-      <svg width="0" height="0" style="position:absolute">
-        <defs>
-          <symbol id="bp-cloud" viewBox="0 0 200 60">
-            <g fill="#dbeafe">
-              <ellipse cx="40" cy="40" rx="40" ry="20"/>
-              <ellipse cx="90" cy="28" rx="50" ry="28"/>
-              <ellipse cx="140" cy="38" rx="42" ry="22"/>
-            </g>
-            <g fill="#cfe0ff" opacity=".9">
-              <ellipse cx="70" cy="40" rx="26" ry="12"/>
-              <ellipse cx="120" cy="32" rx="30" ry="14"/>
-            </g>
-          </symbol>
-        </defs>
-      </svg>
       <svg class="cloud slow"  style="top:12%; left:5%; width:220px;"><use href="#bp-cloud"/></svg>
       <svg class="cloud med"   style="top:26%; left:65%; width:260px;"><use href="#bp-cloud"/></svg>
       <svg class="cloud fast"  style="top:48%; left:20%; width:180px;"><use href="#bp-cloud"/></svg>
@@ -211,90 +229,38 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <div class="lg:text-center">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Features</h2>
-        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">
-          Everything you need to grow your business
-        </p>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">Everything you need to grow your business</p>
       </div>
 
       <div class="mt-10 grid md:grid-cols-2 gap-8">
         <div class="flex" data-aos="fade-up">
-          <div class="flex-shrink-0">
-            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-              <i data-feather="message-square"></i>
-            </div>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">AI Chat & FAQ</h3>
-            <p class="mt-2 text-base text-gray-500">Answer customer questions instantly using your business knowledge. No more missed leads after hours.</p>
-          </div>
+          <div class="flex-shrink-0"><div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white"><i data-feather="message-square"></i></div></div>
+          <div class="ml-4"><h3 class="text-lg font-medium">AI Chat & FAQ</h3><p class="mt-2 muted">Answer customer questions instantly using your business knowledge. No more missed leads after hours.</p></div>
         </div>
-
         <div class="flex" data-aos="fade-up" data-aos-delay="100">
-          <div class="flex-shrink-0">
-            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-              <i data-feather="clock"></i>
-            </div>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">Real-time Availability</h3>
-            <p class="mt-2 text-base text-gray-500">Show your actual availability from Google Calendar or set custom hours. No double bookings.</p>
-          </div>
+          <div class="flex-shrink-0"><div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white"><i data-feather="clock"></i></div></div>
+          <div class="ml-4"><h3 class="text-lg font-medium">Real-time Availability</h3><p class="mt-2 muted">Show your actual availability from Google Calendar or set custom hours. No double bookings.</p></div>
         </div>
-
         <div class="flex" data-aos="fade-up" data-aos-delay="200">
-          <div class="flex-shrink-0">
-            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-              <i data-feather="credit-card"></i>
-            </div>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">Secure Payments</h3>
-            <p class="mt-2 text-base text-gray-500">Collect deposits via Stripe to reduce no-shows. PCI-compliant with no extra work for you.</p>
-          </div>
+          <div class="flex-shrink-0"><div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white"><i data-feather="credit-card"></i></div></div>
+          <div class="ml-4"><h3 class="text-lg font-medium">Secure Payments</h3><p class="mt-2 muted">Collect deposits via Stripe to reduce no-shows. PCI-compliant with no extra work for you.</p></div>
         </div>
-
         <div class="flex" data-aos="fade-up" data-aos-delay="300">
-          <div class="flex-shrink-0">
-            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-              <i data-feather="smartphone"></i>
-            </div>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">Text & Email Reminders</h3>
-            <p class="mt-2 text-base text-gray-500">Automatic confirmations and reminders reduce cancellations and keep customers happy.</p>
-          </div>
+          <div class="flex-shrink-0"><div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white"><i data-feather="smartphone"></i></div></div>
+          <div class="ml-4"><h3 class="text-lg font-medium">Text & Email Reminders</h3><p class="mt-2 muted">Automatic confirmations and reminders reduce cancellations and keep customers happy.</p></div>
         </div>
       </div>
 
-      <!-- Reveal more -->
       <div class="reveal-wrap mt-10">
         <div id="pull-handle" class="reveal-handle" title="Pull to reveal more features" aria-label="Reveal more features"></div>
         <div id="reveal-mask" class="reveal-mask">
           <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="database"></i></div></div>
-              <div class="ml-4"><h4 class="font-semibold text-gray-900">CRM Sync</h4><p class="text-sm text-gray-600 mt-1">Sync leads, notes, and bookings to your CRM with one click.</p></div>
-            </div>
-            <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="shield"></i></div></div>
-              <div class="ml-4"><h4 class="font-semibold text-gray-900">Role-based Access</h4><p class="text-sm text-gray-600 mt-1">Owner, manager, and staff views with audit logs and secure SSO.</p></div>
-            </div>
-            <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="bar-chart-2"></i></div></div>
-              <div class="ml-4"><h4 class="font-semibold text-gray-900">Revenue Insights</h4><p class="text-sm text-gray-600 mt-1">Track bookings, conversion, and cohort retention.</p></div>
-            </div>
-            <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="zap"></i></div></div>
-              <div class="ml-4"><h4 class="font-semibold text-gray-900">Automations</h4><p class="text-sm text-gray-600 mt-1">Drip emails, SMS follow-ups, win-back campaigns.</p></div>
-            </div>
-            <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="globe"></i></div></div>
-              <div class="ml-4"><h4 class="font-semibold text-gray-900">Multi-location</h4><p class="text-sm text-gray-600 mt-1">Route bookings to the right branch automatically.</p></div>
-            </div>
-            <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="git-merge"></i></div></div>
-              <div class="ml-4"><h4 class="font-semibold text-gray-900">Open API</h4><p class="text-sm text-gray-600 mt-1">Webhooks, REST, and Zapier connectors.</p></div>
-            </div>
+            <div class="border rounded-lg p-5 bg-white shadow-sm flex"><div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="database"></i></div></div><div class="ml-4"><h4 class="font-semibold">CRM Sync</h4><p class="text-sm muted mt-1">Sync leads, notes, and bookings to your CRM with one click.</p></div></div>
+            <div class="border rounded-lg p-5 bg-white shadow-sm flex"><div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="shield"></i></div></div><div class="ml-4"><h4 class="font-semibold">Role-based Access</h4><p class="text-sm muted mt-1">Owner, manager, and staff views with audit logs and secure SSO.</p></div></div>
+            <div class="border rounded-lg p-5 bg-white shadow-sm flex"><div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="bar-chart-2"></i></div></div><div class="ml-4"><h4 class="font-semibold">Revenue Insights</h4><p class="text-sm muted mt-1">Track bookings, conversion, and cohort retention.</p></div></div>
+            <div class="border rounded-lg p-5 bg-white shadow-sm flex"><div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="zap"></i></div></div><div class="ml-4"><h4 class="font-semibold">Automations</h4><p class="text-sm muted mt-1">Drip emails, SMS follow-ups, win-back campaigns.</p></div></div>
+            <div class="border rounded-lg p-5 bg-white shadow-sm flex"><div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="globe"></i></div></div><div class="ml-4"><h4 class="font-semibold">Multi-location</h4><p class="text-sm muted mt-1">Route bookings to the right branch automatically.</p></div></div>
+            <div class="border rounded-lg p-5 bg-white shadow-sm flex"><div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="git-merge"></i></div></div><div class="ml-4"><h4 class="font-semibold">Open API</h4><p class="text-sm muted mt-1">Webhooks, REST, and Zapier connectors.</p></div></div>
           </div>
           <div class="text-center mt-6"><button id="collapse-more" class="text-indigo-600 text-sm hover:text-indigo-800 underline">Hide extra features</button></div>
         </div>
@@ -315,7 +281,7 @@
           <h3 class="text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl">One-line installation</h3>
           <p class="mt-3 text-lg text-gray-500">Add these two lines to your website and you're done. No coding required.</p>
           <div class="mt-6 bg-gray-800 rounded-lg p-4 overflow-x-auto">
-            <pre class="text-gray-200 text-sm"><code>&lt;script src="https://cdn.booker.ai/widget.js" async&gt;&lt;/script&gt;
+<pre class="text-gray-200 text-sm"><code>&lt;script src="https://cdn.booker.ai/widget.js" async&gt;&lt;/script&gt;
 &lt;script&gt;
   window.BookerPilot = window.BookerPilot || function(){ (BookerPilot.q = BookerPilot.q || []).push(arguments); };
   BookerPilot("init", { business: "your-business-slug" });
@@ -323,10 +289,7 @@
           </div>
           <div class="mt-8 flex">
             <div class="flex-shrink-0"><div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white"><i data-feather="zap"></i></div></div>
-            <div class="ml-4">
-              <h4 class="text-lg leading-6 font-medium text-gray-900">Works everywhere</h4>
-              <p class="mt-2 text-base text-gray-500">Squarespace, Wix, WordPress, Shopify, or custom HTML sites. Just paste and go.</p>
-            </div>
+            <div class="ml-4"><h4 class="text-lg leading-6 font-medium text-gray-900">Works everywhere</h4><p class="mt-2 text-base text-gray-500">Squarespace, Wix, WordPress, Shopify, or custom HTML sites. Just paste and go.</p></div>
           </div>
         </div>
 
@@ -347,33 +310,87 @@
     </div>
   </section>
 
+  <!-- MAIN ASK + BOOKING + DASHBOARD (DEV) -->
+  <section id="app" class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-3 gap-6">
+        <!-- Ask -->
+        <section class="card">
+          <h2 class="text-lg font-semibold mb-1">Ask a question</h2>
+          <p class="muted mb-3">Ask about the business or anything general.</p>
+          <div class="row">
+            <input id="q" class="flex-1 border rounded-md px-3 py-2" placeholder="Try: Do you offer private sessions?" />
+            <button id="ask" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Ask</button>
+          </div>
+          <p id="a" class="mt-3"></p>
+        </section>
+
+        <!-- Booking -->
+        <section class="card">
+          <h2 class="text-lg font-semibold mb-1">Start a booking</h2>
+          <p class="muted mb-3">Choose service, pick a time, add notes.</p>
+          <label class="muted text-sm">Service</label>
+          <select id="svc" class="w-full border rounded-md px-3 py-2"></select>
+          <label class="muted text-sm mt-2">Start time</label>
+          <input id="starts" type="datetime-local" class="w-full border rounded-md px-3 py-2" />
+          <label class="muted text-sm mt-2">Customer name</label>
+          <input id="cust" placeholder="Full name" class="w-full border rounded-md px-3 py-2" />
+          <label class="muted text-sm mt-2">Notes (what was requested)</label>
+          <textarea id="notes" rows="3" class="w-full border rounded-md px-3 py-2" placeholder="Anything special to request?"></textarea>
+          <button id="bookBtn" class="mt-3 bg-indigo-600 text-white px-4 py-2 rounded-md">Book it</button>
+          <p id="bookOut" class="mt-3"></p>
+        </section>
+
+        <!-- Dashboard (dev) -->
+        <section class="card">
+          <h2 class="text-lg font-semibold mb-1">Business Dashboard</h2>
+          <p id="guard" class="muted mb-3">Append <code>?admin=1</code> to the URL to view.</p>
+          <div id="dashContent" style="display:none;">
+            <div class="grid gap-3">
+              <div class="card">
+                <h3 class="font-semibold">Overview</h3>
+                <div id="kpis" class="mt-2 text-sm"></div>
+                <canvas id="chart" class="mt-3" style="width:100%;height:160px;"></canvas>
+              </div>
+              <div class="card">
+                <h3 class="font-semibold">Orders</h3>
+                <div id="orders" class="mt-2 text-sm"></div>
+              </div>
+              <div class="card">
+                <h3 class="font-semibold">Payments</h3>
+                <div id="payments" class="mt-2 text-sm"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
   <!-- PRICING with Airplane & Banner -->
   <section id="pricing" class="bg-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center mb-12">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Pricing</h2>
-        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">Simple plans that grow with you</p>
+      <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">Simple plans that grow with you</p>
       </div>
 
       <div class="airshow mb-8" aria-label="Animated sky with airplane towing banner">
-        <!-- parallax clouds -->
         <svg class="sky-cloud c1" width="260" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
         <svg class="sky-cloud c2" width="320" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
         <svg class="sky-cloud c3" width="280" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
 
-        <!-- airplane -->
         <svg class="plane" viewBox="0 0 240 100" aria-hidden="true">
           <g fill="#1f2937">
-            <path d="M10 60 L220 50 L220 58 L10 70 Z" fill="#334155"/> <!-- fuselage -->
-            <polygon points="60,55 20,45 18,55" fill="#1f2937"/>     <!-- tail fin -->
-            <polygon points="120,52 70,32 66,42" fill="#1f2937"/>    <!-- wing -->
-            <polygon points="150,56 200,76 204,66" fill="#1f2937"/>  <!-- rear wing -->
-            <circle cx="210" cy="54" r="6" fill="#0ea5e9"/>          <!-- nose/window hint -->
+            <path d="M10 60 L220 50 L220 58 L10 70 Z" fill="#334155"/>
+            <polygon points="60,55 20,45 18,55" fill="#1f2937"/>
+            <polygon points="120,52 70,32 66,42" fill="#1f2937"/>
+            <polygon points="150,56 200,76 204,66" fill="#1f2937"/>
+            <circle cx="210" cy="54" r="6" fill="#0ea5e9"/>
           </g>
           <line x1="220" y1="56" x2="260" y2="70" stroke="#111827" stroke-width="2" />
         </svg>
 
-        <!-- banner with slogan -->
         <div class="banner" aria-hidden="true">
           <svg viewBox="0 0 420 80">
             <path d="M0,10 Q30,0 60,10 H400 q10,10 0,20 H60 Q30,30 0,40 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
@@ -384,18 +401,19 @@
       </div>
 
       <div class="mt-12 grid sm:grid-cols-2 gap-6 lg:max-w-4xl lg:mx-auto">
+        <!-- Starter -->
         <div class="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200" data-aos="fade-up">
           <div class="p-6">
             <div class="flex items-center justify-between">
-              <h3 class="text-lg leading-6 font-medium text-gray-900">Starter</h3>
+              <h3 class="text-lg leading-6 font-medium">Starter</h3>
               <span class="enterprise-badge"><i data-feather="shield"></i> Enterprise-ready</span>
             </div>
-            <p class="mt-4"><span class="text-4xl font-extrabold text-gray-900">$49</span><span class="text-base font-medium text-gray-500">/mo</span></p>
+            <p class="mt-4"><span class="text-4xl font-extrabold">$49</span><span class="text-base text-gray-500">/mo</span></p>
             <p class="mt-4 text-sm text-gray-500">Perfect for solo entrepreneurs and small teams</p>
             <button type="button" data-plan="Starter" class="js-open-wl mt-8 block w-full bg-gray-800 border border-gray-800 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-gray-900">Start free trial — Join Waitlist</button>
           </div>
           <div class="pt-6 pb-8 px-6">
-            <h4 class="text-xs font-medium text-gray-900 tracking-wide uppercase">What's included</h4>
+            <h4 class="text-xs font-medium tracking-wide uppercase">What's included</h4>
             <ul class="mt-6 space-y-4 text-sm text-gray-600">
               <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>50 conversations/month</li>
               <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>15 bookings/month</li>
@@ -405,21 +423,22 @@
           </div>
         </div>
 
+        <!-- Pro -->
         <div class="border border-indigo-500 rounded-lg shadow-sm divide-y divide-indigo-500" data-aos="fade-up" data-aos-delay="100">
           <div class="p-6">
             <div class="flex justify-between items-start">
               <div>
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Pro</h3>
+                <h3 class="text-lg leading-6 font-medium">Pro</h3>
                 <p class="mt-2 text-sm text-indigo-700">Most popular</p>
               </div>
               <span class="enterprise-badge"><i data-feather="shield"></i> Enterprise-ready</span>
             </div>
-            <p class="mt-4"><span class="text-4xl font-extrabold text-gray-900">$99</span><span class="text-base font-medium text-gray-500">/mo</span></p>
+            <p class="mt-4"><span class="text-4xl font-extrabold">$99</span><span class="text-base text-gray-500">/mo</span></p>
             <p class="mt-4 text-sm text-gray-500">For growing businesses that need more</p>
             <button type="button" data-plan="Pro" class="js-open-wl mt-8 block w-full bg-indigo-600 border border-indigo-600 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-indigo-700">Start free trial — Join Waitlist</button>
           </div>
           <div class="pt-6 pb-8 px-6">
-            <h4 class="text-xs font-medium text-gray-900 tracking-wide uppercase">What's included</h4>
+            <h4 class="text-xs font-medium tracking-wide uppercase">What's included</h4>
             <ul class="mt-6 space-y-4 text-sm text-gray-600">
               <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>Unlimited conversations</li>
               <li class="flex items-start"><i data-feather="check" class="h-5 w-5 text-green-500 mr-2"></i>100 bookings/month</li>
@@ -445,23 +464,20 @@
 
       <dl class="grid md:grid-cols-2 gap-6">
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up">
-          <dt class="text-lg leading-6 font-medium text-gray-900">What types of businesses is this for?</dt>
+          <dt class="text-lg leading-6 font-medium">What types of businesses is this for?</dt>
           <dd class="mt-2 text-base text-gray-600">Any local service business that takes appointments: cleaners, salons, tutors, handymen, personal trainers, pet groomers, and more.</dd>
         </div>
-
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="100">
-          <dt class="text-lg leading-6 font-medium text-gray-900">How does the AI work?</dt>
+          <dt class="text-lg leading-6 font-medium">How does the AI work?</dt>
           <dd class="mt-2 text-base text-gray-600">It answers from the information you provide (FAQs, services, pricing) and can use OpenAI safely for free-form questions.</dd>
         </div>
-
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="200">
-          <dt class="text-lg leading-6 font-medium text-gray-900">Can I try before I pay?</dt>
+          <dt class="text-lg leading-6 font-medium">Can I try before I pay?</dt>
           <dd class="mt-2 text-base text-gray-600">Yes—after launch, all plans include a <strong>free 30-day trial</strong>. Join the waitlist to be notified.</dd>
         </div>
-
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="300">
-          <dt class="text-lg leading-6 font-medium text-gray-900">How do payments work?</dt>
-          <dd class="mt-2 text-base text-gray-600">We use Stripe for secure payments. When we launch, you’ll be able to pay on site; until then, pricing buttons route to our waitlist.</dd>
+          <dt class="text-lg leading-6 font-medium">How do payments work?</dt>
+          <dd class="mt-2 text-base text-gray-600">We use Stripe for secure payments. Until launch, pricing buttons route to our waitlist.</dd>
         </div>
       </dl>
     </div>
@@ -490,9 +506,7 @@
             <option value="Not sure">Not sure yet</option>
           </select>
         </div>
-        <label class="inline-flex items-center text-sm text-gray-600">
-          <input type="checkbox" name="newsletter" class="mr-2"> Also subscribe me to product updates & newsletters.
-        </label>
+        <label class="inline-flex items-center text-sm text-gray-600"><input type="checkbox" name="newsletter" class="mr-2"> Also subscribe me to product updates & newsletters.</label>
         <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 shadow">Join Waitlist</button>
         <p id="wl-page-msg" class="text-sm text-gray-500"></p>
       </form>
@@ -505,7 +519,7 @@
       <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
         <a href="#" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Home</a>
         <a href="#features" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Features</a>
-        <a href="#pricing" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Pricing</a>
+        <a href="#pricing" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900 price-scroll">Pricing</a>
         <a href="#faq" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">FAQ</a>
         <a href="#contact" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Contact</a>
         <a href="#" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Privacy</a>
@@ -550,7 +564,7 @@
 
       <!-- Quick Book -->
       <div class="mt-4 border-t pt-4">
-        <h4 class="text-sm font-semibold text-gray-800 mb-2">Quick Book</h4>
+        <h4 class="text-sm font-semibold mb-2">Quick Book</h4>
         <div class="space-y-2">
           <select id="qb-service" class="w-full border rounded-md px-3 py-2 text-sm" aria-label="Service"></select>
           <input id="qb-start" type="datetime-local" class="w-full border rounded-md px-3 py-2 text-sm" aria-label="Start time" />
@@ -570,7 +584,39 @@
     </div>
   </div>
 
-  <!-- Waitlist: hidden HTML form for FormSubmit fallback -->
+  <!-- WAITLIST MODAL -->
+  <div id="wl-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="relative mx-auto mt-20 w-[92vw] max-w-lg">
+      <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+        <div class="p-5 border-b flex items-center justify-between">
+          <h3 class="text-lg font-semibold">Join the waitlist</h3>
+          <button id="wl-close" class="text-gray-400 hover:text-gray-600" aria-label="Close waitlist"><i data-feather="x"></i></button>
+        </div>
+
+        <form id="waitlist-modal-form" class="p-5 space-y-3" autocomplete="off">
+          <p class="text-sm text-gray-700">Join the waitlist to see what’s coming next—launch updates, early access, and a free 30-day trial.</p>
+          <input type="hidden" name="plan" id="wl-plan" value="Starter" />
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input type="text"   name="name"     placeholder="Your Name"        class="w-full border rounded-lg px-3 py-2" required>
+            <input type="email"  name="email"    placeholder="you@example.com"  class="w-full border rounded-lg px-3 py-2" required>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input type="tel"    name="phone"    placeholder="Phone (optional)" class="w-full border rounded-lg px-3 py-2">
+            <input type="text"   name="company"  placeholder="Business (optional)" class="w-full border rounded-lg px-3 py-2">
+          </div>
+          <label class="inline-flex items-center text-sm text-gray-600"><input type="checkbox" name="newsletter" class="mr-2"> Also subscribe me to product updates & newsletters.</label>
+          <button type="submit" class="w-full bg-indigo-600 text-white py-2.5 rounded-lg hover:bg-indigo-700">Join Waitlist</button>
+          <p id="wl-modal-msg" class="text-sm text-gray-500"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Hidden FormSubmit fallback -->
   <form id="hidden-form" action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="hidden">
     <input type="hidden" name="_subject" value="Join Waitlist" />
     <input type="hidden" name="_captcha"  value="false" />
@@ -583,27 +629,35 @@
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <script>
-    // Init libs
+    // ===== Init libs
     AOS.init({ duration: 700, once: true });
     if (window.feather && typeof feather.replace === 'function') feather.replace();
 
-    // URL config (?slug= & ?api=)
+    // ===== Read config from URL
     const url = new URL(location.href);
     const BUSINESS_SLUG = (url.searchParams.get('slug') || 'sunrise-yoga').trim();
     const API_BASE = (url.searchParams.get('api') || 'http://localhost:3001').replace(/\/+$/,'');
+    const IS_ADMIN = url.searchParams.get('admin') === '1';
     document.getElementById('bp-slug').textContent = BUSINESS_SLUG;
 
-    // Pull-to-reveal
-    const pullHandle = document.getElementById('pull-handle');
-    const revealMask = document.getElementById('reveal-mask');
-    const collapseMore = document.getElementById('collapse-more');
-    let revealOpen = false;
-    function openReveal(){ document.querySelector('.reveal-wrap').classList.add('reveal-open'); revealOpen = true; }
-    function closeReveal(){ document.querySelector('.reveal-wrap').classList.remove('reveal-open'); revealOpen = false; revealMask.scrollTop = 0; }
-    if (pullHandle) pullHandle.addEventListener('click', () => (revealOpen ? closeReveal() : openReveal()));
-    if (collapseMore) collapseMore.addEventListener('click', closeReveal);
+    // ===== Remove any legacy placeholder note if present
+    (function removeLegacy() {
+      const BAD = ['AI will be enabled in the next step', 'I’ll check your question against your business info'];
+      document.querySelectorAll('body *').forEach(el => {
+        const t = (el.textContent||'').trim();
+        if (!t) return;
+        if (BAD.some(x => t.includes(x))) {
+          let target = el;
+          for (let i=0;i<4 && target && target.parentElement;i++){
+            if (/^(SECTION|DIV|ARTICLE)$/i.test(target.tagName)) break;
+            target = target.parentElement;
+          }
+          (target || el).remove();
+        }
+      });
+    })();
 
-    // Widget open/close
+    // ===== Widget open/close
     const bubble = document.getElementById('widget-bubble');
     const panel  = document.getElementById('widget-panel');
     const closeB = document.getElementById('close-widget');
@@ -622,14 +676,12 @@
     document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
     window.addEventListener('keydown', e => { if (e.key === 'Escape' && panel.style.display === 'flex') toggleWidget(); });
 
-    // Chat bubbles
+    // ===== Chat helpers
     function addBubble(text, who='bot') {
       const wrap = document.createElement('div');
       wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
       const b = document.createElement('div');
-      b.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-        who === 'user' ? 'rounded-tr-none bg-indigo-600 text-white' : 'rounded-tl-none bg-gray-100 text-gray-800'
-      }`;
+      b.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${who === 'user' ? 'rounded-tr-none bg-indigo-600 text-white' : 'rounded-tl-none bg-gray-100 text-gray-800'}`;
       b.textContent = text;
       wrap.appendChild(b);
       thread.appendChild(wrap);
@@ -664,67 +716,235 @@
     send.addEventListener('click', onSend);
     input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); onSend(); }});
 
-    // Quick Book
-    const $svc = document.getElementById('qb-service');
-    const $start = document.getElementById('qb-start');
-    const $name = document.getElementById('qb-name');
-    const $notes = document.getElementById('qb-notes');
-    const $book = document.getElementById('qb-book');
-    const $out = document.getElementById('qb-out');
+    // ===== Main Ask (page)
+    const $q = document.getElementById('q');
+    const $ask = document.getElementById('ask');
+    const $a = document.getElementById('a');
+    async function mainAsk() {
+      const q = sanitize($q.value);
+      if (!q) { $a.textContent = 'Type a question first.'; return; }
+      $a.textContent = 'Thinking…';
+      const ans = await askAI(q);
+      $a.textContent = ans;
+    }
+    $ask.addEventListener('click', mainAsk);
+    $q.addEventListener('keydown', e => { if (e.key === 'Enter') mainAsk(); });
 
-    async function loadServices() {
+    // ===== Load services + Booking (page)
+    const $svc = document.getElementById('svc');
+    const $starts = document.getElementById('starts');
+    const $cust = document.getElementById('cust');
+    const $notes = document.getElementById('notes');
+    const $bookBtn = document.getElementById('bookBtn');
+    const $bookOut = document.getElementById('bookOut');
+
+    async function loadServicesMain() {
       try {
         $svc.innerHTML = '<option value="">Loading services…</option>';
         const r = await fetch(`${API_BASE}/api/services?slug=${encodeURIComponent(BUSINESS_SLUG)}`);
         const j = await r.json();
-        if (!r.ok) throw new Error(j.error || 'Failed to load services');
         $svc.innerHTML = '';
         (j.services || []).forEach(s => {
           const opt = document.createElement('option');
           const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
           opt.value = s.id; opt.textContent = `${s.name} — ${price}`; $svc.appendChild(opt);
         });
-        if (!$start.value) {
+        if (!$starts.value) {
           const now = new Date(); now.setMinutes(now.getMinutes() + 60);
           const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
-          $start.value = iso;
+          $starts.value = iso;
         }
       } catch (e) {
-        console.warn('Services failed:', e?.message);
         $svc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
       }
     }
-    async function makeBooking() {
+
+    async function bookMain() {
       const serviceId = $svc.value;
-      const startsVal = $start.value;
-      const customer_name = ($name.value || '').trim();
+      const startsVal = $starts.value;
+      const customer_name = ($cust.value || '').trim();
       const notes = ($notes.value || '').trim() || null;
-      if (!serviceId || !startsVal || !customer_name) { $out.textContent = 'Please pick a service, a start time, and enter your name.'; return; }
-      $out.textContent = 'Booking…';
+      if (!serviceId || !startsVal || !customer_name) { $bookOut.textContent = 'Please fill service, start time, and name.'; return; }
+      $bookOut.textContent = 'Booking…';
       try {
         const r = await fetch(`${API_BASE}/api/bookings`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ businessSlug: BUSINESS_SLUG, serviceId, starts_at: new Date(startsVal).toISOString(), customer_name, notes })
         });
         const j = await r.json();
-        $out.textContent = r.ok ? `Booked! Confirmation id: ${j.id}` : (j.error || 'Error');
-      } catch (e) { $out.textContent = 'Network error'; }
+        $bookOut.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
+      } catch (e) { $bookOut.textContent = 'Network error'; }
     }
-    $book.addEventListener('click', makeBooking);
+    $bookBtn.addEventListener('click', bookMain);
 
-    // Waitlist helpers
-    const hiddenForm = document.getElementById('hidden-form');
-    const pageForm   = document.getElementById('waitlist-page-form');
-    const wlPageMsg  = document.getElementById('wl-page-msg');
-    const modal        = document.getElementById('wl-modal');
-    const wlClose      = document.getElementById('wl-close');
-    const wlPlanInput  = document.getElementById('wl-plan');
-    const wlModalForm  = document.getElementById('waitlist-modal-form');
-    const wlModalMsg   = document.getElementById('wl-modal-msg');
-    const toast        = document.getElementById('toast');
-    const STRIPE = { Starter: "#", Pro: "#" };
-    const LAUNCH = { USE_WAITLIST: true };
+    // ===== Widget Quick Book
+    const wsvc = document.getElementById('qb-service');
+    const wstart = document.getElementById('qb-start');
+    const wname = document.getElementById('qb-name');
+    const wnotes = document.getElementById('qb-notes');
+    const wbook = document.getElementById('qb-book');
+    const wout = document.getElementById('qb-out');
+
+    async function loadServicesWidget() {
+      try {
+        wsvc.innerHTML = '<option value="">Loading services…</option>';
+        const r = await fetch(`${API_BASE}/api/services?slug=${encodeURIComponent(BUSINESS_SLUG)}`);
+        const j = await r.json();
+        wsvc.innerHTML = '';
+        (j.services || []).forEach(s => {
+          const opt = document.createElement('option');
+          const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
+          opt.value = s.id; opt.textContent = `${s.name} — ${price}`; wsvc.appendChild(opt);
+        });
+        if (!wstart.value) {
+          const now = new Date(); now.setMinutes(now.getMinutes() + 60);
+          const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
+          wstart.value = iso;
+        }
+      } catch (e) {
+        wsvc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
+      }
+    }
+
+    async function bookWidget() {
+      const serviceId = wsvc.value;
+      const startsVal = wstart.value;
+      const customer_name = (wname.value || '').trim();
+      const notes = (wnotes.value || '').trim() || null;
+      if (!serviceId || !startsVal || !customer_name) { wout.textContent='Fill service, start, and name.'; return; }
+      wout.textContent = 'Booking…';
+      try {
+        const r = await fetch(`${API_BASE}/api/bookings`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ businessSlug: BUSINESS_SLUG, serviceId, starts_at: new Date(startsVal).toISOString(), customer_name, notes })
+        });
+        const j = await r.json();
+        wout.textContent = r.ok ? `Booked! id: ${j.id}` : (j.error || 'Error');
+      } catch (e) { wout.textContent = 'Network error'; }
+    }
+    wbook.addEventListener('click', bookWidget);
+
+    // ===== Dashboard (dev) — ?admin=1
+    (function dashboard() {
+      const guard = document.getElementById('guard');
+      const dashContent = document.getElementById('dashContent');
+      if (!IS_ADMIN) return;
+      guard.style.display = 'none';
+      dashContent.style.display = 'block';
+
+      const $kpis = document.getElementById('kpis');
+      const $orders = document.getElementById('orders');
+      const $payments = document.getElementById('payments');
+
+      function fmtUSD(cents){ return '$' + (cents/100).toFixed(2); }
+
+      async function renderSummary() {
+        const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/summary`);
+        const j = await r.json();
+        if (!r.ok) { $kpis.textContent = j.error || 'Error'; return; }
+        const k = j.kpis || {};
+        $kpis.innerHTML = `
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="card"><div class="muted">Today</div><div class="text-xl">${k.todayBookings||0} bookings</div></div>
+            <div class="card"><div class="muted">7 days</div><div class="text-xl">${k.sevenDayBookings||0} bookings</div></div>
+            <div class="card"><div class="muted">Revenue (booked)</div><div class="text-xl">${fmtUSD(k.revenueCentsBooked||0)}</div></div>
+            <div class="card"><div class="muted">Revenue (paid)</div><div class="text-xl">${fmtUSD(k.revenueCentsPaid||0)}</div></div>
+          </div>
+        `;
+        drawLine(document.getElementById('chart'), (j.series||[]).map(s=>({ x:s.date, y:s.revenue_cents||0 })));
+      }
+
+      async function renderOrders() {
+        const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/orders?limit=50`);
+        const j = await r.json();
+        if (!r.ok) { $orders.textContent = j.error || 'Error'; return; }
+        const rows = j.orders || [];
+        if (!rows.length) { $orders.textContent = 'No orders yet.'; return; }
+        $orders.innerHTML = `
+          <table>
+            <thead><tr><th>When</th><th>Customer</th><th>Service</th><th class="text-right">Total</th><th>Status</th><th>Payment</th></tr></thead>
+            <tbody>
+              ${rows.map(r=>`
+                <tr>
+                  <td>${new Date(r.starts_at).toLocaleString()}</td>
+                  <td>${r.customer_name || '—'}</td>
+                  <td>${r.service_name || '—'}</td>
+                  <td class="text-right">${r.total_cents!=null?fmtUSD(r.total_cents):'—'}</td>
+                  <td><span class="pill">${r.status}</span></td>
+                  <td><span class="pill">${r.payment_status}</span></td>
+                </tr>
+                ${r.notes ? `<tr><td colspan="6" class="muted">Notes: ${r.notes}</td></tr>`:''}
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      async function renderPayments() {
+        const r = await fetch(`${API_BASE}/api/business/${encodeURIComponent(BUSINESS_SLUG)}/payments?limit=50`);
+        const j = await r.json();
+        if (!r.ok) { $payments.textContent = j.error || 'Error'; return; }
+        const rows = j.payments || [];
+        if (!rows.length) { $payments.textContent = 'No payments yet.'; return; }
+        $payments.innerHTML = `
+          <table>
+            <thead><tr><th>When</th><th>Provider</th><th>Status</th><th class="text-right">Amount</th></tr></thead>
+            <tbody>
+              ${rows.map(p=>`
+                <tr>
+                  <td>${new Date(p.created_at).toLocaleString()}</td>
+                  <td>${p.provider}</td>
+                  <td><span class="pill">${p.status}</span></td>
+                  <td class="text-right">${fmtUSD(p.amount_cents||0)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      function drawLine(canvas, points){
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width = canvas.clientWidth;
+        const h = canvas.height = canvas.clientHeight;
+        ctx.clearRect(0,0,w,h);
+        if (!points.length) return;
+        const ys = points.map(p=>p.y);
+        const minY = 0; const maxY = Math.max(...ys, 1);
+        const pad = 24;
+        const stepX = (w - pad*2) / Math.max(1, points.length - 1);
+        ctx.beginPath();
+        points.forEach((p,i)=>{
+          const x = pad + i*stepX;
+          const y = h - pad - ( (p.y - minY) / (maxY - minY) ) * (h - pad*2);
+          if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        });
+        ctx.lineWidth = 2; ctx.strokeStyle = '#2563eb'; ctx.stroke();
+        ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(pad, h-pad); ctx.lineTo(w-pad, h-pad); ctx.stroke();
+      }
+
+      renderSummary(); renderOrders(); renderPayments();
+    })();
+
+    // ===== Waitlist logic
+    const hiddenForm  = document.getElementById('hidden-form');
+    const pageForm    = document.getElementById('waitlist-page-form');
+    const wlPageMsg   = document.getElementById('wl-page-msg');
+    const modal       = document.getElementById('wl-modal');
+    const wlClose     = document.getElementById('wl-close');
+    const wlPlanInput = document.getElementById('wl-plan');
+    const wlModalForm = document.getElementById('waitlist-modal-form');
+    const wlModalMsg  = document.getElementById('wl-modal-msg');
+    const toast       = document.getElementById('toast');
+
     const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; const phoneRegex=/^\+?[0-9\s().-]{7,}$/;
+    function showToast(text){ toast.textContent=text; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3000); }
+    function openWaitlist(plan){ wlPlanInput.value=plan||'Starter'; modal.classList.remove('hidden'); setTimeout(()=>document.querySelector('#waitlist-modal-form input[name="name"]').focus(),50); }
+    function closeWaitlist(){ modal.classList.add('hidden'); }
+    wlClose?.addEventListener('click', closeWaitlist);
+    modal?.addEventListener('click', (e)=>{ if(e.target.id==='wl-modal') closeWaitlist(); });
 
     function collectAndValidate(formEl, msgEl){
       const fd = new FormData(formEl);
@@ -740,28 +960,26 @@
       });
       return new FormData(hiddenForm);
     }
-    function showToast(text){ toast.textContent=text; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3000); }
-    function openWaitlist(plan){ wlPlanInput.value=plan; modal.classList.remove('hidden'); setTimeout(()=>document.querySelector('#waitlist-modal-form input[name="name"]').focus(),50); }
-    function closeWaitlist(){ modal.classList.add('hidden'); }
-    function goHomeAfter(ms=1500){ setTimeout(()=>{ window.location.hash='#home'; window.scrollTo({top:0,behavior:'smooth'}); closeWaitlist(); }, ms); }
     async function submitWaitlist(fd, msgEl){
-      try { await fetch(hiddenForm.action, { method:'POST', body: mirrorToHidden(fd), mode:'no-cors' }); msgEl.textContent=""; showToast("Thanks! Check your email for a confirmation."); goHomeAfter(); return true; }
+      try { await fetch(hiddenForm.action, { method:'POST', body: mirrorToHidden(fd), mode:'no-cors' }); msgEl.textContent=""; showToast("Thanks! Check your email for a confirmation."); setTimeout(()=>{ window.location.hash='#pricing'; closeWaitlist(); },1500); return true; }
       catch(e){ msgEl.textContent = "Hmm, something went wrong. Please try again."; msgEl.className="text-sm text-red-600"; return false; }
     }
-    document.querySelectorAll('.js-open-wl, .price-trigger').forEach(el=>{
-      el.addEventListener('click', ()=>{
-        const plan = el.getAttribute('data-plan') || 'Starter';
-        if (LAUNCH.USE_WAITLIST) openWaitlist(plan); else { const u=STRIPE[plan]; if (u) location.href=u; }
-      });
-    });
-    document.getElementById('wl-close')?.addEventListener('click', closeWaitlist);
-    document.getElementById('wl-modal')?.addEventListener('click', e=>{ if(e.target.id==='wl-modal') closeWaitlist(); });
-
     pageForm.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(pageForm, wlPageMsg); if(!fd) return; await submitWaitlist(fd, wlPageMsg); });
     wlModalForm.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(wlModalForm, wlModalMsg); if(!fd) return; await submitWaitlist(fd, wlModalMsg); });
 
-    // Load data
-    loadServices();
+    // Scroll to pricing then open modal for any CTA marked with data-open-wl or .js-open-wl
+    function scrollToPricingThenOpen(plan){
+      const target = document.getElementById('pricing');
+      if (target) { target.scrollIntoView({ behavior:'smooth', block:'start' }); }
+      setTimeout(()=>openWaitlist(plan), 400);
+    }
+    document.querySelectorAll('[data-open-wl], .js-open-wl').forEach(el=>{
+      el.addEventListener('click', (e)=>{ e.preventDefault(); const plan = el.getAttribute('data-plan') || 'Starter'; scrollToPricingThenOpen(plan); });
+    });
+
+    // ===== Kick off
+    loadServicesMain();
+    loadServicesWidget();
   </script>
 </body>
 </html>
