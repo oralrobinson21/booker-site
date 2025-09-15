@@ -100,6 +100,70 @@
       z-index: 9999; display: none;
     }
     .toast.show { display: block; }
+
+    /* ===== Soft Cloud Layers (Features section) ===== */
+    .clouds-stage {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    }
+    .clouds-stage svg { position: absolute; opacity: .35; filter: blur(0.2px); }
+    .cloud { animation: drift linear infinite; }
+    .cloud.slow  { animation-duration: 110s; }
+    .cloud.med   { animation-duration: 70s; }
+    .cloud.fast  { animation-duration: 45s; }
+    .cloud:nth-child(odd) { animation-direction: reverse; }
+    @keyframes drift {
+      0%   { transform: translateX(-25vw) translateY(0px); }
+      50%  { transform: translateX(25vw)  translateY(-8px); }
+      100% { transform: translateX(-25vw) translateY(0px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cloud { animation: none; }
+    }
+
+    /* ===== Airshow (Pricing section) ===== */
+    .airshow {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #e8f2ff, #ffffff);
+      border: 1px solid #e5e7eb;
+    }
+    .sky-cloud { position:absolute; opacity:.28; }
+    .sky-cloud.c1 { top:10%; left:-20vw; animation: skyMove 48s linear infinite; }
+    .sky-cloud.c2 { top:30%; left:-30vw; animation: skyMove 60s linear infinite reverse; }
+    .sky-cloud.c3 { top:65%; left:-25vw; animation: skyMove 54s linear infinite; }
+    @keyframes skyMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(120vw); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sky-cloud { animation: none; }
+    }
+
+    .plane {
+      position:absolute; top: 38%; left: -30vw; width: 220px;
+      animation: fly 22s linear infinite;
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,.15));
+    }
+    @keyframes fly {
+      0%   { transform: translateX(0) translateY(0); }
+      50%  { transform: translateX(80vw) translateY(-6px); }
+      100% { transform: translateX(160vw) translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .plane { animation: none; left: 5%; }
+    }
+
+    .banner {
+      position:absolute; top: 42%; left: -30vw; height: 56px;
+      animation: fly 22s linear infinite;
+    }
+    .banner svg { height: 56px; }
+    .enterprise-badge {
+      display: inline-flex; align-items:center; gap:6px;
+      background: #eef2ff; color:#3730a3; border:1px solid #c7d2fe;
+      padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    }
   </style>
 </head>
 <body class="font-sans antialiased text-gray-900" id="home">
@@ -110,7 +174,7 @@
         <div class="flex items-center">
           <div class="flex-shrink-0 flex items-center">
             <!-- Inline logo -->
-            <svg class="h-7 w-7 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg class="h-7 w-7 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M2 12l20-6-6 20-4-8-8-4z" />
             </svg>
             <span class="ml-2 text-xl font-bold text-indigo-600">BookerPilot</span>
@@ -131,16 +195,21 @@
   <!-- HERO -->
   <header class="gradient-bg text-white">
     <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
-      <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl" data-aos="fade-up">
+      <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1 rounded-full" data-aos="fade-up">
+        <span class="enterprise-badge" style="background:rgba(255,255,255,.9);border-color:#e5e7eb;color:#111;">
+          <i data-feather="shield"></i> Enterprise-ready
+        </span>
+      </div>
+      <h1 class="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl" data-aos="fade-up" data-aos-delay="50">
         Turn your website into a 24/7 salesperson
       </h1>
-      <p class="mt-4 text-lg text-indigo-100" data-aos="fade-up" data-aos-delay="50">
+      <p class="mt-4 text-lg text-indigo-100" data-aos="fade-up" data-aos-delay="80">
         <strong>Anything that needs booking needs a pilot.</strong>
       </p>
-      <p class="mt-3 max-w-3xl mx-auto text-xl text-indigo-100" data-aos="fade-up" data-aos-delay="100">
+      <p class="mt-3 max-w-3xl mx-auto text-xl text-indigo-100" data-aos="fade-up" data-aos-delay="120">
         Add one line of code. Get more bookings, reduce no-shows, and grow your local service business.
       </p>
-      <div class="mt-10 flex justify-center gap-4" data-aos="fade-up" data-aos-delay="150">
+      <div class="mt-10 flex justify-center gap-4" data-aos="fade-up" data-aos-delay="160">
         <a href="#pricing" class="bg-white text-indigo-600 px-8 py-3 rounded-md font-medium hover:bg-gray-50">
           Start free trial — Starter
         </a>
@@ -163,9 +232,35 @@
     </div>
   </section>
 
-  <!-- FEATURES -->
-  <section id="features" class="py-12 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- FEATURES with soft clouds BG -->
+  <section id="features" class="py-12 bg-white relative">
+    <!-- Cloud layers behind content -->
+    <div class="clouds-stage" aria-hidden="true">
+      <!-- Reusable cloud SVG symbol -->
+      <svg width="0" height="0" style="position:absolute">
+        <defs>
+          <symbol id="bp-cloud" viewBox="0 0 200 60">
+            <g fill="#dbeafe">
+              <ellipse cx="40" cy="40" rx="40" ry="20"/>
+              <ellipse cx="90" cy="28" rx="50" ry="28"/>
+              <ellipse cx="140" cy="38" rx="42" ry="22"/>
+            </g>
+            <g fill="#cfe0ff" opacity=".9">
+              <ellipse cx="70" cy="40" rx="26" ry="12"/>
+              <ellipse cx="120" cy="32" rx="30" ry="14"/>
+            </g>
+          </symbol>
+        </defs>
+      </svg>
+      <!-- Instances -->
+      <svg class="cloud slow"  style="top:12%; left:5%; width:220px;"><use href="#bp-cloud"/></svg>
+      <svg class="cloud med"   style="top:26%; left:65%; width:260px;"><use href="#bp-cloud"/></svg>
+      <svg class="cloud fast"  style="top:48%; left:20%; width:180px;"><use href="#bp-cloud"/></svg>
+      <svg class="cloud med"   style="top:70%; left:75%; width:210px;"><use href="#bp-cloud"/></svg>
+      <svg class="cloud slow"  style="top:82%; left:10%; width:240px;"><use href="#bp-cloud"/></svg>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <div class="lg:text-center">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Features</h2>
         <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">
@@ -234,7 +329,7 @@
 
       <!-- Pull-to-reveal handle -->
       <div class="reveal-wrap mt-10">
-        <div id="pull-handle" class="reveal-handle" title="Pull to reveal more features"></div>
+        <div id="pull-handle" class="reveal-handle" title="Pull to reveal more features" aria-label="Reveal more features"></div>
 
         <!-- Hidden area -->
         <div id="reveal-mask" class="reveal-mask">
@@ -373,7 +468,7 @@
     </div>
   </section>
 
-  <!-- PRICING -->
+  <!-- PRICING with Airplane & Banner -->
   <section id="pricing" class="bg-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center mb-12">
@@ -383,11 +478,47 @@
         </p>
       </div>
 
+      <!-- Airshow stage -->
+      <div class="airshow mb-8" aria-label="Animated sky with airplane towing banner">
+        <!-- parallax clouds -->
+        <svg class="sky-cloud c1" width="260" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
+        <svg class="sky-cloud c2" width="320" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
+        <svg class="sky-cloud c3" width="280" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
+
+        <!-- airplane -->
+        <svg class="plane" viewBox="0 0 240 100" aria-hidden="true">
+          <!-- simple 2D plane -->
+          <g fill="#1f2937">
+            <path d="M10 60 L220 50 L220 58 L10 70 Z" fill="#334155"/> <!-- fuselage -->
+            <polygon points="60,55 20,45 18,55" fill="#1f2937"/>     <!-- tail fin -->
+            <polygon points="120,52 70,32 66,42" fill="#1f2937"/>    <!-- wing -->
+            <polygon points="150,56 200,76 204,66" fill="#1f2937"/>  <!-- rear wing -->
+            <circle cx="210" cy="54" r="6" fill="#0ea5e9"/>          <!-- nose / window hint -->
+          </g>
+          <!-- rope to banner -->
+          <line x1="220" y1="56" x2="260" y2="70" stroke="#111827" stroke-width="2" />
+        </svg>
+
+        <!-- banner with slogan -->
+        <div class="banner" aria-hidden="true">
+          <svg viewBox="0 0 420 80">
+            <!-- cloth -->
+            <path d="M0,10 Q30,0 60,10 H400 q10,10 0,20 H60 Q30,30 0,40 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+            <!-- text -->
+            <text x="70" y="32" font-size="16" font-weight="700" fill="#78350f">Anything that needs booking needs a pilot.</text>
+            <text x="70" y="54" font-size="12" fill="#92400e">Enterprise-ready • AI • Payments • Automations</text>
+          </svg>
+        </div>
+      </div>
+
       <div class="mt-12 grid sm:grid-cols-2 gap-6 lg:max-w-4xl lg:mx-auto">
         <!-- Starter -->
         <div class="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200" data-aos="fade-up">
           <div class="p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">Starter</h3>
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Starter</h3>
+              <span class="enterprise-badge"><i data-feather="shield"></i> Enterprise-ready</span>
+            </div>
             <p class="mt-4">
               <span class="text-4xl font-extrabold text-gray-900">$49</span>
               <span class="text-base font-medium text-gray-500">/mo</span>
@@ -417,6 +548,7 @@
                 <h3 class="text-lg leading-6 font-medium text-gray-900">Pro</h3>
                 <p class="mt-2 text-sm text-indigo-700">Most popular</p>
               </div>
+              <span class="enterprise-badge"><i data-feather="shield"></i> Enterprise-ready</span>
             </div>
             <p class="mt-4">
               <span class="text-4xl font-extrabold text-gray-900">$99</span>
@@ -541,14 +673,18 @@
   </div>
 
   <!-- WIDGET PANEL -->
-  <div id="widget-panel" class="widget-panel">
+  <div id="widget-panel" class="widget-panel" role="dialog" aria-label="BookerPilot Assistant">
     <div class="bg-indigo-600 text-white p-4">
       <div class="flex justify-between items-center">
         <h3 class="font-medium flex items-center gap-2">
-          <svg class="h-5 w-5 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12l20-6-6 20-4-8-8-4z"/></svg>
+          <svg class="h-5 w-5 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12l20-6-6 20-4-8-8-4z"/></svg>
           BookerPilot — <span id="bp-slug" class="opacity-90"></span>
         </h3>
-        <button id="close-widget" class="text-white hover:text-indigo-200"><i data-feather="x"></i></button>
+        <div class="hidden sm:flex items-center gap-2">
+          <span class="enterprise-badge bg-white/10 text-white border-white/30"><i data-feather="shield"></i> Enterprise-ready</span>
+          <span class="hidden md:inline text-white/80 text-xs">Anything that needs booking needs a pilot.</span>
+        </div>
+        <button id="close-widget" class="text-white hover:text-indigo-200" aria-label="Close widget"><i data-feather="x"></i></button>
       </div>
     </div>
 
@@ -565,20 +701,20 @@
       <div class="mt-4 border-t pt-4">
         <h4 class="text-sm font-semibold text-gray-800 mb-2">Quick Book</h4>
         <div class="space-y-2">
-          <select id="qb-service" class="w-full border rounded-md px-3 py-2 text-sm"></select>
-          <input id="qb-start" type="datetime-local" class="w-full border rounded-md px-3 py-2 text-sm" />
-          <input id="qb-name"  type="text" placeholder="Customer name" class="w-full border rounded-md px-3 py-2 text-sm" />
-          <textarea id="qb-notes" rows="2" placeholder="Notes (optional)" class="w-full border rounded-md px-3 py-2 text-sm"></textarea>
+          <select id="qb-service" class="w-full border rounded-md px-3 py-2 text-sm" aria-label="Service"></select>
+          <input id="qb-start" type="datetime-local" class="w-full border rounded-md px-3 py-2 text-sm" aria-label="Start time" />
+          <input id="qb-name"  type="text" placeholder="Customer name" class="w-full border rounded-md px-3 py-2 text-sm" aria-label="Customer name"/>
+          <textarea id="qb-notes" rows="2" placeholder="Notes (optional)" class="w-full border rounded-md px-3 py-2 text-sm" aria-label="Notes"></textarea>
           <button id="qb-book" class="w-full bg-indigo-600 text-white rounded-md py-2 text-sm hover:bg-indigo-700">Book</button>
-          <p id="qb-out" class="text-xs text-gray-600"></p>
+          <p id="qb-out" class="text-xs text-gray-600" aria-live="polite"></p>
         </div>
       </div>
     </div>
 
     <div class="border-t border-gray-200 p-3">
       <div class="flex items-center">
-        <input id="chat-input" type="text" placeholder="Type your question…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-        <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
+        <input id="chat-input" type="text" placeholder="Type your question…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500" aria-label="Your message">
+        <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700" aria-label="Send">
           <i data-feather="send"></i>
         </button>
       </div>
@@ -592,7 +728,7 @@
       <div class="bg-white rounded-xl shadow-xl overflow-hidden">
         <div class="p-5 border-b flex items-center justify-between">
           <h3 class="text-lg font-semibold">Join the waitlist</h3>
-          <button id="wl-close" class="text-gray-400 hover:text-gray-600"><i data-feather="x"></i></button>
+          <button id="wl-close" class="text-gray-400 hover:text-gray-600" aria-label="Close"><i data-feather="x"></i></button>
         </div>
 
         <form id="waitlist-modal-form" class="p-5 space-y-3" autocomplete="off">
@@ -622,7 +758,7 @@
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="toast"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <!-- Hidden FormSubmit fallback -->
   <form id="hidden-form" action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="hidden">
@@ -853,7 +989,7 @@
     }
     $book.addEventListener('click', makeBooking);
 
-    // ===== Utilities
+    // ===== Utilities (waitlist forms)
     function collectAndValidate(formEl, msgEl) {
       const fd = new FormData(formEl);
       const name  = (fd.get('name')  || '').toString().trim();
@@ -908,6 +1044,8 @@
     }
 
     // In-page waitlist submit
+    const pageForm = document.getElementById('waitlist-page-form');
+    const wlPageMsg = document.getElementById('wl-page-msg');
     pageForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = collectAndValidate(pageForm, wlPageMsg);
@@ -916,6 +1054,8 @@
     });
 
     // Modal waitlist submit
+    const wlModalForm = document.getElementById('waitlist-modal-form');
+    const wlModalMsg = document.getElementById('wl-modal-msg');
     wlModalForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = collectAndValidate(wlModalForm, wlModalMsg);
