@@ -64,8 +64,8 @@
       position: fixed;
       bottom: calc(2rem + 80px);
       right: 2rem;
-      width: 400px; max-width: 92vw;
-      height: 520px;
+      width: 420px; max-width: 92vw;
+      height: 560px;
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
@@ -91,6 +91,10 @@
       width: 36px; height: 4px; border-radius: 9999px; background: #9ca3af;
     }
     .reveal-open .reveal-mask { max-height: 1800px; }
+
+    /* Quick replies (chips) */
+    .chip { border: 1px solid #e5e7eb; border-radius: 9999px; padding: .25rem .6rem; font-size: .75rem; cursor: pointer; }
+    .chip:hover { background: #f3f4f6; }
 
     /* Toast */
     .toast {
@@ -351,13 +355,19 @@
         <div class="relative" data-aos="fade-left">
           <div class="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
             <h3 class="text-xl font-bold text-gray-900 mb-4">Demo: Ask the assistant</h3>
-            <p class="text-gray-600 mb-4">Try asking:</p>
-            <ul class="space-y-2 text-gray-700 text-sm">
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“How can you help my nail business?”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“What’s your cancellation policy?”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Do you service Brooklyn?”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Price for a 1 bedroom cleaning?”</span></li>
-            </ul>
+            <p class="text-gray-600 mb-4">Click a prompt to try:</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="chip" data-q="What is BookerPilot?">What is BookerPilot?</span>
+              <span class="chip" data-q="How does BookerPilot work?">How does it work?</span>
+              <span class="chip" data-q="What industries do you support?">Industries</span>
+              <span class="chip" data-q="Starter vs Pro">Starter vs Pro</span>
+              <span class="chip" data-q="Do you integrate with Google Calendar?">Google Calendar</span>
+              <span class="chip" data-q="Do you integrate with Stripe?">Stripe</span>
+              <span class="chip" data-q="How do reminders work?">Reminders</span>
+              <span class="chip" data-q="Is my data secure?">Security</span>
+              <span class="chip" data-q="How much does it cost?">Pricing</span>
+              <span class="chip" data-q="Join waitlist">Join waitlist</span>
+            </div>
             <button id="open-demo-widget" class="mt-6 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Open Demo Widget
             </button>
@@ -534,26 +544,39 @@
     <i data-feather="message-square"></i>
   </div>
 
-  <!-- WIDGET PANEL (kept simple demo) -->
+  <!-- WIDGET PANEL (BookerPilot demo assistant) -->
   <div id="widget-panel" class="widget-panel">
     <div class="bg-indigo-600 text-white p-4">
       <div class="flex justify-between items-center">
-        <h3 class="font-medium">Your Business</h3>
+        <h3 class="font-medium">BookerPilot — Demo Assistant</h3>
         <button id="close-widget" class="text-white hover:text-indigo-200"><i data-feather="x"></i></button>
       </div>
+      <p class="text-indigo-100 text-xs mt-1">Ask about what we do, pricing, Starter vs Pro, integrations, security, reminders, and more.</p>
     </div>
     <div class="flex-1 p-4 overflow-y-auto">
       <div id="chat-thread" class="space-y-3">
         <div class="flex justify-start">
           <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100 text-gray-800">
-            Hi there! I’m your AI assistant. Ask me anything — pricing, availability, policies, or “How can you help my nail business?”
+            Hi! I’m your BookerPilot assistant. I can answer covered questions and help you join the waitlist.
           </div>
+        </div>
+        <div class="flex justify-start">
+          <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100 text-gray-800">
+            Try: “What is BookerPilot?”, “Starter vs Pro”, “Do you integrate with Google Calendar?”, “Is my data secure?”, or “Join waitlist”.
+          </div>
+        </div>
+        <div id="quick-replies" class="flex flex-wrap gap-2 pt-1">
+          <span class="chip" data-q="What is BookerPilot?">What is BookerPilot?</span>
+          <span class="chip" data-q="Starter vs Pro">Starter vs Pro</span>
+          <span class="chip" data-q="Do you integrate with Stripe?">Stripe</span>
+          <span class="chip" data-q="How do reminders work?">Reminders</span>
+          <span class="chip" data-q="Join waitlist">Join waitlist</span>
         </div>
       </div>
     </div>
     <div class="border-t border-gray-200 p-3">
       <div class="flex items-center">
-        <input id="chat-input" type="text" placeholder="Type your question…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+        <input id="chat-input" type="text" placeholder="Ask about BookerPilot…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
         <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
           <i data-feather="send"></i>
         </button>
@@ -605,8 +628,6 @@
     <input type="hidden" name="_subject" value="Join Waitlist" />
     <input type="hidden" name="_captcha"  value="false" />
     <input type="hidden" name="_template" value="table" />
-    <!-- Tip: if you use FormSubmit’s autoresponse, you can add: -->
-    <!-- <input type="hidden" name="_autoresponse" value="Thanks for joining the waitlist! Please reply to confirm your email." /> -->
     <input type="hidden" name="_next"     value="https://bookerpilot.com/#home" />
     <input type="hidden" name="name">
     <input type="hidden" name="email">
@@ -616,7 +637,7 @@
     <input type="hidden" name="plan">
   </form>
 
-  <!-- Supabase (optional placeholder for future AI) -->
+  <!-- Supabase (placeholder for future AI) -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <script>
@@ -642,58 +663,33 @@
       redirectDelayMs: 1500
     };
 
-    // ===== DOM refs
+    // ===== Pull-to-reveal
     const pullHandle   = document.getElementById('pull-handle');
     const revealMask   = document.getElementById('reveal-mask');
     const collapseMore = document.getElementById('collapse-more');
-
-    const modal        = document.getElementById('wl-modal');
-    const wlClose      = document.getElementById('wl-close');
-    const wlPlanInput  = document.getElementById('wl-plan');
-    const wlModalForm  = document.getElementById('waitlist-modal-form');
-    const wlModalMsg   = document.getElementById('wl-modal-msg');
-
-    const pageForm     = document.getElementById('waitlist-page-form');
-    const wlPageMsg    = document.getElementById('wl-page-msg');
-
-    const hiddenForm   = document.getElementById('hidden-form');
-    const toast        = document.getElementById('toast');
-
-    // ===== Pull-to-reveal
     let revealOpen = false;
-    function openReveal() {
-      document.querySelector('.reveal-wrap').classList.add('reveal-open');
-      revealOpen = true;
-    }
-    function closeReveal() {
-      document.querySelector('.reveal-wrap').classList.remove('reveal-open');
-      revealOpen = false;
-      revealMask.scrollTop = 0;
-    }
+    function openReveal() { document.querySelector('.reveal-wrap').classList.add('reveal-open'); revealOpen = true; }
+    function closeReveal() { document.querySelector('.reveal-wrap').classList.remove('reveal-open'); revealOpen = false; revealMask.scrollTop = 0; }
     pullHandle.addEventListener('click', () => (revealOpen ? closeReveal() : openReveal()));
     collapseMore.addEventListener('click', closeReveal);
 
     // ===== Waitlist modal openers (pricing buttons)
+    function openWaitlist(plan) {
+      document.getElementById('wl-plan').value = plan || 'Starter';
+      document.getElementById('wl-modal').classList.remove('hidden');
+      setTimeout(() => { document.querySelector('#waitlist-modal-form input[name="name"]').focus(); }, 50);
+    }
+    function closeWaitlist() { document.getElementById('wl-modal').classList.add('hidden'); }
+    document.getElementById('wl-close').addEventListener('click', closeWaitlist);
+    document.getElementById('wl-modal').addEventListener('click', (e) => { if (e.target === document.getElementById('wl-modal')) closeWaitlist(); });
+
     document.querySelectorAll('.js-open-wl, .price-trigger').forEach(el => {
       el.addEventListener('click', () => {
         const plan = el.getAttribute('data-plan') || 'Starter';
-        if (LAUNCH.USE_WAITLIST) {
-          openWaitlist(plan);
-        } else {
-          const url = STRIPE[plan];
-          if (url) window.location.href = url;
-        }
+        if (LAUNCH.USE_WAITLIST) openWaitlist(plan);
+        else window.location.href = STRIPE[plan] || '#';
       });
     });
-
-    function openWaitlist(plan) {
-      wlPlanInput.value = plan;
-      modal.classList.remove('hidden');
-      setTimeout(() => { document.querySelector('#waitlist-modal-form input[name="name"]').focus(); }, 50);
-    }
-    function closeWaitlist() { modal.classList.add('hidden'); }
-    wlClose.addEventListener('click', closeWaitlist);
-    modal.addEventListener('click', (e) => { if (e.target === modal) closeWaitlist(); });
 
     // ===== Widget open/close
     const bubble = document.getElementById('widget-bubble');
@@ -702,7 +698,6 @@
     const input  = document.getElementById('chat-input');
     const send   = document.getElementById('send-btn');
     const thread = document.getElementById('chat-thread');
-
     function toggleWidget() {
       const show = panel.style.display !== 'flex';
       panel.style.display = show ? 'flex' : 'none';
@@ -714,47 +709,16 @@
     document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
     window.addEventListener('keydown', e => { if (e.key === 'Escape') panel.style.display === 'flex' && toggleWidget(); });
 
-    // Simple demo chat
-    function addBubble(text, who='bot') {
-      const wrap = document.createElement('div');
-      wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
-      const b = document.createElement('div');
-      b.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-        who === 'user'
-          ? 'rounded-tr-none bg-indigo-600 text-white'
-          : 'rounded-tl-none bg-gray-100 text-gray-800'
-      }`;
-      b.textContent = text;
-      wrap.appendChild(b);
-      thread.appendChild(wrap);
-      const sc = panel.querySelector('.overflow-y-auto');
-      if (sc) sc.scrollTop = sc.scrollHeight;
-    }
-    function sanitize(s) { return String(s || '').replace(/[\u0000-\u001F<>]/g, '').trim(); }
-    send.addEventListener('click', () => {
-      const q = sanitize(input.value);
-      if (!q) return;
-      addBubble(q, 'user');
-      input.value = '';
-      setTimeout(() => addBubble("Thanks! In production this connects to our AI and answers from your business data.", 'bot'), 600);
-    });
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send.click(); }});
-
-    // ===== Utilities
-    function collectAndValidate(formEl, msgEl) {
-      const fd = new FormData(formEl);
-      const name  = (fd.get('name')  || '').toString().trim();
-      const email = (fd.get('email') || '').toString().trim();
-      const phone = (fd.get('phone') || '').toString().trim();
-
-      if (!name)  { msgEl.textContent = "Please enter your name."; return null; }
-      if (!CONFIG.emailRegex.test(email)) { msgEl.textContent = "Please enter a valid email (must include @ and .)."; return null; }
-      if (phone && !CONFIG.phoneRegex.test(phone)) { msgEl.textContent = "Please enter a valid phone number."; return null; }
-
-      msgEl.textContent = "";
-      return fd;
+    // ===== Toast
+    const toast = document.getElementById('toast');
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
+    // ===== Hidden form + helpers
+    const hiddenForm = document.getElementById('hidden-form');
     function mirrorToHidden(fd) {
       hiddenForm.elements['name'].value      = fd.get('name')      || '';
       hiddenForm.elements['email'].value     = fd.get('email')     || '';
@@ -764,54 +728,250 @@
       hiddenForm.elements['plan'].value      = fd.get('plan')      || 'N/A';
       return new FormData(hiddenForm);
     }
-
-    function showToast(text) {
-      toast.textContent = text;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+    async function submitWaitlist(fd) {
+      const payload = mirrorToHidden(fd);
+      await fetch(hiddenForm.action, { method: 'POST', body: payload, mode: 'no-cors' });
     }
-
     function goHomeAfter(ms=CONFIG.redirectDelayMs) {
       setTimeout(() => {
-        // Smoothly scroll to top / home
         window.location.hash = '#home';
         window.scrollTo({ top: 0, behavior: 'smooth' });
         closeWaitlist();
       }, ms);
     }
+    function validateContact(name, email, phoneOpt) {
+      if (!name) return "Please enter your name.";
+      if (!CONFIG.emailRegex.test(email)) return "Please enter a valid email (must include @ and .).";
+      if (phoneOpt && !CONFIG.phoneRegex.test(phoneOpt)) return "Please enter a valid phone number.";
+      return "";
+    }
 
-    async function submitWaitlist(fd, msgEl) {
-      const payload = mirrorToHidden(fd);
+    // ===== In-page waitlist
+    const pageForm  = document.getElementById('waitlist-page-form');
+    const wlPageMsg = document.getElementById('wl-page-msg');
+    pageForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(pageForm);
+      const err = validateContact((fd.get('name')||'').trim(), (fd.get('email')||'').trim(), (fd.get('phone')||'').trim());
+      if (err) { wlPageMsg.textContent = err; wlPageMsg.className = "text-sm text-red-600"; return; }
       try {
-        await fetch(hiddenForm.action, { method: 'POST', body: payload, mode: 'no-cors' });
-        // success UX
+        await submitWaitlist(fd);
+        wlPageMsg.textContent = "";
+        showToast(CONFIG.thankYouMsg);
+        goHomeAfter();
+      } catch { wlPageMsg.textContent = "Please try again or email " + CONFIG.waitlistMailbox; wlPageMsg.className = "text-sm text-red-600"; }
+    });
+
+    // ===== Modal waitlist
+    const wlModalForm = document.getElementById('waitlist-modal-form');
+    const wlModalMsg  = document.getElementById('wl-modal-msg');
+    wlModalForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(wlModalForm);
+      const err = validateContact((fd.get('name')||'').trim(), (fd.get('email')||'').trim(), (fd.get('phone')||'').trim());
+      if (err) { wlModalMsg.textContent = err; wlModalMsg.className = "text-sm text-red-600"; return; }
+      try {
+        await submitWaitlist(fd);
+        wlModalMsg.textContent = "";
+        showToast(CONFIG.thankYouMsg);
+        goHomeAfter();
+      } catch { wlModalMsg.textContent = "Please try again or email " + CONFIG.waitlistMailbox; wlModalMsg.className = "text-sm text-red-600"; }
+    });
+
+    // ===== Demo assistant knowledge base (only answers covered topics; routes to waitlist)
+    function addBubble(text, who='bot', html=false) {
+      const wrap = document.createElement('div');
+      wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
+      const b = document.createElement('div');
+      b.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+        who === 'user'
+          ? 'rounded-tr-none bg-indigo-600 text-white'
+          : 'rounded-tl-none bg-gray-100 text-gray-800'
+      } text-sm leading-relaxed`;
+      if (html) b.innerHTML = text; else b.textContent = text;
+      wrap.appendChild(b);
+      document.getElementById('chat-thread').appendChild(wrap);
+      const sc = panel.querySelector('.overflow-y-auto');
+      if (sc) sc.scrollTop = sc.scrollHeight;
+    }
+    function chipsHTML(arr) {
+      if (!arr || !arr.length) return '';
+      return `<div class="flex flex-wrap gap-2 mt-2">${
+        arr.map(t=>`<span class="chip" data-q="${t.replace(/"/g,'&quot;')}">${t}</span>`).join('')
+      }</div>`;
+    }
+    const KB = [
+      { id:'what', keys:['what is bookerpilot','bookerpilot','about you','about this','who are you','overview','explain'],
+        reply:`<strong>BookerPilot</strong> is a booking widget + AI assistant for local service businesses. It answers FAQs 24/7, captures leads, proposes times, sends reminders, and (at launch) accepts Stripe payments—helping you convert more visitors into booked jobs.`,
+        followUps:['How does BookerPilot work?','Industries','Pricing','Starter vs Pro','Join waitlist'] },
+      { id:'how', keys:['how does it work','how it works','setup','install','implementation','add to my website'],
+        reply:`Paste a single script. The chat bubble appears on your site. The assistant answers from your content (services, pricing, policies), proposes open slots, collects details, and writes to your calendar.`,
+        followUps:['Google Calendar','Reminders','Integrations','Security','Join waitlist'] },
+      { id:'industries', keys:['industries','who do you support','what businesses','use cases','verticals','works for'],
+        reply:`Built for <em>local services</em>: cleaners, salons/spas, tutors, coaches, trainers, handymen, pet groomers, photographers, movers, plumbers, HVAC, lawn care, auto detailers, and more.`,
+        followUps:['Pricing','Starter vs Pro','Join waitlist'] },
+      { id:'pricing', keys:['price','pricing','cost','how much','plans','fees'],
+        reply:`Two plans:<br><br><strong>Starter ($49/mo):</strong> 50 conversations, 15 bookings, email confirmations, basic analytics.<br><strong>Pro ($99/mo):</strong> Unlimited conversations, 100 bookings, email & SMS reminders, advanced analytics, membership upsells.<br><br>Pre-launch: clicking a plan opens the waitlist. Free 30-day trial after launch.`,
+        followUps:['Starter vs Pro','Join waitlist'] },
+      { id:'plan', keys:['starter vs pro','difference','compare','which plan','pro vs starter'],
+        reply:`<strong>Starter</strong> fits solo operators or early teams—caps plus confirmations & basic analytics.<br><strong>Pro</strong> adds SMS reminders, higher booking capacity, advanced analytics, and upsells—great for growth.`,
+        followUps:['Pricing','Join waitlist'] },
+      { id:'calendar', keys:['google calendar','calendar','availability','sync hours','double booking'],
+        reply:`Yes—syncs with Google Calendar (and custom hours). The assistant proposes open slots and prevents double booking.`,
+        followUps:['Reminders','Integrations','Join waitlist'] },
+      { id:'reminders', keys:['reminders','sms','text','email reminders','no shows','reduce cancellations'],
+        reply:`Customers get email confirmations (Pro adds SMS) and reminders to reduce no-shows and keep schedules tight.`,
+        followUps:['Starter vs Pro','Join waitlist'] },
+      { id:'payments', keys:['stripe','payments','deposit','pay online','checkout'],
+        reply:`Stripe handles secure payments. During pre-launch, plan buttons open the waitlist. When we launch, enable checkout with one toggle.`,
+        followUps:['Pricing','Join waitlist'] },
+      { id:'integrations', keys:['integrations','zapier','api','crm','hubspot','pipedrive','webhooks'],
+        reply:`Open API, webhooks, and Zapier. CRM sync (HubSpot, Pipedrive) on the roadmap so you can push leads & bookings to your stack.`,
+        followUps:['Security','Join waitlist'] },
+      { id:'security', keys:['security','secure','gdpr','ccpa','privacy','data'],
+        reply:`Best practices: encryption in transit, least-privilege access, audit logs, and data retention controls. Stripe stores card data. You decide what the assistant can answer.`,
+        followUps:['Pricing','Join waitlist'] },
+      { id:'trial', keys:['trial','free trial','try before pay','demo'],
+        reply:`We’re launching with a <strong>free 30-day trial</strong>. Join the waitlist and we’ll email you when it’s live.`,
+        followUps:['Join waitlist','Pricing'] },
+      { id:'contact', keys:['contact','support','help','email you','talk to someone'],
+        reply:`Reach us at <a class="underline" href="mailto:bookerpilot@outlook.com">bookerpilot@outlook.com</a> or join the waitlist and we’ll follow up.`,
+        followUps:['Join waitlist','Pricing'] },
+      { id:'wl', keys:['join waitlist','waitlist','early access','notify me','sign up'],
+        reply:`Great—let’s add you to the waitlist. What’s your <strong>name</strong>? (I’ll ask for your email next.)`,
+        followUps:[] }
+    ];
+    const SYN = {
+      pricing:['price','cost','fees','plan','plans','monthly','per month'],
+      security:['gdpr','ccpa','privacy','secure','compliance','data','encryption'],
+      stripe:['checkout','payment','pay online','deposit','card'],
+      calendar:['availability','schedule','calendar sync','double booking'],
+      reminders:['sms','text','email reminder','notifications','no shows','cancellation'],
+      integrations:['zapier','api','webhook','crm','hubspot','pipedrive','integrate'],
+      trial:['free trial','try before pay','30 day'],
+      compare:['starter vs pro','difference','compare','which plan'],
+      contact:['talk to someone','support','help','email you','reach you'],
+      waitlist:['join waitlist','early access','notify me','sign up']
+    };
+    function normalize(t){ return (t||'').toLowerCase().replace(/\s+/g,' ').trim(); }
+    function matchIntent(q) {
+      const n = normalize(q);
+      for (const item of KB) if (item.keys.some(k=>n.includes(k))) return item;
+      for (const [id, list] of Object.entries(SYN)) {
+        if (list.some(k=>n.includes(k))) {
+          if (id==='pricing') return KB.find(i=>i.id==='pricing');
+          if (id==='compare') return KB.find(i=>i.id==='plan');
+          if (id==='stripe') return KB.find(i=>i.id==='payments');
+          if (id==='calendar') return KB.find(i=>i.id==='calendar');
+          if (id==='reminders') return KB.find(i=>i.id==='reminders');
+          if (id==='integrations') return KB.find(i=>i.id==='integrations');
+          if (id==='security') return KB.find(i=>i.id==='security');
+          if (id==='trial') return KB.find(i=>i.id==='trial');
+          if (id==='contact') return KB.find(i=>i.id==='contact');
+          if (id==='waitlist') return KB.find(i=>i.id==='wl');
+        }
+      }
+      return KB.find(i=>i.id==='what');
+    }
+    function answerIntent(intent){ addBubble(intent.reply + chipsHTML(intent.followUps), 'bot', true); }
+
+    // In-chat waitlist dialog state
+    const dialog = { mode:'idle', plan:'Not sure', name:'', email:'', phone:'' };
+
+    async function handleUser(raw) {
+      const q = (raw||'').replace(/[\u0000-\u001F]/g,'').trim();
+      if (!q) return;
+      addBubble(q, 'user');
+
+      // Waitlist flow
+      if (dialog.mode === 'wl-name') {
+        dialog.name = q;
+        dialog.mode = 'wl-email';
+        addBubble(`Nice to meet you, ${dialog.name}! What’s your email? (we’ll send a verification link)`, 'bot', true);
+        return;
+      }
+      if (dialog.mode === 'wl-email') {
+        if (!CONFIG.emailRegex.test(q)) { addBubble(`That doesn’t look valid. Include “@” and “.” (e.g. you@example.com).`, 'bot'); return; }
+        dialog.email = q; dialog.mode = 'wl-phone';
+        addBubble(`Got it. Phone number (optional, for SMS reminders)? You can type <em>skip</em>.`, 'bot', true);
+        return;
+      }
+      if (dialog.mode === 'wl-phone') {
+        if (q.toLowerCase()!=='skip' && q && !CONFIG.phoneRegex.test(q)) { addBubble(`Please enter a valid phone number or type “skip”.`, 'bot'); return; }
+        dialog.phone = (q.toLowerCase()==='skip') ? '' : q.trim();
+
+        // Submit via hidden form
+        const fd = new FormData();
+        fd.set('name', dialog.name);
+        fd.set('email', dialog.email);
+        fd.set('phone', dialog.phone);
+        fd.set('company','');
+        fd.set('newsletter','Yes');
+        fd.set('plan', dialog.plan || 'Not sure');
+
+        try {
+          await submitWaitlist(fd);
+          addBubble(`You’re on the list, <strong>${dialog.name}</strong>! Please check <strong>${dialog.email}</strong> and verify your email.`, 'bot', true);
+          addBubble(`Want a quick refresher on <em>Starter vs Pro</em> or <em>Pricing</em>?`, 'bot', true);
+        } catch {
+          addBubble(`Hmm—couldn’t submit just now. Please try “Join waitlist” again or email ${CONFIG.waitlistMailbox}.`, 'bot', true);
+        }
+        dialog.mode='idle'; dialog.name=''; dialog.email=''; dialog.phone=''; dialog.plan='Not sure';
+        return;
+      }
+
+      // Normal intents
+      const intent = matchIntent(q);
+      if (intent.id === 'wl') {
+        dialog.mode='wl-name';
+        dialog.plan = /pro/.test(q.toLowerCase()) ? 'Pro' : (/starter/.test(q.toLowerCase()) ? 'Starter' : 'Not sure');
+        addBubble(intent.reply, 'bot', true);
+        return;
+      }
+      answerIntent(intent);
+    }
+
+    // Bind chat input
+    document.getElementById('send-btn').addEventListener('click', ()=>{ const val = input.value; input.value=''; handleUser(val); });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('send-btn').click(); }});
+
+    // Delegate chips in chat
+    document.getElementById('chat-thread').addEventListener('click', (e)=>{
+      const chip = e.target.closest('.chip'); if (chip) handleUser(chip.getAttribute('data-q')||chip.textContent);
+    });
+    // Chips in demo card open widget and ask
+    document.querySelectorAll('#demo .chip').forEach(ch=>{
+      ch.addEventListener('click', ()=>{
+        if (panel.style.display !== 'flex') toggleWidget();
+        const q = ch.getAttribute('data-q') || ch.textContent;
+        setTimeout(()=> handleUser(q), 150);
+      });
+    });
+
+    // ===== Page & modal forms (validation + submit + redirect)
+    function collectAndValidate(formEl, msgEl) {
+      const fd = new FormData(formEl);
+      const name  = (fd.get('name')  || '').toString().trim();
+      const email = (fd.get('email') || '').toString().trim();
+      const phone = (fd.get('phone') || '').toString().trim();
+      const err = validateContact(name, email, phone);
+      if (err){ msgEl.textContent = err; msgEl.className = "text-sm text-red-600"; return null; }
+      msgEl.textContent = ""; return fd;
+    }
+    async function handleSubmit(formEl, msgEl) {
+      const fd = collectAndValidate(formEl, msgEl); if (!fd) return;
+      try {
+        await submitWaitlist(fd);
         msgEl.textContent = "";
         showToast(CONFIG.thankYouMsg);
         goHomeAfter();
-        return true;
-      } catch (e) {
-        msgEl.textContent = "Hmm, something went wrong. Please try again or email " + CONFIG.waitlistMailbox;
+      } catch {
+        msgEl.textContent = "Please try again or email " + CONFIG.waitlistMailbox;
         msgEl.className = "text-sm text-red-600";
-        return false;
       }
     }
-
-    // In-page waitlist submit
-    pageForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = collectAndValidate(pageForm, wlPageMsg);
-      if (!fd) return;
-      await submitWaitlist(fd, wlPageMsg);
-    });
-
-    // Modal waitlist submit
-    wlModalForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = collectAndValidate(wlModalForm, wlModalMsg);
-      if (!fd) return;
-      await submitWaitlist(fd, wlModalMsg);
-    });
+    document.getElementById('waitlist-page-form').addEventListener('submit', e => { e.preventDefault(); handleSubmit(e.target, wlPageMsg); });
+    document.getElementById('waitlist-modal-form').addEventListener('submit', e => { e.preventDefault(); handleSubmit(e.target, wlModalMsg); });
   </script>
 </body>
 </html>
-
