@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>BookerPilot — AI Booking Widget for Local Services</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>Booker.ai - AI Booking Widget for Local Services</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,12 +21,11 @@
   <style>
     /* Global */
     html { scroll-behavior: smooth; }
-    [id] { scroll-margin-top: 84px; }
-    body { overflow-x: hidden; } /* lock horizontal scroll */
+    [id] { scroll-margin-top: 80px; }
+    body { overflow-x: hidden; } /* prevent horizontal scrolling */
 
-    /* Gradient wave background */
+    /* Gradient animation (wave) */
     .gradient-bg {
-      position: relative;
       background: linear-gradient(135deg,
         #1e3a8a 0%,
         #1d4ed8 20%,
@@ -33,7 +35,6 @@
         #dbeafe 100%);
       background-size: 200% 200%;
       animation: waveBackground 8s ease infinite;
-      overflow: hidden;
     }
     @keyframes waveBackground {
       0% { background-position: 0% 50%; }
@@ -41,50 +42,16 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Plane + clouds (hero) */
-    .cloud {
-      position: absolute;
-      top: var(--top, 20%);
-      left: -20%;
-      width: var(--w, 160px);
-      height: auto;
-      opacity: .9;
-      animation: cloud-drift var(--dur, 38s) linear infinite;
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,.08));
-    }
-    .cloud.small { --w: 120px; --dur: 28s; opacity: .8; }
-    .cloud.tiny  { --w: 90px;  --dur: 23s; opacity: .7; }
-    @keyframes cloud-drift { 
-      0% { transform: translateX(0); }
-      100% { transform: translateX(140vw); }
-    }
-
-    .plane {
-      position: absolute;
-      left: -15vw;
-      top: 18%;
-      width: 140px;
-      height: auto;
-      animation: plane-fly 22s cubic-bezier(.42,0,.2,1) infinite;
-      filter: drop-shadow(0 12px 24px rgba(0,0,0,.18));
-    }
-    @keyframes plane-fly {
-      0%   { transform: translate(0,0) rotate(2deg);   opacity: .0; }
-      5%   { opacity: 1; }
-      40%  { transform: translate(65vw, -2vh) rotate(-2deg); }
-      60%  { transform: translate(90vw, 2vh) rotate(1deg); }
-      95%  { opacity: 1; }
-      100% { transform: translate(120vw, -1vh) rotate(-1deg); opacity: 0; }
-    }
-
-    /* Chat Widget */
+    /* Widget UI */
     .widget-bubble {
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      width: 60px; height: 60px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: #4F46E5; color: white;
+      background: #4F46E5;
+      color: white;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
       box-shadow: 0 10px 25px -5px rgba(79,70,229,0.4);
@@ -97,8 +64,8 @@
       position: fixed;
       bottom: calc(2rem + 80px);
       right: 2rem;
-      width: 420px; max-width: 92vw;
-      height: 560px;
+      width: 400px; max-width: 92vw;
+      height: 520px;
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
@@ -112,7 +79,7 @@
       .widget-panel  { bottom: calc(1rem + 80px); right: 1rem; }
     }
 
-    /* Pull-to-reveal features sheet */
+    /* “Pull-to-reveal” features sheet */
     .reveal-wrap { position: relative; overflow: hidden; }
     .reveal-mask { position: relative; max-height: 0; overflow: hidden; transition: max-height .6s cubic-bezier(.4,0,.2,1); }
     .reveal-handle {
@@ -158,44 +125,13 @@
     </div>
   </nav>
 
-  <!-- HERO with animated plane & clouds -->
-  <header class="gradient-bg text-white relative">
-    <!-- Clouds (SVG) -->
-    <svg class="cloud" style="--top:18%; --w:170px; --dur:36s" viewBox="0 0 64 32" fill="none">
-      <g fill="white">
-        <ellipse cx="12" cy="20" rx="12" ry="8"/><ellipse cx="26" cy="16" rx="10" ry="8"/><ellipse cx="42" cy="20" rx="12" ry="9"/><rect x="6" y="20" width="40" height="8" rx="4" />
-      </g>
-    </svg>
-    <svg class="cloud small" style="--top:32%" viewBox="0 0 64 32" fill="none">
-      <g fill="white">
-        <ellipse cx="12" cy="20" rx="12" ry="8"/><ellipse cx="26" cy="16" rx="10" ry="8"/><ellipse cx="42" cy="20" rx="12" ry="9"/><rect x="6" y="20" width="40" height="8" rx="4" />
-      </g>
-    </svg>
-    <svg class="cloud tiny" style="--top:8%" viewBox="0 0 64 32" fill="none">
-      <g fill="white" opacity="0.9">
-        <ellipse cx="12" cy="20" rx="12" ry="8"/><ellipse cx="26" cy="16" rx="10" ry="8"/><ellipse cx="42" cy="20" rx="12" ry="9"/><rect x="6" y="20" width="40" height="8" rx="4" />
-      </g>
-    </svg>
-
-    <!-- Plane (SVG) -->
-    <svg class="plane" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-      <g>
-        <path d="M10 45 L110 40 L190 45 L110 50 Z" fill="#111827" opacity=".15"/>
-        <path d="M12 40 L120 38 L186 42 L120 46 Z" fill="#1f2937" />
-        <rect x="70" y="30" width="20" height="16" rx="2" fill="#3b82f6"/>
-        <rect x="88" y="33" width="26" height="10" rx="2" fill="#60a5fa"/>
-        <polygon points="120,38 145,35 145,49 120,46" fill="#2563eb"/>
-        <rect x="52" y="36" width="18" height="8" rx="1.5" fill="#93c5fd"/>
-        <circle cx="28" cy="43" r="5" fill="#111827"/>
-        <circle cx="150" cy="44" r="4" fill="#111827"/>
-      </g>
-    </svg>
-
-    <div class="relative max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
+  <!-- HERO -->
+  <header class="gradient-bg text-white">
+    <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl" data-aos="fade-up">
         Turn your website into a 24/7 salesperson
       </h1>
-      <p class="mt-6 max-w-3xl mx-auto text-xl text-indigo-50" data-aos="fade-up" data-aos-delay="100">
+      <p class="mt-6 max-w-3xl mx-auto text-xl text-indigo-100" data-aos="fade-up" data-aos-delay="100">
         Add one line of code. Get more bookings, reduce no-shows, and grow your local service business.
       </p>
       <div class="mt-10 flex justify-center gap-4" data-aos="fade-up" data-aos-delay="150">
@@ -242,7 +178,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">AI Chat & FAQ</h3>
             <p class="mt-2 text-base text-gray-500">
-              Convert visitors 24/7 with an assistant trained on your services, pricing, and policies.
+              Answer customer questions instantly using your business knowledge. No more missed leads after hours.
             </p>
           </div>
         </div>
@@ -256,7 +192,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Real-time Availability</h3>
             <p class="mt-2 text-base text-gray-500">
-              Show live openings from Google/Outlook Calendar or custom hours—no more double-booking.
+              Show your actual availability from Google Calendar or set custom hours. No double bookings.
             </p>
           </div>
         </div>
@@ -270,7 +206,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Secure Payments</h3>
             <p class="mt-2 text-base text-gray-500">
-              Collect deposits with Stripe to reduce no-shows. PCI-compliant, no dev time required.
+              Collect deposits via Stripe to reduce no-shows. PCI-compliant with no extra work for you.
             </p>
           </div>
         </div>
@@ -284,7 +220,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Text & Email Reminders</h3>
             <p class="mt-2 text-base text-gray-500">
-              Automatic confirmations, reminders, and follow-ups that keep customers on track.
+              Automatic confirmations and reminders reduce cancellations and keep customers happy.
             </p>
           </div>
         </div>
@@ -305,7 +241,7 @@
               </div>
               <div class="ml-4">
                 <h4 class="font-semibold text-gray-900">CRM Sync</h4>
-                <p class="text-sm text-gray-600 mt-1">Send leads & bookings to HubSpot, Pipedrive, or Zapier.</p>
+                <p class="text-sm text-gray-600 mt-1">Sync leads, notes, and bookings to your CRM (HubSpot, Pipedrive) with one click.</p>
               </div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
@@ -316,7 +252,7 @@
               </div>
               <div class="ml-4">
                 <h4 class="font-semibold text-gray-900">Role-based Access</h4>
-                <p class="text-sm text-gray-600 mt-1">Owner, manager, and staff views with audit logs and SSO.</p>
+                <p class="text-sm text-gray-600 mt-1">Owner, manager, and staff views with audit logs and secure SSO.</p>
               </div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
@@ -327,7 +263,7 @@
               </div>
               <div class="ml-4">
                 <h4 class="font-semibold text-gray-900">Revenue Insights</h4>
-                <p class="text-sm text-gray-600 mt-1">Cohorts, conversion, and channel ROI at a glance.</p>
+                <p class="text-sm text-gray-600 mt-1">Track bookings, conversion, and cohort retention to see what’s working.</p>
               </div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
@@ -338,7 +274,7 @@
               </div>
               <div class="ml-4">
                 <h4 class="font-semibold text-gray-900">Automations</h4>
-                <p class="text-sm text-gray-600 mt-1">Drips, reactivation, and missed-call texts—on autopilot.</p>
+                <p class="text-sm text-gray-600 mt-1">Drip emails, SMS follow-ups, and win-back campaigns triggered by behavior.</p>
               </div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
@@ -349,7 +285,7 @@
               </div>
               <div class="ml-4">
                 <h4 class="font-semibold text-gray-900">Multi-location</h4>
-                <p class="text-sm text-gray-600 mt-1">Route bookings by branch with location-aware slots.</p>
+                <p class="text-sm text-gray-600 mt-1">Route bookings to the right branch with location-aware availability.</p>
               </div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
@@ -360,7 +296,7 @@
               </div>
               <div class="ml-4">
                 <h4 class="font-semibold text-gray-900">Open API</h4>
-                <p class="text-sm text-gray-600 mt-1">Webhooks & REST—plug into your stack in minutes.</p>
+                <p class="text-sm text-gray-600 mt-1">Integrate with your stack. Webhooks, REST, and Zapier connectors.</p>
               </div>
             </div>
           </div>
@@ -415,12 +351,12 @@
         <div class="relative" data-aos="fade-left">
           <div class="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
             <h3 class="text-xl font-bold text-gray-900 mb-4">Demo: Ask the assistant</h3>
-            <p class="text-gray-600 mb-4">Try asking (examples):</p>
+            <p class="text-gray-600 mb-4">Try asking:</p>
             <ul class="space-y-2 text-gray-700 text-sm">
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“What does BookerPilot do?”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Starter vs Pro — what’s different?”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Do you integrate with Google Calendar?”</span></li>
-              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Is checkout secure?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“How can you help my nail business?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“What’s your cancellation policy?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Do you service Brooklyn?”</span></li>
+              <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Price for a 1 bedroom cleaning?”</span></li>
             </ul>
             <button id="open-demo-widget" class="mt-6 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Open Demo Widget
@@ -514,12 +450,12 @@
       <dl class="grid md:grid-cols-2 gap-6">
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up">
           <dt class="text-lg leading-6 font-medium text-gray-900">What types of businesses is this for?</dt>
-          <dd class="mt-2 text-base text-gray-600">Any local service business that takes appointments: cleaners, salons, tutors, handymen, trainers, pet groomers, and more.</dd>
+          <dd class="mt-2 text-base text-gray-600">Any local service business that takes appointments: cleaners, salons, tutors, handymen, personal trainers, pet groomers, and more.</dd>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="100">
           <dt class="text-lg leading-6 font-medium text-gray-900">How does the AI work?</dt>
-          <dd class="mt-2 text-base text-gray-600">It answers from the information you provide (FAQs, services, pricing) and can safely use OpenAI for free-form questions.</dd>
+          <dd class="mt-2 text-base text-gray-600">It answers from the information you provide (FAQs, services, pricing) and can use OpenAI safely for free-form questions.</dd>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="200">
@@ -529,7 +465,7 @@
 
         <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="300">
           <dt class="text-lg leading-6 font-medium text-gray-900">How do payments work?</dt>
-          <dd class="mt-2 text-base text-gray-600">We use Stripe for secure payments. Until launch, pricing buttons route to the waitlist rather than checkout.</dd>
+          <dd class="mt-2 text-base text-gray-600">We use Stripe for secure payments. When we launch, you’ll be able to pay on site; until then, pricing buttons route to our waitlist.</dd>
         </div>
       </dl>
     </div>
@@ -540,8 +476,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div class="lg:text-center mb-10">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Join the Waitlist</h2>
-        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Be first to try BookerPilot</p>
-        <p class="mt-3 text-gray-700">Join to see what’s coming next—launch updates, early access, and a free 30-day trial.</p>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Be first to try Booker.ai</p>
+        <p class="mt-3 text-gray-700">Join the waitlist to see what’s coming next—launch updates, early access, and a free 30-day trial.</p>
       </div>
 
       <!-- In-page waitlist form -->
@@ -598,11 +534,11 @@
     <i data-feather="message-square"></i>
   </div>
 
-  <!-- WIDGET PANEL (demo KB answers + waitlist CTA) -->
+  <!-- WIDGET PANEL (kept simple demo) -->
   <div id="widget-panel" class="widget-panel">
     <div class="bg-indigo-600 text-white p-4">
       <div class="flex justify-between items-center">
-        <h3 class="font-medium">BookerPilot Assistant</h3>
+        <h3 class="font-medium">Your Business</h3>
         <button id="close-widget" class="text-white hover:text-indigo-200"><i data-feather="x"></i></button>
       </div>
     </div>
@@ -610,21 +546,14 @@
       <div id="chat-thread" class="space-y-3">
         <div class="flex justify-start">
           <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg rounded-tl-none bg-gray-100 text-gray-800">
-            Hi! I’m your BookerPilot AI demo. Ask me about what we do, the difference between Starter and Pro, integrations, security, pricing, and more. I can also add you to the waitlist.
+            Hi there! I’m your AI assistant. Ask me anything — pricing, availability, policies, or “How can you help my nail business?”
           </div>
-        </div>
-        <div id="chips" class="flex flex-wrap gap-2 pt-1">
-          <button class="chip px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs">What do you do?</button>
-          <button class="chip px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs">Starter vs Pro</button>
-          <button class="chip px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs">Integrations</button>
-          <button class="chip px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs">Security</button>
-          <button class="chip px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs">Join waitlist</button>
         </div>
       </div>
     </div>
     <div class="border-t border-gray-200 p-3">
       <div class="flex items-center">
-        <input id="chat-input" type="text" placeholder="Ask about BookerPilot…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+        <input id="chat-input" type="text" placeholder="Type your question…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
         <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">
           <i data-feather="send"></i>
         </button>
@@ -643,7 +572,7 @@
         </div>
 
         <form id="waitlist-modal-form" class="p-5 space-y-3" autocomplete="off">
-          <p class="text-sm text-gray-700">Get launch updates, early access, and a free 30-day trial when we go live.</p>
+          <p class="text-sm text-gray-700">Join the waitlist to see what’s coming next—launch updates, early access, and a free 30-day trial.</p>
           <input type="hidden" name="plan" id="wl-plan" value="Starter" />
           <div class="grid sm:grid-cols-2 gap-3">
             <input type="text"   name="name"     placeholder="Your Name"        class="w-full border rounded-lg px-3 py-2"
@@ -671,14 +600,14 @@
   <!-- Toast -->
   <div id="toast" class="toast"></div>
 
-  <!-- Hidden FormSubmit fallback (actual POST) -->
+  <!-- Hidden FormSubmit fallback -->
   <form id="hidden-form" action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="hidden">
     <input type="hidden" name="_subject" value="Join Waitlist" />
     <input type="hidden" name="_captcha"  value="false" />
     <input type="hidden" name="_template" value="table" />
+    <!-- Tip: if you use FormSubmit’s autoresponse, you can add: -->
+    <!-- <input type="hidden" name="_autoresponse" value="Thanks for joining the waitlist! Please reply to confirm your email." /> -->
     <input type="hidden" name="_next"     value="https://bookerpilot.com/#home" />
-    <!-- Optional: auto-response to ask for reply (manual verify) -->
-    <!-- <input type="hidden" name="_autoresponse" value="Thanks for joining the waitlist! Please reply to this email to verify your address so we can contact you at launch."> -->
     <input type="hidden" name="name">
     <input type="hidden" name="email">
     <input type="hidden" name="phone">
@@ -687,7 +616,7 @@
     <input type="hidden" name="plan">
   </form>
 
-  <!-- Supabase placeholder -->
+  <!-- Supabase (optional placeholder for future AI) -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <script>
@@ -695,10 +624,10 @@
     AOS.init({ duration: 700, once: true });
     if (window.feather && typeof feather.replace === 'function') feather.replace();
 
-    // ===== Launch toggles (Stripe kept for later) =====
-    const LAUNCH = { USE_WAITLIST: true }; // set false later to enable Stripe
+    // ===== Launch toggles =====
+    const LAUNCH = { USE_WAITLIST: true }; // set to false later to enable Stripe
 
-    // ===== Stripe (links preserved) =====
+    // ===== Stripe (kept for launch) =====
     const STRIPE = {
       Starter: "https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03",
       Pro:     "https://buy.stripe.com/6oU3cu4Khacj6O81cv43S04"
@@ -706,24 +635,45 @@
 
     // ===== Config for validation + UX
     const CONFIG = {
-      emailRegex: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/,
-      phoneRegex: /^\\+?[0-9\\s().-]{7,}$/,
+      emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      phoneRegex: /^\+?[0-9\s().-]{7,}$/,
       waitlistMailbox: "bookerpilot@outlook.com",
       thankYouMsg: "Thanks! We’ve received your info. Please check your inbox and verify your email so we can reach back out.",
       redirectDelayMs: 1500
     };
 
-    // ===== Pull-to-reveal =====
+    // ===== DOM refs
     const pullHandle   = document.getElementById('pull-handle');
     const revealMask   = document.getElementById('reveal-mask');
     const collapseMore = document.getElementById('collapse-more');
+
+    const modal        = document.getElementById('wl-modal');
+    const wlClose      = document.getElementById('wl-close');
+    const wlPlanInput  = document.getElementById('wl-plan');
+    const wlModalForm  = document.getElementById('waitlist-modal-form');
+    const wlModalMsg   = document.getElementById('wl-modal-msg');
+
+    const pageForm     = document.getElementById('waitlist-page-form');
+    const wlPageMsg    = document.getElementById('wl-page-msg');
+
+    const hiddenForm   = document.getElementById('hidden-form');
+    const toast        = document.getElementById('toast');
+
+    // ===== Pull-to-reveal
     let revealOpen = false;
-    function openReveal() { document.querySelector('.reveal-wrap').classList.add('reveal-open'); revealOpen = true; }
-    function closeReveal(){ document.querySelector('.reveal-wrap').classList.remove('reveal-open'); revealOpen = false; revealMask.scrollTop = 0; }
+    function openReveal() {
+      document.querySelector('.reveal-wrap').classList.add('reveal-open');
+      revealOpen = true;
+    }
+    function closeReveal() {
+      document.querySelector('.reveal-wrap').classList.remove('reveal-open');
+      revealOpen = false;
+      revealMask.scrollTop = 0;
+    }
     pullHandle.addEventListener('click', () => (revealOpen ? closeReveal() : openReveal()));
     collapseMore.addEventListener('click', closeReveal);
 
-    // ===== Waitlist modal openers (pricing buttons & anywhere with .js-open-wl or .price-trigger) =====
+    // ===== Waitlist modal openers (pricing buttons)
     document.querySelectorAll('.js-open-wl, .price-trigger').forEach(el => {
       el.addEventListener('click', () => {
         const plan = el.getAttribute('data-plan') || 'Starter';
@@ -736,11 +686,6 @@
       });
     });
 
-    const modal        = document.getElementById('wl-modal');
-    const wlClose      = document.getElementById('wl-close');
-    const wlPlanInput  = document.getElementById('wl-plan');
-    const wlModalForm  = document.getElementById('waitlist-modal-form');
-    const wlModalMsg   = document.getElementById('wl-modal-msg');
     function openWaitlist(plan) {
       wlPlanInput.value = plan;
       modal.classList.remove('hidden');
@@ -750,14 +695,13 @@
     wlClose.addEventListener('click', closeWaitlist);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeWaitlist(); });
 
-    // ===== Widget open/close =====
+    // ===== Widget open/close
     const bubble = document.getElementById('widget-bubble');
     const panel  = document.getElementById('widget-panel');
     const closeB = document.getElementById('close-widget');
     const input  = document.getElementById('chat-input');
     const send   = document.getElementById('send-btn');
     const thread = document.getElementById('chat-thread');
-    const chips  = document.getElementById('chips');
 
     function toggleWidget() {
       const show = panel.style.display !== 'flex';
@@ -770,119 +714,33 @@
     document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
     window.addEventListener('keydown', e => { if (e.key === 'Escape') panel.style.display === 'flex' && toggleWidget(); });
 
+    // Simple demo chat
     function addBubble(text, who='bot') {
       const wrap = document.createElement('div');
-      wrap.className = \`flex \${who === 'user' ? 'justify-end' : 'justify-start'}\`;
+      wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
       const b = document.createElement('div');
-      b.className = \`max-w-xs lg:max-w-md px-4 py-2 rounded-lg \${who === 'user' ? 'rounded-tr-none bg-indigo-600 text-white' : 'rounded-tl-none bg-gray-100 text-gray-800'}\`;
+      b.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+        who === 'user'
+          ? 'rounded-tr-none bg-indigo-600 text-white'
+          : 'rounded-tl-none bg-gray-100 text-gray-800'
+      }`;
       b.textContent = text;
       wrap.appendChild(b);
       thread.appendChild(wrap);
       const sc = panel.querySelector('.overflow-y-auto');
       if (sc) sc.scrollTop = sc.scrollHeight;
     }
-    function sanitize(s) { return String(s || '').replace(/[\\u0000-\\u001F<>]/g, '').trim(); }
-
-    // ===== Simple KB for ~150+ questions (grouped by intents with synonyms) =====
-    const KB = [
-      { intent: 'what', keys: ['what do you do','what is bookerpilot','about','how help','features','capabilities'], answer:
-        "BookerPilot adds an AI booking widget to your site that answers questions, shows real-time availability, captures bookings, sends reminders, and (at launch) takes secure Stripe deposits to reduce no-shows."
-      },
-      { intent: 'starter-pro', keys: ['starter vs pro','difference','compare plans','pricing tiers'], answer:
-        "Starter is great for solo teams: 50 conversations & 15 bookings/mo. Pro unlocks unlimited conversations, 100 bookings/mo, SMS reminders, and advanced analytics."
-      },
-      { intent: 'integrations', keys: ['integrations','google calendar','outlook','zapier','hubspot','pipedrive','api'], answer:
-        "We integrate with Google/Outlook Calendar for availability, plus HubSpot/Pipedrive via Zapier. An open REST API and webhooks are available after launch."
-      },
-      { intent: 'security', keys: ['secure','security','pci','gdpr','compliance','privacy','data'], answer:
-        "Payments run through Stripe (PCI compliant). Your data is encrypted in transit and at rest. Admin SSO and role-based access control are supported."
-      },
-      { intent: 'pricing', keys: ['price','cost','how much','plans','trial'], answer:
-        "Starter is $49/mo, Pro is $99/mo. We’re currently in pre-launch—join the waitlist. After launch, you’ll get a free 30-day trial."
-      },
-      { intent: 'waitlist', keys: ['waitlist','join','beta','early access'], answer:
-        "I can add you to the waitlist now. Want to join with your name and email?"
-      },
-      { intent: 'payments', keys: ['stripe','deposit','payment','checkout','no show'], answer:
-        "At launch, checkout happens on your site with Stripe. For now, pricing buttons open the waitlist so nobody is charged early."
-      },
-      { intent: 'usecases', keys: ['who is this for','industries','examples','local services'], answer:
-        "Cleaning, salons, spas, tutoring, trainers, pet care, auto detail, handyman, yoga studios—if you book appointments, BookerPilot fits."
-      },
-      { intent: 'setup', keys: ['setup','install','how to add','snippet','code'], answer:
-        "Paste a 2-line script on your site. That’s it. The widget starts answering FAQs and capturing bookings immediately."
-      },
-      { intent: 'reminders', keys: ['reminders','texts','sms','email reminders','reduce no shows'], answer:
-        "Built-in email & SMS confirmations and reminders reduce no-shows and keep customers on track."
-      }
-      // You can extend this with many more synonym phrases to easily cover 150+ variations.
-    ];
-
-    function findAnswer(q) {
-      const s = q.toLowerCase();
-      for (const k of KB) {
-        if (k.keys.some(kw => s.includes(kw))) return k.answer;
-      }
-      // Default: redirect to waitlist funnel
-      return "Here’s the short version: we help you answer questions, show live availability, and book customers automatically. Want to join the waitlist?";
-    }
-
-    function addChipsQuickReplies() {
-      if (!chips) return;
-      chips.querySelectorAll('button.chip').forEach(btn => {
-        btn.addEventListener('click', () => {
-          addBubble(btn.textContent, 'user');
-          const a = findAnswer(btn.textContent);
-          addBubble(a, 'bot');
-          if (a.toLowerCase().includes('waitlist')) {
-            // Offer inline CTA
-            setTimeout(() => addBubble('Tap “Join Waitlist” in Pricing or say “join waitlist” and I can take your info here.', 'bot'), 500);
-          }
-        });
-      });
-    }
-
-    function maybeHandleInlineWaitlist(q) {
-      const s = q.toLowerCase();
-      return (s.includes('waitlist') || s.includes('join') || s.includes('early access'));
-    }
-
+    function sanitize(s) { return String(s || '').replace(/[\u0000-\u001F<>]/g, '').trim(); }
     send.addEventListener('click', () => {
       const q = sanitize(input.value);
       if (!q) return;
       addBubble(q, 'user');
       input.value = '';
-      setTimeout(() => {
-        if (maybeHandleInlineWaitlist(q)) {
-          addBubble("Great! I’ll pop open the waitlist so you can drop your name & email.", 'bot');
-          setTimeout(()=>openWaitlist('Starter'), 500);
-          return;
-        }
-        const a = findAnswer(q);
-        addBubble(a, 'bot');
-        if (a.toLowerCase().includes('waitlist')) {
-          setTimeout(() => addBubble('Would you like me to open the waitlist form?', 'bot'), 700);
-        }
-      }, 350);
+      setTimeout(() => addBubble("Thanks! In production this connects to our AI and answers from your business data.", 'bot'), 600);
     });
     input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send.click(); }});
-    addChipsQuickReplies();
 
-    // ===== Waitlist POST plumbing (both forms) =====
-    const pageForm     = document.getElementById('waitlist-page-form');
-    const wlPageMsg    = document.getElementById('wl-page-msg');
-    const hiddenForm   = document.getElementById('hidden-form');
-    const toast        = document.getElementById('toast');
-
-    function showToast(text) { toast.textContent = text; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
-    function goHomeAfter(ms=CONFIG.redirectDelayMs) {
-      setTimeout(() => {
-        window.location.hash = '#home';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        closeWaitlist();
-      }, ms);
-    }
-
+    // ===== Utilities
     function collectAndValidate(formEl, msgEl) {
       const fd = new FormData(formEl);
       const name  = (fd.get('name')  || '').toString().trim();
@@ -892,7 +750,9 @@
       if (!name)  { msgEl.textContent = "Please enter your name."; return null; }
       if (!CONFIG.emailRegex.test(email)) { msgEl.textContent = "Please enter a valid email (must include @ and .)."; return null; }
       if (phone && !CONFIG.phoneRegex.test(phone)) { msgEl.textContent = "Please enter a valid phone number."; return null; }
-      msgEl.textContent = ""; return fd;
+
+      msgEl.textContent = "";
+      return fd;
     }
 
     function mirrorToHidden(fd) {
@@ -905,10 +765,27 @@
       return new FormData(hiddenForm);
     }
 
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function goHomeAfter(ms=CONFIG.redirectDelayMs) {
+      setTimeout(() => {
+        // Smoothly scroll to top / home
+        window.location.hash = '#home';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        closeWaitlist();
+      }, ms);
+    }
+
     async function submitWaitlist(fd, msgEl) {
       const payload = mirrorToHidden(fd);
       try {
         await fetch(hiddenForm.action, { method: 'POST', body: payload, mode: 'no-cors' });
+        // success UX
+        msgEl.textContent = "";
         showToast(CONFIG.thankYouMsg);
         goHomeAfter();
         return true;
@@ -919,6 +796,7 @@
       }
     }
 
+    // In-page waitlist submit
     pageForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = collectAndValidate(pageForm, wlPageMsg);
@@ -926,6 +804,7 @@
       await submitWaitlist(fd, wlPageMsg);
     });
 
+    // Modal waitlist submit
     wlModalForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = collectAndValidate(wlModalForm, wlModalMsg);
