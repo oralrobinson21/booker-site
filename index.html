@@ -2,11 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  />
-  <title>Booker.ai - AI Booking Widget for Local Services</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>BookerPilot — Anything that needs booking needs a pilot.</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -19,12 +16,11 @@
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
   <style>
-    /* Global */
     html { scroll-behavior: smooth; }
     [id] { scroll-margin-top: 80px; }
-    body { overflow-x: hidden; } /* prevent horizontal scrolling */
+    body { overflow-x: hidden; }
 
-    /* Gradient animation (wave) */
+    /* Gradient HERO */
     .gradient-bg {
       background: linear-gradient(135deg,
         #1e3a8a 0%,
@@ -44,67 +40,38 @@
 
     /* Widget UI */
     .widget-bubble {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: #4F46E5;
-      color: white;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 10px 25px -5px rgba(79,70,229,0.4);
-      z-index: 1000;
+      position: fixed; bottom: 2rem; right: 2rem; width: 60px; height: 60px;
+      border-radius: 50%; background: #4F46E5; color: white; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 10px 25px -5px rgba(79,70,229,0.4); z-index: 1000;
       transition: transform .25s ease, box-shadow .25s ease;
     }
     .widget-bubble:hover { transform: scale(1.06); box-shadow: 0 14px 30px -6px rgba(79,70,229,.45); }
-
     .widget-panel {
-      position: fixed;
-      bottom: calc(2rem + 80px);
-      right: 2rem;
-      width: 400px; max-width: 92vw;
-      height: 560px;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
-      overflow: hidden;
-      display: none;
-      flex-direction: column;
-      z-index: 1000;
+      position: fixed; bottom: calc(2rem + 80px); right: 2rem; width: 400px; max-width: 92vw; height: 560px;
+      background: #fff; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
+      overflow: hidden; display: none; flex-direction: column; z-index: 1000;
     }
     @media (max-width: 640px) {
       .widget-bubble { bottom: 1rem; right: 1rem; }
       .widget-panel  { bottom: calc(1rem + 80px); right: 1rem; }
     }
 
-    /* “Pull-to-reveal” features sheet */
+    /* Pull-to-reveal features sheet */
     .reveal-wrap { position: relative; overflow: hidden; }
     .reveal-mask { position: relative; max-height: 0; overflow: hidden; transition: max-height .6s cubic-bezier(.4,0,.2,1); }
     .reveal-handle {
-      position: relative; margin: -12px auto 0; width: 120px; height: 32px;
-      background: #e5e7eb; border-radius: 9999px 9999px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,.06) inset; cursor: pointer;
+      position: relative; margin: -12px auto 0; width: 120px; height: 32px; background: #e5e7eb; border-radius: 9999px 9999px 0 0;
+      box-shadow: 0 -4px 16px rgba(0,0,0,.06) inset; cursor: pointer;
     }
-    .reveal-handle::after {
-      content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-      width: 36px; height: 4px; border-radius: 9999px; background: #9ca3af;
-    }
+    .reveal-handle::after { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 36px; height: 4px; border-radius: 9999px; background: #9ca3af; }
     .reveal-open .reveal-mask { max-height: 1800px; }
 
     /* Toast */
-    .toast {
-      position: fixed; left: 50%; transform: translateX(-50%);
-      bottom: 24px; background: #111827; color: #fff;
-      padding: .75rem 1rem; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,.2);
-      z-index: 9999; display: none;
-    }
+    .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 24px; background: #111827; color: #fff; padding: .75rem 1rem; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,.2); z-index: 9999; display: none; }
     .toast.show { display: block; }
 
     /* ===== Soft Cloud Layers (Features section) ===== */
-    .clouds-stage {
-      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
-    }
+    .clouds-stage { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
     .clouds-stage svg { position: absolute; opacity: .35; filter: blur(0.2px); }
     .cloud { animation: drift linear infinite; }
     .cloud.slow  { animation-duration: 110s; }
@@ -116,52 +83,35 @@
       50%  { transform: translateX(25vw)  translateY(-8px); }
       100% { transform: translateX(-25vw) translateY(0px); }
     }
-    @media (prefers-reduced-motion: reduce) {
-      .cloud { animation: none; }
-    }
+    @media (prefers-reduced-motion: reduce) { .cloud { animation: none; } }
 
     /* ===== Airshow (Pricing section) ===== */
     .airshow {
-      position: relative;
-      overflow: hidden;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #e8f2ff, #ffffff);
-      border: 1px solid #e5e7eb;
+      position: relative; overflow: hidden; border-radius: 16px; background: linear-gradient(180deg, #e8f2ff, #ffffff); border: 1px solid #e5e7eb;
     }
     .sky-cloud { position:absolute; opacity:.28; }
     .sky-cloud.c1 { top:10%; left:-20vw; animation: skyMove 48s linear infinite; }
     .sky-cloud.c2 { top:30%; left:-30vw; animation: skyMove 60s linear infinite reverse; }
     .sky-cloud.c3 { top:65%; left:-25vw; animation: skyMove 54s linear infinite; }
-    @keyframes skyMove {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(120vw); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .sky-cloud { animation: none; }
-    }
+    @keyframes skyMove { 0% { transform: translateX(0); } 100% { transform: translateX(120vw); } }
+    @media (prefers-reduced-motion: reduce) { .sky-cloud { animation: none; } }
 
     .plane {
-      position:absolute; top: 38%; left: -30vw; width: 220px;
-      animation: fly 22s linear infinite;
+      position:absolute; top: 38%; left: -30vw; width: 220px; animation: fly 22s linear infinite;
       filter: drop-shadow(0 3px 6px rgba(0,0,0,.15));
+    }
+    .banner {
+      position:absolute; top: 42%; left: -30vw; height: 56px; animation: fly 22s linear infinite;
     }
     @keyframes fly {
       0%   { transform: translateX(0) translateY(0); }
       50%  { transform: translateX(80vw) translateY(-6px); }
       100% { transform: translateX(160vw) translateY(0); }
     }
-    @media (prefers-reduced-motion: reduce) {
-      .plane { animation: none; left: 5%; }
-    }
+    @media (prefers-reduced-motion: reduce) { .plane, .banner { animation: none; left: 5%; } }
 
-    .banner {
-      position:absolute; top: 42%; left: -30vw; height: 56px;
-      animation: fly 22s linear infinite;
-    }
-    .banner svg { height: 56px; }
     .enterprise-badge {
-      display: inline-flex; align-items:center; gap:6px;
-      background: #eef2ff; color:#3730a3; border:1px solid #c7d2fe;
+      display: inline-flex; align-items:center; gap:6px; background: #eef2ff; color:#3730a3; border:1px solid #c7d2fe;
       padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
     }
   </style>
@@ -234,9 +184,8 @@
 
   <!-- FEATURES with soft clouds BG -->
   <section id="features" class="py-12 bg-white relative">
-    <!-- Cloud layers behind content -->
+    <!-- Cloud symbol defs + layer -->
     <div class="clouds-stage" aria-hidden="true">
-      <!-- Reusable cloud SVG symbol -->
       <svg width="0" height="0" style="position:absolute">
         <defs>
           <symbol id="bp-cloud" viewBox="0 0 200 60">
@@ -252,7 +201,6 @@
           </symbol>
         </defs>
       </svg>
-      <!-- Instances -->
       <svg class="cloud slow"  style="top:12%; left:5%; width:220px;"><use href="#bp-cloud"/></svg>
       <svg class="cloud med"   style="top:26%; left:65%; width:260px;"><use href="#bp-cloud"/></svg>
       <svg class="cloud fast"  style="top:48%; left:20%; width:180px;"><use href="#bp-cloud"/></svg>
@@ -268,7 +216,6 @@
         </p>
       </div>
 
-      <!-- First 4 tiles -->
       <div class="mt-10 grid md:grid-cols-2 gap-8">
         <div class="flex" data-aos="fade-up">
           <div class="flex-shrink-0">
@@ -278,9 +225,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">AI Chat & FAQ</h3>
-            <p class="mt-2 text-base text-gray-500">
-              Answer customer questions instantly using your business knowledge. No more missed leads after hours.
-            </p>
+            <p class="mt-2 text-base text-gray-500">Answer customer questions instantly using your business knowledge. No more missed leads after hours.</p>
           </div>
         </div>
 
@@ -292,9 +237,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Real-time Availability</h3>
-            <p class="mt-2 text-base text-gray-500">
-              Show your actual availability from Google Calendar or set custom hours. No double bookings.
-            </p>
+            <p class="mt-2 text-base text-gray-500">Show your actual availability from Google Calendar or set custom hours. No double bookings.</p>
           </div>
         </div>
 
@@ -306,9 +249,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Secure Payments</h3>
-            <p class="mt-2 text-base text-gray-500">
-              Collect deposits via Stripe to reduce no-shows. PCI-compliant with no extra work for you.
-            </p>
+            <p class="mt-2 text-base text-gray-500">Collect deposits via Stripe to reduce no-shows. PCI-compliant with no extra work for you.</p>
           </div>
         </div>
 
@@ -320,91 +261,42 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Text & Email Reminders</h3>
-            <p class="mt-2 text-base text-gray-500">
-              Automatic confirmations and reminders reduce cancellations and keep customers happy.
-            </p>
+            <p class="mt-2 text-base text-gray-500">Automatic confirmations and reminders reduce cancellations and keep customers happy.</p>
           </div>
         </div>
       </div>
 
-      <!-- Pull-to-reveal handle -->
+      <!-- Reveal more -->
       <div class="reveal-wrap mt-10">
         <div id="pull-handle" class="reveal-handle" title="Pull to reveal more features" aria-label="Reveal more features"></div>
-
-        <!-- Hidden area -->
         <div id="reveal-mask" class="reveal-mask">
           <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0">
-                <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                  <i data-feather="database"></i>
-                </div>
-              </div>
-              <div class="ml-4">
-                <h4 class="font-semibold text-gray-900">CRM Sync</h4>
-                <p class="text-sm text-gray-600 mt-1">Sync leads, notes, and bookings to your CRM (HubSpot, Pipedrive) with one click.</p>
-              </div>
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="database"></i></div></div>
+              <div class="ml-4"><h4 class="font-semibold text-gray-900">CRM Sync</h4><p class="text-sm text-gray-600 mt-1">Sync leads, notes, and bookings to your CRM with one click.</p></div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0">
-                <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                  <i data-feather="shield"></i>
-                </div>
-              </div>
-              <div class="ml-4">
-                <h4 class="font-semibold text-gray-900">Role-based Access</h4>
-                <p class="text-sm text-gray-600 mt-1">Owner, manager, and staff views with audit logs and secure SSO.</p>
-              </div>
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="shield"></i></div></div>
+              <div class="ml-4"><h4 class="font-semibold text-gray-900">Role-based Access</h4><p class="text-sm text-gray-600 mt-1">Owner, manager, and staff views with audit logs and secure SSO.</p></div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0">
-                <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                  <i data-feather="bar-chart-2"></i>
-                </div>
-              </div>
-              <div class="ml-4">
-                <h4 class="font-semibold text-gray-900">Revenue Insights</h4>
-                <p class="text-sm text-gray-600 mt-1">Track bookings, conversion, and cohort retention to see what’s working.</p>
-              </div>
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="bar-chart-2"></i></div></div>
+              <div class="ml-4"><h4 class="font-semibold text-gray-900">Revenue Insights</h4><p class="text-sm text-gray-600 mt-1">Track bookings, conversion, and cohort retention.</p></div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0">
-                <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                  <i data-feather="zap"></i>
-                </div>
-              </div>
-              <div class="ml-4">
-                <h4 class="font-semibold text-gray-900">Automations</h4>
-                <p class="text-sm text-gray-600 mt-1">Drip emails, SMS follow-ups, and win-back campaigns triggered by behavior.</p>
-              </div>
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="zap"></i></div></div>
+              <div class="ml-4"><h4 class="font-semibold text-gray-900">Automations</h4><p class="text-sm text-gray-600 mt-1">Drip emails, SMS follow-ups, win-back campaigns.</p></div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0">
-                <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                  <i data-feather="globe"></i>
-                </div>
-              </div>
-              <div class="ml-4">
-                <h4 class="font-semibold text-gray-900">Multi-location</h4>
-                <p class="text-sm text-gray-600 mt-1">Route bookings to the right branch with location-aware availability.</p>
-              </div>
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="globe"></i></div></div>
+              <div class="ml-4"><h4 class="font-semibold text-gray-900">Multi-location</h4><p class="text-sm text-gray-600 mt-1">Route bookings to the right branch automatically.</p></div>
             </div>
             <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-              <div class="flex-shrink-0">
-                <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                  <i data-feather="git-merge"></i>
-                </div>
-              </div>
-              <div class="ml-4">
-                <h4 class="font-semibold text-gray-900">Open API</h4>
-                <p class="text-sm text-gray-600 mt-1">Integrate with your stack. Webhooks, REST, and Zapier connectors.</p>
-              </div>
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="git-merge"></i></div></div>
+              <div class="ml-4"><h4 class="font-semibold text-gray-900">Open API</h4><p class="text-sm text-gray-600 mt-1">Webhooks, REST, and Zapier connectors.</p></div>
             </div>
           </div>
-
-          <div class="text-center mt-6">
-            <button id="collapse-more" class="text-indigo-600 text-sm hover:text-indigo-800 underline">Hide extra features</button>
-          </div>
+          <div class="text-center mt-6"><button id="collapse-more" class="text-indigo-600 text-sm hover:text-indigo-800 underline">Hide extra features</button></div>
         </div>
       </div>
     </div>
@@ -415,17 +307,13 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center mb-12">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Live Demo</h2>
-        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">
-          Try it yourself
-        </p>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">Try it yourself</p>
       </div>
 
       <div class="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
         <div class="relative mb-8 lg:mb-0" data-aos="fade-right">
           <h3 class="text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl">One-line installation</h3>
-          <p class="mt-3 text-lg text-gray-500">
-            Add these two lines to your website and you're done. No coding required.
-          </p>
+          <p class="mt-3 text-lg text-gray-500">Add these two lines to your website and you're done. No coding required.</p>
           <div class="mt-6 bg-gray-800 rounded-lg p-4 overflow-x-auto">
             <pre class="text-gray-200 text-sm"><code>&lt;script src="https://cdn.booker.ai/widget.js" async&gt;&lt;/script&gt;
 &lt;script&gt;
@@ -433,18 +321,11 @@
   BookerPilot("init", { business: "your-business-slug" });
 &lt;/script&gt;</code></pre>
           </div>
-
           <div class="mt-8 flex">
-            <div class="flex-shrink-0">
-              <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                <i data-feather="zap"></i>
-              </div>
-            </div>
+            <div class="flex-shrink-0"><div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white"><i data-feather="zap"></i></div></div>
             <div class="ml-4">
               <h4 class="text-lg leading-6 font-medium text-gray-900">Works everywhere</h4>
-              <p class="mt-2 text-base text-gray-500">
-                Squarespace, Wix, WordPress, Shopify, or custom HTML sites. Just paste and go.
-              </p>
+              <p class="mt-2 text-base text-gray-500">Squarespace, Wix, WordPress, Shopify, or custom HTML sites. Just paste and go.</p>
             </div>
           </div>
         </div>
@@ -459,9 +340,7 @@
               <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Do you service Brooklyn?”</span></li>
               <li class="flex items-start"><i data-feather="chevron-right" class="h-4 w-4 text-indigo-500 mt-0.5"></i><span class="ml-2">“Price for a 1 bedroom cleaning?”</span></li>
             </ul>
-            <button id="open-demo-widget" class="mt-6 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Open Demo Widget
-            </button>
+            <button id="open-demo-widget" class="mt-6 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-4 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Open Demo Widget</button>
           </div>
         </div>
       </div>
@@ -473,12 +352,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center mb-12">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Pricing</h2>
-        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">
-          Simple plans that grow with you
-        </p>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl" data-aos="fade-up">Simple plans that grow with you</p>
       </div>
 
-      <!-- Airshow stage -->
       <div class="airshow mb-8" aria-label="Animated sky with airplane towing banner">
         <!-- parallax clouds -->
         <svg class="sky-cloud c1" width="260" viewBox="0 0 200 60"><use href="#bp-cloud"/></svg>
@@ -487,24 +363,20 @@
 
         <!-- airplane -->
         <svg class="plane" viewBox="0 0 240 100" aria-hidden="true">
-          <!-- simple 2D plane -->
           <g fill="#1f2937">
             <path d="M10 60 L220 50 L220 58 L10 70 Z" fill="#334155"/> <!-- fuselage -->
             <polygon points="60,55 20,45 18,55" fill="#1f2937"/>     <!-- tail fin -->
             <polygon points="120,52 70,32 66,42" fill="#1f2937"/>    <!-- wing -->
             <polygon points="150,56 200,76 204,66" fill="#1f2937"/>  <!-- rear wing -->
-            <circle cx="210" cy="54" r="6" fill="#0ea5e9"/>          <!-- nose / window hint -->
+            <circle cx="210" cy="54" r="6" fill="#0ea5e9"/>          <!-- nose/window hint -->
           </g>
-          <!-- rope to banner -->
           <line x1="220" y1="56" x2="260" y2="70" stroke="#111827" stroke-width="2" />
         </svg>
 
         <!-- banner with slogan -->
         <div class="banner" aria-hidden="true">
           <svg viewBox="0 0 420 80">
-            <!-- cloth -->
             <path d="M0,10 Q30,0 60,10 H400 q10,10 0,20 H60 Q30,30 0,40 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
-            <!-- text -->
             <text x="70" y="32" font-size="16" font-weight="700" fill="#78350f">Anything that needs booking needs a pilot.</text>
             <text x="70" y="54" font-size="12" fill="#92400e">Enterprise-ready • AI • Payments • Automations</text>
           </svg>
@@ -512,22 +384,15 @@
       </div>
 
       <div class="mt-12 grid sm:grid-cols-2 gap-6 lg:max-w-4xl lg:mx-auto">
-        <!-- Starter -->
         <div class="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200" data-aos="fade-up">
           <div class="p-6">
             <div class="flex items-center justify-between">
               <h3 class="text-lg leading-6 font-medium text-gray-900">Starter</h3>
               <span class="enterprise-badge"><i data-feather="shield"></i> Enterprise-ready</span>
             </div>
-            <p class="mt-4">
-              <span class="text-4xl font-extrabold text-gray-900">$49</span>
-              <span class="text-base font-medium text-gray-500">/mo</span>
-            </p>
+            <p class="mt-4"><span class="text-4xl font-extrabold text-gray-900">$49</span><span class="text-base font-medium text-gray-500">/mo</span></p>
             <p class="mt-4 text-sm text-gray-500">Perfect for solo entrepreneurs and small teams</p>
-            <button type="button" data-plan="Starter"
-              class="js-open-wl mt-8 block w-full bg-gray-800 border border-gray-800 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-gray-900">
-              Start free trial — Join Waitlist
-            </button>
+            <button type="button" data-plan="Starter" class="js-open-wl mt-8 block w-full bg-gray-800 border border-gray-800 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-gray-900">Start free trial — Join Waitlist</button>
           </div>
           <div class="pt-6 pb-8 px-6">
             <h4 class="text-xs font-medium text-gray-900 tracking-wide uppercase">What's included</h4>
@@ -540,7 +405,6 @@
           </div>
         </div>
 
-        <!-- Pro -->
         <div class="border border-indigo-500 rounded-lg shadow-sm divide-y divide-indigo-500" data-aos="fade-up" data-aos-delay="100">
           <div class="p-6">
             <div class="flex justify-between items-start">
@@ -550,15 +414,9 @@
               </div>
               <span class="enterprise-badge"><i data-feather="shield"></i> Enterprise-ready</span>
             </div>
-            <p class="mt-4">
-              <span class="text-4xl font-extrabold text-gray-900">$99</span>
-              <span class="text-base font-medium text-gray-500">/mo</span>
-            </p>
+            <p class="mt-4"><span class="text-4xl font-extrabold text-gray-900">$99</span><span class="text-base font-medium text-gray-500">/mo</span></p>
             <p class="mt-4 text-sm text-gray-500">For growing businesses that need more</p>
-            <button type="button" data-plan="Pro"
-              class="js-open-wl mt-8 block w-full bg-indigo-600 border border-indigo-600 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-indigo-700">
-              Start free trial — Join Waitlist
-            </button>
+            <button type="button" data-plan="Pro" class="js-open-wl mt-8 block w-full bg-indigo-600 border border-indigo-600 rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-indigo-700">Start free trial — Join Waitlist</button>
           </div>
           <div class="pt-6 pb-8 px-6">
             <h4 class="text-xs font-medium text-gray-900 tracking-wide uppercase">What's included</h4>
@@ -614,21 +472,18 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div class="lg:text-center mb-10">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Join the Waitlist</h2>
-        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Be first to try Booker.ai</p>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Be first to try BookerPilot</p>
         <p class="mt-3 text-gray-700">Join the waitlist to see what’s coming next—launch updates, early access, and a free 30-day trial.</p>
       </div>
 
       <!-- In-page waitlist form -->
       <form id="waitlist-page-form" class="max-w-2xl mx-auto space-y-4" autocomplete="off">
         <div class="grid sm:grid-cols-2 gap-3">
-          <input type="text"   name="name"     placeholder="Your Name"  class="w-full border rounded-lg px-3 py-2"
-                 required oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
-          <input type="email"  name="email"    placeholder="you@example.com" class="w-full border rounded-lg px-3 py-2"
-                 required oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
+          <input type="text"   name="name"     placeholder="Your Name"  class="w-full border rounded-lg px-3 py-2" required>
+          <input type="email"  name="email"    placeholder="you@example.com" class="w-full border rounded-lg px-3 py-2" required>
         </div>
         <div class="grid sm:grid-cols-2 gap-3">
-          <input type="text"   name="company"  placeholder="Business / Company (optional)" class="w-full border rounded-lg px-3 py-2"
-                 oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
+          <input type="text"   name="company"  placeholder="Business / Company (optional)" class="w-full border rounded-lg px-3 py-2">
           <select name="plan"  class="w-full border rounded-lg px-3 py-2">
             <option value="Starter">Starter</option>
             <option value="Pro">Pro</option>
@@ -636,8 +491,7 @@
           </select>
         </div>
         <label class="inline-flex items-center text-sm text-gray-600">
-          <input type="checkbox" name="newsletter" class="mr-2">
-          Also subscribe me to product updates & newsletters.
+          <input type="checkbox" name="newsletter" class="mr-2"> Also subscribe me to product updates & newsletters.
         </label>
         <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 shadow">Join Waitlist</button>
         <p id="wl-page-msg" class="text-sm text-gray-500"></p>
@@ -649,15 +503,14 @@
   <footer class="bg-white">
     <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
       <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
-        <a href="#"         class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Home</a>
+        <a href="#" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Home</a>
         <a href="#features" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Features</a>
-        <a href="#pricing"  class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Pricing</a>
-        <a href="#faq"      class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">FAQ</a>
-        <a href="#contact"  class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Contact</a>
-        <a href="#"         class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Privacy</a>
-        <a href="#"         class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Terms</a>
+        <a href="#pricing" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Pricing</a>
+        <a href="#faq" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">FAQ</a>
+        <a href="#contact" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Contact</a>
+        <a href="#" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Privacy</a>
+        <a href="#" class="px-5 py-2 text-base text-gray-500 hover:text-gray-900">Terms</a>
       </nav>
-
       <div class="mt-8 flex justify-center space-x-6">
         <a href="#" class="text-gray-400 hover:text-gray-500" aria-label="Facebook"><i data-feather="facebook"></i></a>
         <a href="#" class="text-gray-400 hover:text-gray-500" aria-label="Instagram"><i data-feather="instagram"></i></a>
@@ -668,9 +521,7 @@
   </footer>
 
   <!-- WIDGET BUBBLE -->
-  <div id="widget-bubble" class="widget-bubble" title="Chat with BookerPilot">
-    <i data-feather="message-square"></i>
-  </div>
+  <div id="widget-bubble" class="widget-bubble" title="Chat with BookerPilot"><i data-feather="message-square"></i></div>
 
   <!-- WIDGET PANEL -->
   <div id="widget-panel" class="widget-panel" role="dialog" aria-label="BookerPilot Assistant">
@@ -714,152 +565,45 @@
     <div class="border-t border-gray-200 p-3">
       <div class="flex items-center">
         <input id="chat-input" type="text" placeholder="Type your question…" class="flex-1 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500" aria-label="Your message">
-        <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700" aria-label="Send">
-          <i data-feather="send"></i>
-        </button>
+        <button id="send-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700" aria-label="Send"><i data-feather="send"></i></button>
       </div>
     </div>
   </div>
 
-  <!-- WAITLIST MODAL -->
-  <div id="wl-modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/50"></div>
-    <div class="relative mx-auto mt-20 w-[92vw] max-w-lg">
-      <div class="bg-white rounded-xl shadow-xl overflow-hidden">
-        <div class="p-5 border-b flex items-center justify-between">
-          <h3 class="text-lg font-semibold">Join the waitlist</h3>
-          <button id="wl-close" class="text-gray-400 hover:text-gray-600" aria-label="Close"><i data-feather="x"></i></button>
-        </div>
-
-        <form id="waitlist-modal-form" class="p-5 space-y-3" autocomplete="off">
-          <p class="text-sm text-gray-700">Join the waitlist to see what’s coming next—launch updates, early access, and a free 30-day trial.</p>
-          <input type="hidden" name="plan" id="wl-plan" value="Starter" />
-          <div class="grid sm:grid-cols-2 gap-3">
-            <input type="text"   name="name"     placeholder="Your Name"        class="w-full border rounded-lg px-3 py-2"
-                   required oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
-            <input type="email"  name="email"    placeholder="you@example.com"  class="w-full border rounded-lg px-3 py-2"
-                   required oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
-          </div>
-          <div class="grid sm:grid-cols-2 gap-3">
-            <input type="tel"    name="phone"    placeholder="Phone (optional)" class="w-full border rounded-lg px-3 py-2"
-                   oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
-            <input type="text"   name="company"  placeholder="Business (optional)" class="w-full border rounded-lg px-3 py-2"
-                   oncopy="return false" onpaste="return false" spellcheck="false" autocapitalize="off" autocomplete="off">
-          </div>
-          <label class="inline-flex items-center text-sm text-gray-600">
-            <input type="checkbox" name="newsletter" class="mr-2">
-            Also subscribe me to product updates & newsletters.
-          </label>
-          <button type="submit" class="w-full bg-indigo-600 text-white py-2.5 rounded-lg hover:bg-indigo-700">Join Waitlist</button>
-          <p id="wl-modal-msg" class="text-sm text-gray-500"></p>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast -->
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <!-- Hidden FormSubmit fallback -->
+  <!-- Waitlist: hidden HTML form for FormSubmit fallback -->
   <form id="hidden-form" action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="hidden">
     <input type="hidden" name="_subject" value="Join Waitlist" />
     <input type="hidden" name="_captcha"  value="false" />
     <input type="hidden" name="_template" value="table" />
     <input type="hidden" name="_next"     value="https://bookerpilot.com/#home" />
-    <input type="hidden" name="name">
-    <input type="hidden" name="email">
-    <input type="hidden" name="phone">
-    <input type="hidden" name="company">
-    <input type="hidden" name="newsletter">
-    <input type="hidden" name="plan">
+    <input type="hidden" name="name"><input type="hidden" name="email"><input type="hidden" name="phone"><input type="hidden" name="company"><input type="hidden" name="newsletter"><input type="hidden" name="plan">
   </form>
 
-  <!-- Supabase (optional placeholder for future AI) -->
+  <!-- Supabase (kept available) -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <script>
-    // ===== Init libs
+    // Init libs
     AOS.init({ duration: 700, once: true });
     if (window.feather && typeof feather.replace === 'function') feather.replace();
 
-    // ===== Launch toggles =====
-    const LAUNCH = { USE_WAITLIST: true }; // set to false later to enable Stripe
-
-    // ===== Stripe (kept for launch) =====
-    const STRIPE = {
-      Starter: "https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03",
-      Pro:     "https://buy.stripe.com/6oU3cu4Khacj6O81cv43S04"
-    };
-
-    // ===== Config for validation + UX
-    const CONFIG = {
-      emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      phoneRegex: /^\+?[0-9\s().-]{7,}$/,
-      waitlistMailbox: "bookerpilot@outlook.com",
-      thankYouMsg: "Thanks! We’ve received your info. Please check your inbox and verify your email so we can reach back out.",
-      redirectDelayMs: 1500
-    };
-
-    // ===== Read business slug & API base from URL (e.g., ?slug=sunrise-yoga&api=http://localhost:3001)
+    // URL config (?slug= & ?api=)
     const url = new URL(location.href);
     const BUSINESS_SLUG = (url.searchParams.get('slug') || 'sunrise-yoga').trim();
     const API_BASE = (url.searchParams.get('api') || 'http://localhost:3001').replace(/\/+$/,'');
     document.getElementById('bp-slug').textContent = BUSINESS_SLUG;
 
-    // ===== DOM refs
-    const pullHandle   = document.getElementById('pull-handle');
-    const revealMask   = document.getElementById('reveal-mask');
+    // Pull-to-reveal
+    const pullHandle = document.getElementById('pull-handle');
+    const revealMask = document.getElementById('reveal-mask');
     const collapseMore = document.getElementById('collapse-more');
-
-    const modal        = document.getElementById('wl-modal');
-    const wlClose      = document.getElementById('wl-close');
-    const wlPlanInput  = document.getElementById('wl-plan');
-    const wlModalForm  = document.getElementById('waitlist-modal-form');
-    const wlModalMsg   = document.getElementById('wl-modal-msg');
-
-    const pageForm     = document.getElementById('waitlist-page-form');
-    const wlPageMsg    = document.getElementById('wl-page-msg');
-
-    const hiddenForm   = document.getElementById('hidden-form');
-    const toast        = document.getElementById('toast');
-
-    // ===== Pull-to-reveal
     let revealOpen = false;
-    function openReveal() {
-      document.querySelector('.reveal-wrap').classList.add('reveal-open');
-      revealOpen = true;
-    }
-    function closeReveal() {
-      document.querySelector('.reveal-wrap').classList.remove('reveal-open');
-      revealOpen = false;
-      revealMask.scrollTop = 0;
-    }
-    pullHandle.addEventListener('click', () => (revealOpen ? closeReveal() : openReveal()));
-    collapseMore.addEventListener('click', closeReveal);
+    function openReveal(){ document.querySelector('.reveal-wrap').classList.add('reveal-open'); revealOpen = true; }
+    function closeReveal(){ document.querySelector('.reveal-wrap').classList.remove('reveal-open'); revealOpen = false; revealMask.scrollTop = 0; }
+    if (pullHandle) pullHandle.addEventListener('click', () => (revealOpen ? closeReveal() : openReveal()));
+    if (collapseMore) collapseMore.addEventListener('click', closeReveal);
 
-    // ===== Waitlist modal openers (pricing buttons)
-    document.querySelectorAll('.js-open-wl, .price-trigger').forEach(el => {
-      el.addEventListener('click', () => {
-        const plan = el.getAttribute('data-plan') || 'Starter';
-        if (LAUNCH.USE_WAITLIST) {
-          openWaitlist(plan);
-        } else {
-          const url = STRIPE[plan];
-          if (url) window.location.href = url;
-        }
-      });
-    });
-
-    function openWaitlist(plan) {
-      wlPlanInput.value = plan;
-      modal.classList.remove('hidden');
-      setTimeout(() => { document.querySelector('#waitlist-modal-form input[name="name"]').focus(); }, 50);
-    }
-    function closeWaitlist() { modal.classList.add('hidden'); }
-    wlClose.addEventListener('click', closeWaitlist);
-    modal.addEventListener('click', (e) => { if (e.target === modal) closeWaitlist(); });
-
-    // ===== Widget open/close
+    // Widget open/close
     const bubble = document.getElementById('widget-bubble');
     const panel  = document.getElementById('widget-panel');
     const closeB = document.getElementById('close-widget');
@@ -876,31 +620,27 @@
     bubble.addEventListener('click', toggleWidget);
     closeB.addEventListener('click', toggleWidget);
     document.getElementById('open-demo-widget')?.addEventListener('click', toggleWidget);
-    window.addEventListener('keydown', e => { if (e.key === 'Escape') panel.style.display === 'flex' && toggleWidget(); });
+    window.addEventListener('keydown', e => { if (e.key === 'Escape' && panel.style.display === 'flex') toggleWidget(); });
 
-    // ===== AI Chat wired to your API (/api/ask)
+    // Chat bubbles
     function addBubble(text, who='bot') {
       const wrap = document.createElement('div');
       wrap.className = `flex ${who === 'user' ? 'justify-end' : 'justify-start'}`;
       const b = document.createElement('div');
       b.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-        who === 'user'
-          ? 'rounded-tr-none bg-indigo-600 text-white'
-          : 'rounded-tl-none bg-gray-100 text-gray-800'
+        who === 'user' ? 'rounded-tr-none bg-indigo-600 text-white' : 'rounded-tl-none bg-gray-100 text-gray-800'
       }`;
       b.textContent = text;
       wrap.appendChild(b);
       thread.appendChild(wrap);
-      const sc = panel.querySelector('.overflow-y-auto');
-      if (sc) sc.scrollTop = sc.scrollHeight;
+      const sc = panel.querySelector('.overflow-y-auto'); if (sc) sc.scrollTop = sc.scrollHeight;
     }
-    function sanitize(s) { return String(s || '').replace(/[\u0000-\u001F<>]/g, '').trim(); }
+    const sanitize = s => String(s || '').replace(/[\u0000-\u001F<>]/g, '').trim();
 
     async function askAI(q) {
       try {
         const r = await fetch(`${API_BASE}/api/ask`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ q, businessSlug: BUSINESS_SLUG })
         });
         const j = await r.json();
@@ -911,7 +651,6 @@
         return "Thanks! (Demo mode) In production this connects to our AI and answers from your business data.";
       }
     }
-
     async function onSend() {
       const q = sanitize(input.value);
       if (!q) return;
@@ -925,7 +664,7 @@
     send.addEventListener('click', onSend);
     input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); onSend(); }});
 
-    // ===== Quick Book wired to your API (/api/services, /api/bookings)
+    // Quick Book
     const $svc = document.getElementById('qb-service');
     const $start = document.getElementById('qb-start');
     const $name = document.getElementById('qb-name');
@@ -943,13 +682,10 @@
         (j.services || []).forEach(s => {
           const opt = document.createElement('option');
           const price = s.price_cents != null ? ('$' + (s.price_cents/100).toFixed(2)) : '—';
-          opt.value = s.id;
-          opt.textContent = `${s.name} — ${price}`;
-          $svc.appendChild(opt);
+          opt.value = s.id; opt.textContent = `${s.name} — ${price}`; $svc.appendChild(opt);
         });
         if (!$start.value) {
-          const now = new Date();
-          now.setMinutes(now.getMinutes() + 60);
+          const now = new Date(); now.setMinutes(now.getMinutes() + 60);
           const iso = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
           $start.value = iso;
         }
@@ -958,112 +694,73 @@
         $svc.innerHTML = '<option value="">(No services found—configure in Supabase)</option>';
       }
     }
-
     async function makeBooking() {
       const serviceId = $svc.value;
       const startsVal = $start.value;
-      const customer_name = $name.value.trim();
+      const customer_name = ($name.value || '').trim();
       const notes = ($notes.value || '').trim() || null;
-
-      if (!serviceId || !startsVal || !customer_name) {
-        $out.textContent = 'Please pick a service, a start time, and enter your name.'; return;
-      }
+      if (!serviceId || !startsVal || !customer_name) { $out.textContent = 'Please pick a service, a start time, and enter your name.'; return; }
       $out.textContent = 'Booking…';
       try {
         const r = await fetch(`${API_BASE}/api/bookings`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            businessSlug: BUSINESS_SLUG,
-            serviceId,
-            starts_at: new Date(startsVal).toISOString(),
-            customer_name,
-            notes
-          })
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessSlug: BUSINESS_SLUG, serviceId, starts_at: new Date(startsVal).toISOString(), customer_name, notes })
         });
         const j = await r.json();
         $out.textContent = r.ok ? `Booked! Confirmation id: ${j.id}` : (j.error || 'Error');
-      } catch (e) {
-        $out.textContent = 'Network error';
-      }
+      } catch (e) { $out.textContent = 'Network error'; }
     }
     $book.addEventListener('click', makeBooking);
 
-    // ===== Utilities (waitlist forms)
-    function collectAndValidate(formEl, msgEl) {
+    // Waitlist helpers
+    const hiddenForm = document.getElementById('hidden-form');
+    const pageForm   = document.getElementById('waitlist-page-form');
+    const wlPageMsg  = document.getElementById('wl-page-msg');
+    const modal        = document.getElementById('wl-modal');
+    const wlClose      = document.getElementById('wl-close');
+    const wlPlanInput  = document.getElementById('wl-plan');
+    const wlModalForm  = document.getElementById('waitlist-modal-form');
+    const wlModalMsg   = document.getElementById('wl-modal-msg');
+    const toast        = document.getElementById('toast');
+    const STRIPE = { Starter: "#", Pro: "#" };
+    const LAUNCH = { USE_WAITLIST: true };
+    const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; const phoneRegex=/^\+?[0-9\s().-]{7,}$/;
+
+    function collectAndValidate(formEl, msgEl){
       const fd = new FormData(formEl);
-      const name  = (fd.get('name')  || '').toString().trim();
-      const email = (fd.get('email') || '').toString().trim();
-      const phone = (fd.get('phone') || '').toString().trim();
-
-      if (!name)  { msgEl.textContent = "Please enter your name."; return null; }
-      if (!CONFIG.emailRegex.test(email)) { msgEl.textContent = "Please enter a valid email (must include @ and .)."; return null; }
-      if (phone && !CONFIG.phoneRegex.test(phone)) { msgEl.textContent = "Please enter a valid phone number."; return null; }
-
-      msgEl.textContent = "";
-      return fd;
+      const name=(fd.get('name')||'').toString().trim(); const email=(fd.get('email')||'').toString().trim(); const phone=(fd.get('phone')||'').toString().trim();
+      if(!name){ msgEl.textContent="Please enter your name."; return null; }
+      if(!emailRegex.test(email)){ msgEl.textContent="Please enter a valid email."; return null; }
+      if(phone && !phoneRegex.test(phone)){ msgEl.textContent="Please enter a valid phone number."; return null; }
+      msgEl.textContent=""; return fd;
     }
-
-    function mirrorToHidden(fd) {
-      hiddenForm.elements['name'].value      = fd.get('name')      || '';
-      hiddenForm.elements['email'].value     = fd.get('email')     || '';
-      hiddenForm.elements['phone'].value     = fd.get('phone')     || '';
-      hiddenForm.elements['company'].value   = fd.get('company')   || '';
-      hiddenForm.elements['newsletter'].value= fd.get('newsletter')? 'Yes':'No';
-      hiddenForm.elements['plan'].value      = fd.get('plan')      || 'N/A';
+    function mirrorToHidden(fd){
+      ['name','email','phone','company','newsletter','plan'].forEach(k=>{
+        const v = fd.get(k); if (hiddenForm.elements[k]) hiddenForm.elements[k].value = k==='newsletter' ? (v?'Yes':'No') : (v||'');
+      });
       return new FormData(hiddenForm);
     }
-
-    function showToast(text) {
-      toast.textContent = text;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+    function showToast(text){ toast.textContent=text; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3000); }
+    function openWaitlist(plan){ wlPlanInput.value=plan; modal.classList.remove('hidden'); setTimeout(()=>document.querySelector('#waitlist-modal-form input[name="name"]').focus(),50); }
+    function closeWaitlist(){ modal.classList.add('hidden'); }
+    function goHomeAfter(ms=1500){ setTimeout(()=>{ window.location.hash='#home'; window.scrollTo({top:0,behavior:'smooth'}); closeWaitlist(); }, ms); }
+    async function submitWaitlist(fd, msgEl){
+      try { await fetch(hiddenForm.action, { method:'POST', body: mirrorToHidden(fd), mode:'no-cors' }); msgEl.textContent=""; showToast("Thanks! Check your email for a confirmation."); goHomeAfter(); return true; }
+      catch(e){ msgEl.textContent = "Hmm, something went wrong. Please try again."; msgEl.className="text-sm text-red-600"; return false; }
     }
-
-    function goHomeAfter(ms=CONFIG.redirectDelayMs) {
-      setTimeout(() => {
-        window.location.hash = '#home';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        closeWaitlist();
-      }, ms);
-    }
-
-    async function submitWaitlist(fd, msgEl) {
-      const payload = mirrorToHidden(fd);
-      try {
-        await fetch(hiddenForm.action, { method: 'POST', body: payload, mode: 'no-cors' });
-        msgEl.textContent = "";
-        showToast(CONFIG.thankYouMsg);
-        goHomeAfter();
-        return true;
-      } catch (e) {
-        msgEl.textContent = "Hmm, something went wrong. Please try again or email " + CONFIG.waitlistMailbox;
-        msgEl.className = "text-sm text-red-600";
-        return false;
-      }
-    }
-
-    // In-page waitlist submit
-    const pageForm = document.getElementById('waitlist-page-form');
-    const wlPageMsg = document.getElementById('wl-page-msg');
-    pageForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = collectAndValidate(pageForm, wlPageMsg);
-      if (!fd) return;
-      await submitWaitlist(fd, wlPageMsg);
+    document.querySelectorAll('.js-open-wl, .price-trigger').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const plan = el.getAttribute('data-plan') || 'Starter';
+        if (LAUNCH.USE_WAITLIST) openWaitlist(plan); else { const u=STRIPE[plan]; if (u) location.href=u; }
+      });
     });
+    document.getElementById('wl-close')?.addEventListener('click', closeWaitlist);
+    document.getElementById('wl-modal')?.addEventListener('click', e=>{ if(e.target.id==='wl-modal') closeWaitlist(); });
 
-    // Modal waitlist submit
-    const wlModalForm = document.getElementById('waitlist-modal-form');
-    const wlModalMsg = document.getElementById('wl-modal-msg');
-    wlModalForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = collectAndValidate(wlModalForm, wlModalMsg);
-      if (!fd) return;
-      await submitWaitlist(fd, wlModalMsg);
-    });
+    pageForm.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(pageForm, wlPageMsg); if(!fd) return; await submitWaitlist(fd, wlPageMsg); });
+    wlModalForm.addEventListener('submit', async e=>{ e.preventDefault(); const fd=collectAndValidate(wlModalForm, wlModalMsg); if(!fd) return; await submitWaitlist(fd, wlModalMsg); });
 
-    // ===== Kickoff
+    // Load data
     loadServices();
   </script>
 </body>
