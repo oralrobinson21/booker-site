@@ -1,613 +1,530 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>BookerPilot — NYC Return Pickup</title>
-<meta name="description" content="We pick up your return & drop it at USPS/UPS/FedEx/Amazon Hub. Flat $6.99 + optional $2 insurance. NYC metro only."/>
-<link rel="icon" href="data:;base64,iVBORw0KGgo="/>
-<!-- Tailwind via CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- Chart.js for reviews chart -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<style>
-  :root { --brand:#0b74de }
-  .btn { @apply inline-flex items-center justify-center rounded-md bg-[color:var(--brand)] text-white px-4 py-2 font-medium hover:opacity-90 transition; }
-  .card { @apply bg-white border border-gray-200 rounded-xl shadow-sm; }
-  .container-narrow { @apply max-w-4xl mx-auto px-4; }
-  .container-wide { @apply max-w-6xl mx-auto px-4; }
-  .link { @apply text-[color:var(--brand)] hover:underline; }
-</style>
+  <!-- ====== Meta / SEO ====== -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>On-Site Jet & Helicopter Detailing — Aircraft Exterior & Interior Cleaning | Mobile Across the Northeast, Mid-Atlantic & Southeast</title>
+  <meta name="description" content="On-site aircraft detailing for jets, turboprops & helicopters. Exterior wash, brightwork, decon & interior sanitation. We come to your FBO, hangar, ramp or helipad. Call or text 917-615-7104." />
+  <link rel="canonical" href="https://your-domain.com/" />
+  <meta property="og:title" content="On-Site Jet & Helicopter Detailing — Anywhere You Need Us" />
+  <meta property="og:description" content="Mobile aircraft detailing for jets, turboprops & helicopters. We come to your FBO, hangar, ramp or helipad. Call or text 917-615-7104." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://your-domain.com/" />
+  <meta name="theme-color" content="#4F46E5" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS (fade/slide) -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <!-- Feather Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+  <style>
+    /* Global */
+    html{scroll-behavior:smooth}
+    body{overflow-x:hidden}
+    [id]{scroll-margin-top:90px}
+
+    /* Gradient sky animation */
+    .gradient-bg{
+      background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 25%,#1d4ed8 50%,#3b82f6 75%,#93c5fd 100%);
+      background-size:200% 200%;
+      animation:skyShift 10s ease-in-out infinite;
+    }
+    @keyframes skyShift{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+    /* Little cloud bands */
+    .clouds:before,.clouds:after{
+      content:""; position:absolute; left:-10%; right:-10%;
+      height:160px; top:20%; background:radial-gradient(ellipse at center, rgba(255,255,255,.35), rgba(255,255,255,0) 60%);
+      filter:blur(10px);
+      transform:translateY(0); animation:cloudDrift 22s linear infinite;
+    }
+    .clouds:after{ top:65%; animation-duration:28s; opacity:.6 }
+    @keyframes cloudDrift{
+      0%{transform:translate(-5%,0)}
+      50%{transform:translate(5%,0)}
+      100%{transform:translate(-5%,0)}
+    }
+
+    /* CTA buttons hover lift */
+    .lift{transition:transform .15s ease, box-shadow .25s ease}
+    .lift:hover{transform:translateY(-2px); box-shadow:0 12px 30px -12px rgba(0,0,0,.35)}
+
+    /* Sticky nav backdrop blur */
+    .nav-blur{backdrop-filter:saturate(180%) blur(10px); background:rgba(255,255,255,.85)}
+
+    /* Feature “pull-to-reveal” */
+    .reveal-wrap{position:relative}
+    .reveal-mask{max-height:0; overflow:hidden; transition:max-height .7s cubic-bezier(.4,0,.2,1)}
+    .reveal-open .reveal-mask{max-height:1800px}
+    .reveal-handle{
+      width:120px;height:32px;margin:10px auto 0;border-radius:9999px 9999px 0 0;background:#e5e7eb;
+      position:relative;cursor:pointer;box-shadow:inset 0 -6px 12px rgba(0,0,0,.06)
+    }
+    .reveal-handle:after{
+      content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+      width:40px;height:4px;border-radius:999px;background:#9ca3af
+    }
+
+    /* Modal */
+    .modal{position:fixed;inset:0;z-index:50;display:none}
+    .modal.show{display:block}
+  </style>
+
+  <!-- JSON-LD: LocalBusiness + Service -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"LocalBusiness",
+    "name":"On-Site Jet & Helicopter Detailing",
+    "url":"https://your-domain.com/",
+    "telephone":"+1-917-615-7104",
+    "areaServed":[
+      "NY","NJ","CT","PA","MA","RI","NH","VT","ME","DE","MD","DC",
+      "VA","WV","NC","SC","GA","FL","TN","KY","OH","MI","IN","IL","WI"
+    ],
+    "description":"Mobile aircraft detailing for jets, turboprops and helicopters. Exterior wash, brightwork polishing, decontamination, interior sanitation. We come to FBOs, hangars, ramps and approved helipads.",
+    "openingHoursSpecification":{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"06:00","closes":"22:00"},
+    "sameAs":[]
+  }
+  </script>
 </head>
-<body class="bg-gray-50 text-gray-900">
-  <!-- Header -->
-  <header class="border-b bg-white">
-    <div class="container-wide py-3 flex items-center justify-between">
-      <a href="#/" class="text-2xl font-semibold" style="color:var(--brand)">BookerPilot</a>
-      <nav class="flex gap-5 text-sm">
-        <a class="link" href="#/book">Book Pickup</a>
-        <a class="link" href="#/pricing">Pricing</a>
-        <a class="link" href="#/reviews">Reviews</a>
-        <a class="link" href="#/faq">FAQ</a>
-        <a class="link" href="#/service-area">Service Area</a>
-        <a class="link" href="#/legal">Legal</a>
-      </nav>
+
+<body class="text-gray-900">
+  <!-- ===== NAV ===== -->
+  <nav class="nav-blur sticky top-0 z-40 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="h-16 flex items-center justify-between">
+        <a href="#home" class="flex items-center space-x-2">
+          <i data-feather="send" class="w-6 h-6 text-indigo-600"></i>
+          <span class="font-semibold text-indigo-700">On-Site Jet Detailing</span>
+        </a>
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="#features" class="text-sm text-gray-600 hover:text-gray-900">Features</a>
+          <a href="#service-area" class="text-sm text-gray-600 hover:text-gray-900">Service Area</a>
+          <a href="#airports" class="text-sm text-gray-600 hover:text-gray-900">Airports</a>
+          <a href="#pricing" class="text-sm text-gray-600 hover:text-gray-900">Pricing</a>
+          <a href="#contact" class="text-sm text-gray-600 hover:text-gray-900">Contact</a>
+          <a href="tel:+19176157104" class="lift inline-flex items-center rounded-full bg-gray-900 text-white px-4 py-2 text-sm">
+            <i data-feather="phone" class="w-4 h-4 mr-2"></i> Call 917-615-7104
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header id="home" class="relative gradient-bg text-white">
+    <div class="clouds absolute inset-0 pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight" data-aos="fade-up">
+          On-Site Jet & Helicopter Detailing — Anywhere You Need Us.
+        </h1>
+        <p class="mt-5 text-indigo-100 text-lg" data-aos="fade-up" data-aos-delay="100">
+          We come to your <span class="font-semibold">FBO, hangar, ramp or helipad</span> across the Northeast, Mid-Atlantic & Southeast.
+          Exterior, interior, brightwork — done right and ready for wheels-up.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="160">
+          <a href="tel:+19176157104" class="lift inline-flex items-center bg-white text-indigo-700 font-medium px-6 py-3 rounded-md">
+            <i data-feather="phone" class="w-5 h-5 mr-2"></i>Call Now
+          </a>
+          <a href="sms:+19176157104?&body=Hi%2C%20I%27d%20like%20a%20detailing%20quote%20for%20my%20aircraft." class="lift inline-flex items-center bg-indigo-600 text-white font-medium px-6 py-3 rounded-md hover:bg-indigo-700">
+            <i data-feather="message-circle" class="w-5 h-5 mr-2"></i>Text for Quote
+          </a>
+          <a href="#contact" class="lift inline-flex items-center border border-white/70 text-white font-medium px-6 py-3 rounded-md">
+            <i data-feather="mail" class="w-5 h-5 mr-2"></i>Email Us
+          </a>
+        </div>
+        <p class="mt-4 text-sm text-indigo-200">NYC-based • Mobile team • Short-notice & overnight slots available</p>
+      </div>
     </div>
   </header>
 
-  <!-- Main -->
-  <main id="app" class="container-wide py-6"></main>
+  <!-- ===== FEATURES (first 4) ===== -->
+  <section id="features" class="py-14 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <h2 class="text-indigo-600 font-semibold uppercase tracking-wide" data-aos="fade-up">Features</h2>
+        <p class="mt-2 text-3xl font-extrabold" data-aos="fade-up">Everything you need for a showroom-ready aircraft</p>
+      </div>
 
-  <!-- Footer -->
-  <footer class="border-t bg-white mt-10">
-    <div class="container-wide py-6 text-sm text-gray-600">
-      <p>© <span id="year"></span> BookerPilot — NYC returns pickup. Not affiliated with retailers.</p>
-      <p class="mt-1">Flat $6.99 per pickup (+$2 optional insurance). Coverage: NYC metro only.</p>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="flex" data-aos="fade-up">
+          <div class="flex-shrink-0">
+            <div class="h-12 w-12 rounded-md bg-indigo-600 text-white flex items-center justify-center">
+              <i data-feather="droplet"></i>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-semibold">Exterior Wash & Dry</h3>
+            <p class="text-gray-600">PH-balanced soaps, de-bug, undercarriage splash, pitot/static awareness, safe around sensors & brightwork.</p>
+          </div>
+        </div>
+
+        <div class="flex" data-aos="fade-up" data-aos-delay="80">
+          <div class="flex-shrink-0">
+            <div class="h-12 w-12 rounded-md bg-indigo-600 text-white flex items-center justify-center">
+              <i data-feather="sun"></i>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-semibold">Brightwork & Paint Care</h3>
+            <p class="text-gray-600">Swirl-free polishing, sealants & paint protection tailored for aluminum & composite surfaces.</p>
+          </div>
+        </div>
+
+        <div class="flex" data-aos="fade-up" data-aos-delay="120">
+          <div class="flex-shrink-0">
+            <div class="h-12 w-12 rounded-md bg-indigo-600 text-white flex items-center justify-center">
+              <i data-feather="wind"></i>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-semibold">Cabin & Cockpit Interior</h3>
+            <p class="text-gray-600">Vacuum, leather clean/condition, disinfect high-touch areas, galley & lav tidy, glass streak-free.</p>
+          </div>
+        </div>
+
+        <div class="flex" data-aos="fade-up" data-aos-delay="160">
+          <div class="flex-shrink-0">
+            <div class="h-12 w-12 rounded-md bg-indigo-600 text-white flex items-center justify-center">
+              <i data-feather="map-pin"></i>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg font-semibold">We Come to You</h3>
+            <p class="text-gray-600">FBOs, private hangars, hospital/rooftop helipads (with site permission) — we’re fully mobile.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pull to reveal more enterprise detail -->
+      <div class="reveal-wrap mt-8">
+        <div id="pull-more" class="reveal-handle" title="Pull to reveal more"></div>
+        <div id="features-more" class="reveal-mask">
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+            <div class="border rounded-lg p-5 flex">
+              <div class="h-10 w-10 rounded-md bg-indigo-600 text-white flex items-center justify-center"><i data-feather="shield"></i></div>
+              <div class="ml-4">
+                <h4 class="font-semibold">FOD & Safety Forward</h4>
+                <p class="text-sm text-gray-600">Chocks, cones & FOD sweeps. Pitot/static covers when needed. Crew brief on aircraft-specific no-touch zones.</p>
+              </div>
+            </div>
+            <div class="border rounded-lg p-5 flex">
+              <div class="h-10 w-10 rounded-md bg-indigo-600 text-white flex items-center justify-center"><i data-feather="truck"></i></div>
+              <div class="ml-4">
+                <h4 class="font-semibold">Ramp-Ready Gear</h4>
+                <p class="text-sm text-gray-600">Low-noise equipment and spill-safe chemicals approved for ramp work where permitted by the field.</p>
+              </div>
+            </div>
+            <div class="border rounded-lg p-5 flex">
+              <div class="h-10 w-10 rounded-md bg-indigo-600 text-white flex items-center justify-center"><i data-feather="bar-chart-2"></i></div>
+              <div class="ml-4">
+                <h4 class="font-semibold">Flight-Schedule Friendly</h4>
+                <p class="text-sm text-gray-600">Overnights, quick turns, or out-and-backs — we build around your movements.</p>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mt-6">
+            <button id="hide-features" class="text-indigo-600 text-sm underline">Hide details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICE AREA (state selector) ===== -->
+  <section id="service-area" class="py-14 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <h2 class="text-indigo-600 font-semibold uppercase tracking-wide" data-aos="fade-up">Service Area</h2>
+        <p class="mt-2 text-3xl font-extrabold" data-aos="fade-up">Northeast • Mid-Atlantic • Southeast</p>
+        <p class="mt-3 text-gray-600 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="50">
+          Choose your state to see major and local airports we regularly service. We also support <strong>remote-access</strong> sites:
+          private helipads, hospitals, corporate rooftops and off-airport hangars (with permission).
+        </p>
+      </div>
+
+      <div class="max-w-3xl mx-auto">
+        <label for="stateSelect" class="block text-sm font-medium text-gray-700 mb-1">Select your state</label>
+        <select id="stateSelect" class="w-full border rounded-md px-3 py-2">
+          <option value="" selected disabled>— Choose a state —</option>
+          <option>NY</option><option>NJ</option><option>CT</option><option>PA</option><option>MA</option><option>RI</option><option>NH</option><option>VT</option><option>ME</option>
+          <option>DE</option><option>MD</option><option>DC</option><option>VA</option><option>WV</option><option>NC</option><option>SC</option><option>GA</option><option>FL</option>
+          <option>OH</option><option>MI</option><option>IN</option><option>IL</option><option>WI</option><option>TN</option><option>KY</option>
+          <option>Other</option>
+        </select>
+
+        <div id="stateAirports" class="mt-6 hidden">
+          <h3 class="text-xl font-semibold mb-2"><span id="stateLabel"></span> Airports</h3>
+          <ul id="airportList" class="list-disc pl-6 text-gray-700 space-y-1"></ul>
+          <p class="mt-3 text-sm text-gray-600" id="remoteNote"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AIRPORT DIRECTORY (quick skim of hubs) ===== -->
+  <section id="airports" class="py-14 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <h2 class="text-indigo-600 font-semibold uppercase tracking-wide" data-aos="fade-up">Airport Coverage</h2>
+        <p class="mt-2 text-3xl font-extrabold" data-aos="fade-up">Major FBOs & Regional Fields We Visit Often</p>
+        <p class="mt-3 text-gray-600" data-aos="fade-up" data-aos-delay="50">
+          We regularly work at Teterboro (TEB), White Plains (HPN), JFK/EWR/LGA, Morristown (MMU), Westchester, Trenton (TTN),
+          Republic (FRG), Islip (ISP), Stewart (SWF), Philadelphia (PHL/PHL-NE), Boston area (BOS/BDL), Dulles (IAD), Reagan (DCA),
+          Baltimore (BWI), Charlotte (CLT), Raleigh-Durham (RDU), Atlanta (PDK/FTY/ATL), Miami & Fort Lauderdale (OPF/FLL/MIA),
+          Orlando (MCO/ORL/SFB), Tampa (TPA/PIE/VDF), Naples (APF), Palm Beach (PBI), Sarasota (SRQ), Jacksonville (JAX/CRG/VQQ),
+          Nashville (BNA), Chicago (MDW/ORD/DPA), Detroit (DTW/DET/ARB), Cleveland (BKL/CLE), Columbus (CMH/OSU/LCK) and many more.
+        </p>
+      </div>
+      <div class="text-center">
+        <a href="#contact" class="lift inline-flex items-center bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700">
+          <i data-feather="calendar" class="w-5 h-5 mr-2"></i>Request a Slot
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRICING / TERMS ===== -->
+  <section id="pricing" class="py-14 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <h2 class="text-indigo-600 font-semibold uppercase tracking-wide" data-aos="fade-up">Pricing & Terms</h2>
+        <p class="mt-2 text-3xl font-extrabold" data-aos="fade-up">Transparent booking — no surprises</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg border p-6">
+          <h3 class="font-semibold text-lg">Booking Deposit</h3>
+          <p class="text-gray-700 mt-2">• **$2,000 minimum** or **25% of the total estimate** (whichever is higher).<br/>• Applied to final invoice. **Non-refundable** due to aircraft positioning & slot allocation.</p>
+        </div>
+        <div class="bg-white rounded-lg border p-6">
+          <h3 class="font-semibold text-lg">Milestone Payments</h3>
+          <p class="text-gray-700 mt-2">• **50% on arrival** at your aircraft.<br/>• **25% on completion** after walk-around sign-off.</p>
+        </div>
+        <div class="bg-white rounded-lg border p-6">
+          <h3 class="font-semibold text-lg">Rush / Immediate Dispatch</h3>
+          <p class="text-gray-700 mt-2">• **From $1,500** additional, varies by location, ramp access & call-out window.</p>
+        </div>
+      </div>
+
+      <div class="mt-6 bg-white rounded-lg border p-6">
+        <h4 class="font-semibold">Optional Add-On</h4>
+        <p class="text-gray-700 mt-2">• **$700 insurance add-on** available per project if your field or operator requires it. Not needed for most jobs.</p>
+      </div>
+
+      <!-- Stripe preserved for later -->
+      <!--
+      Stripe (for future)
+      Starter: https://buy.stripe.com/fZu8wO3Gd3NVc8s8EX43S03
+      Pro:     https://buy.stripe.com/6oU3cu4Khacj6O81cv43S04
+      -->
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="py-14 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <h2 class="text-indigo-600 font-semibold uppercase tracking-wide" data-aos="fade-up">Contact</h2>
+        <p class="mt-2 text-3xl font-extrabold" data-aos="fade-up">Call, text or email for a quote</p>
+        <p class="mt-2 text-gray-600">Fastest: call or text <a class="font-semibold text-indigo-700" href="tel:+19176157104">917-615-7104</a></p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="space-y-3">
+          <a href="tel:+19176157104" class="lift inline-flex items-center bg-gray-900 text-white px-5 py-3 rounded-md">
+            <i data-feather="phone" class="w-5 h-5 mr-2"></i> Call 917-615-7104
+          </a>
+          <a href="sms:+19176157104?&body=Hi%2C%20I%27m%20looking%20for%20aircraft%20detailing.%20My%20state%20is%20____%20and%20airport%20is%20____." class="lift inline-flex items-center bg-indigo-600 text-white px-5 py-3 rounded-md hover:bg-indigo-700">
+            <i data-feather="message-circle" class="w-5 h-5 mr-2"></i> Text for Quote
+          </a>
+          <p class="text-sm text-gray-600">Tell us: aircraft type/tail, state & airport, timing window, interior/exterior scope.</p>
+        </div>
+
+        <!-- Email form (FormSubmit) -->
+        <form id="quote-form" class="space-y-3" action="https://formsubmit.co/CONTACT_EMAIL" method="POST" autocomplete="off">
+          <!-- Replace CONTACT_EMAIL (below & in hidden form) with your email, e.g., bookerpilot@outlook.com -->
+          <input type="hidden" name="_subject" value="Aircraft Detailing Quote Request" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_next" value="https://your-domain.com/#home" />
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input name="name" type="text" placeholder="Your Name" class="border rounded-md px-3 py-2" required oncopy="return false" onpaste="return false" />
+            <input name="email" type="email" placeholder="you@example.com" class="border rounded-md px-3 py-2" required oncopy="return false" onpaste="return false" />
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input name="phone" type="tel" placeholder="Phone (for quick scheduling)" class="border rounded-md px-3 py-2" />
+            <input name="tail" type="text" placeholder="Tail # (optional)" class="border rounded-md px-3 py-2" />
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <select name="state" class="border rounded-md px-3 py-2" required>
+              <option value="">State</option>
+              <option>NY</option><option>NJ</option><option>CT</option><option>PA</option><option>MA</option><option>RI</option><option>NH</option><option>VT</option><option>ME</option>
+              <option>DE</option><option>MD</option><option>DC</option><option>VA</option><option>WV</option><option>NC</option><option>SC</option><option>GA</option><option>FL</option>
+              <option>OH</option><option>MI</option><option>IN</option><option>IL</option><option>WI</option><option>TN</option><option>KY</option><option>Other</option>
+            </select>
+            <input name="airport" type="text" placeholder="Airport / Helipad (e.g., TEB, HPN, OPF, hospital rooftop)" class="border rounded-md px-3 py-2" required />
+          </div>
+          <textarea name="scope" placeholder="Scope (exterior wash, interior detail, brightwork, quick turn, etc.)" class="w-full border rounded-md px-3 py-2 h-28" required></textarea>
+          <label class="inline-flex items-center text-sm text-gray-600">
+            <input type="checkbox" name="insurance_addon" class="mr-2"> Add optional $700 insurance (if your field/operator requires it)
+          </label>
+          <button class="w-full bg-indigo-600 text-white px-4 py-3 rounded-md hover:bg-indigo-700">Request Quote</button>
+          <p id="form-msg" class="text-sm text-gray-600"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-3">
+        <p class="text-sm text-gray-500">NYC-based • Mobile across Northeast, Mid-Atlantic & Southeast</p>
+        <div class="flex items-center gap-4">
+          <a href="tel:+19176157104" class="text-sm text-gray-700 hover:text-gray-900"><i data-feather="phone" class="inline w-4 h-4 mr-1"></i>917-615-7104</a>
+          <a href="#contact" class="text-sm text-gray-700 hover:text-gray-900"><i data-feather="mail" class="inline w-4 h-4 mr-1"></i>Email</a>
+        </div>
+      </div>
+      <p class="mt-4 text-center text-xs text-gray-400">&copy; <span id="yr"></span> On-Site Jet & Helicopter Detailing. All rights reserved.</p>
     </div>
   </footer>
 
-<script>
-/* ------------------------------
-   CONFIG / CONSTANTS
---------------------------------*/
-const BASE_PRICE = 6.99;
-const INSURANCE_PRICE = 2.00;
-const CITY_LABEL = "NYC Metro";
-const NYC_ZIPS = new Set([
-  // Manhattan
-  "10001","10002","10003","10004","10005","10006","10007","10009","10010","10011","10012","10013","10014","10016","10017","10018","10019","10020","10021","10022","10023","10024","10025","10026","10027","10028","10029","10030","10031","10032","10033","10034","10035","10036","10037","10038","10039","10040",
-  // Brooklyn (subset)
-  "11201","11203","11204","11205","11206","11207","11208","11209","11210","11211","11212","11213","11214","11215","11216","11217","11218","11219","11220","11221","11222","11223","11224","11225","11226","11228","11229","11230","11231","11232","11233","11234","11235","11236","11237","11238",
-  // Queens (subset)
-  "11101","11102","11103","11104","11105","11106","11354","11355","11356","11357","11358","11360","11361","11362","11363","11364","11365","11366","11367","11368","11369","11370","11372","11373","11374","11375","11377","11378","11379","11385",
-  // Bronx
-  "10451","10452","10453","10454","10455","10456","10457","10458","10459","10460","10461","10462","10463","10464","10465","10466","10467","10468","10469","10470","10471","10472","10473","10474","10475",
-  // Staten Island
-  "10301","10302","10303","10304","10305","10306","10307","10308","10309","10310","10312","10314"
-]);
-/* Demo order store (in-memory for SPA) */
-const ORDERS = new Map(); // id -> order object
+  <!-- ===== Scripts ===== -->
+  <script>
+    /* Init libs */
+    AOS.init({ duration: 700, once: true });
+    if (window.feather && typeof feather.replace === 'function') feather.replace();
+    document.getElementById('yr').textContent = new Date().getFullYear();
 
-/* ------------------------------
-   UTIL
---------------------------------*/
-const $ = (sel, root=document) => root.querySelector(sel);
-const h = (html) => { const d=document.createElement('div'); d.innerHTML=html; return d.firstElementChild; };
-function fmtMoney(n){ return `$${n.toFixed(2)}`; }
-function uid(){ return Math.random().toString(36).slice(2,10); }
-function calcTotal(items, insurance, weightBand){
-  let add = 0;
-  if(items>1) add += (items-1)*2;       // $2 per extra box
-  if(weightBand==="15-25") add += 2;
-  if(weightBand==="25+") add += 4;
-  if(insurance) add += INSURANCE_PRICE;
-  return +(BASE_PRICE + add);
-}
+    /* Pull-to-reveal */
+    const wrap = document.querySelector('.reveal-wrap');
+    document.getElementById('pull-more').addEventListener('click', () => wrap.classList.toggle('reveal-open'));
+    document.getElementById('hide-features').addEventListener('click', () => wrap.classList.remove('reveal-open'));
 
-/* ------------------------------
-   DEMO REVIEWS (SAMPLE ONLY)
-   ~70% ★★★★★, some 4/3/2, and exactly 20 ★
---------------------------------*/
-function generateDemoReviews(){
-  const total = 465, ones = 20, fives = Math.floor(total * 0.70);
-  let left = total - fives - ones;
-  const fours = Math.floor(left * 0.60); left -= fours;
-  const threes = Math.floor(left * 0.60);
-  const twos = total - fives - fours - threes - ones;
-  const boroughs = ["Manhattan","Brooklyn","Queens","Bronx","Staten Island"];
-  const names = ["Jordan R.","Sam P.","Nadia K.","Luis A.","Priya S.","Mike D.","Elena T.","Chris W.","Aisha F.","Tommy L.","Ray H.","Shannon C.","Leo M.","Irene V.","Zach T."];
-  const texts = {
-    5:[
-      "SAMPLE: Same-day pickup, zero hassle. Loved the proof photo.",
-      "SAMPLE: Cheapest way to return Amazon I’ve used in NYC.",
-      "SAMPLE: Courteous driver and on-time. Will use again.",
-      "SAMPLE: Label upload + pickup window = perfect.",
-      "SAMPLE: Apartment friendly—no lobby headaches.",
-      "SAMPLE: Clear pricing and super fast.",
-      "SAMPLE: So easy compared to waiting at UPS!"
-    ],
-    4:[
-      "SAMPLE: Smooth overall, pickup 10 mins late.",
-      "SAMPLE: Great price, more evening slots please.",
-      "SAMPLE: Worked as promised; tracking helped."
-    ],
-    3:[
-      "SAMPLE: Did the job. More morning windows would help.",
-      "SAMPLE: Ok; driver called twice to find the buzzer."
-    ],
-    2:[
-      "SAMPLE: Pickup rescheduled due to weather, still completed.",
-      "SAMPLE: Label upload failed once; second try worked."
-    ],
-    1:[
-      "SAMPLE: Missed my slot; rebook wasn’t immediate.",
-      "SAMPLE: Drop-off proof took hours to show."
-    ]
-  };
-  const out=[];
-  const pushMany=(count, rating)=>{
-    for(let i=0;i<count;i++){
-      out.push({
-        id: uid(),
-        name: names[Math.floor(Math.random()*names.length)],
-        rating,
-        text: texts[rating][Math.floor(Math.random()*texts[rating].length)],
-        borough: boroughs[Math.floor(Math.random()*boroughs.length)],
-        verified: Math.random()>0.25,
-        createdAt: Date.now()-Math.floor(Math.random()*60*24*60*60*1000) // within ~60 days
+    /* State -> airports map (major + regional + remote note) */
+    const AIRPORTS = {
+      "NY":[
+        "TEB Teterboro (via Hudson crossing)","HPN Westchester County","JFK • LGA • EWR (with FBO access)","FRG Republic",
+        "ISP Islip","SWF Stewart","ALB Albany","BUF Buffalo","ROC Rochester","SYR Syracuse",
+        "All NYC hospitals & approved rooftop helipads (remote access)"
+      ],
+      "NJ":[
+        "MMU Morristown","TEB Teterboro","ACY Atlantic City","TTN Trenton","CDW Essex County","LDJ Linden",
+        "BLM Monmouth","MIV Millville","Howard/Robert Wood Johnson helipads (remote access)"
+      ],
+      "CT":[
+        "BDL Bradley","HVN Tweed-New Haven","BDR Bridgeport","OXC Waterbury-Oxford","GON Groton-New London",
+        "HFD Hartford-Brainard","Hospital helipads by approval (remote)"
+      ],
+      "PA":[
+        "PHL Philadelphia","PNE Northeast Philly","AGC Allegheny County","PIT Pittsburgh","MDT Harrisburg",
+        "TTN/PHL region FBOs","Regional GA fields statewide"
+      ],
+      "MA":[
+        "BOS Logan (FBO)","BED Hanscom","ORH Worcester","ACK Nantucket","HYA Hyannis","MVY Martha’s Vineyard",
+        "BAF Westfield","Cape & island helipads (remote)"
+      ],
+      "MD":[
+        "BWI Baltimore","MTN Martin State","FDK Frederick","HEF/Manassas via DC corridor","HGR Hagerstown",
+        "Hospital helipads by approval (remote)"
+      ],
+      "DC":[
+        "DCA (limited) via operator/FBO","IAD Dulles (primary)","CGS College Park (case-by-case)",
+        "Hospital helipads by approval (remote)"
+      ],
+      "VA":[
+        "IAD Dulles","DCA (limited)","RIC Richmond","HEF Manassas","PHF Newport News","ORF Norfolk",
+        "CHO Charlottesville","ROA Roanoke","Regional helipads (remote)"
+      ],
+      "NC":[
+        "CLT Charlotte","RDU Raleigh-Durham","GSO Greensboro","ILM Wilmington","FAY Fayetteville",
+        "AVL Asheville","Regional GA fields + hospital helipads (remote)"
+      ],
+      "SC":[
+        "CHS Charleston","CAE Columbia","GSP Greenville","MYR Myrtle Beach","HHH Hilton Head",
+        "Regional helipads (remote)"
+      ],
+      "GA":[
+        "PDK DeKalb-Peachtree","FTY Fulton County","ATL Hartsfield-Jackson (FBO required)","CSG Columbus",
+        "SAV Savannah","Augusta region","Remote helipads by approval"
+      ],
+      "FL":[
+        "OPF Opa-locka","FLL Fort Lauderdale","MIA Miami (FBO)","PBI Palm Beach","BCT Boca Raton",
+        "MCO Orlando • ORL Executive • SFB Sanford","TPA Tampa • PIE St. Pete • VDF","SRQ Sarasota","RSW/FMY Fort Myers","APF Naples","JAX Jacksonville • CRG • VQQ",
+        "Keys & coastal helipads (remote)"
+      ],
+      "OH":[
+        "CMH Columbus","OSU Don Scott","LCK Rickenbacker","CLE Cleveland Hopkins","BKL Burke Lakefront",
+        "CAK Akron-Canton","DAY Dayton","Regional GA fields"
+      ],
+      "MI":[
+        "DTW Detroit","DET Coleman A. Young","PTK Pontiac","ARB Ann Arbor","LAN Lansing","GRR Grand Rapids",
+        "Regional GA fields"
+      ],
+      "IN":[
+        "IND Indianapolis","MQJ Mount Comfort","EVV Evansville","FWA Fort Wayne","SBN South Bend"
+      ],
+      "IL":[
+        "MDW Chicago Midway","ORD O’Hare (FBO)","PWK Chicago Executive","DPA DuPage","MLI Quad Cities",
+        "PIA Peoria","RFD Rockford"
+      ],
+      "WI":[
+        "MKE Milwaukee","MSN Madison","GRB Green Bay","OSH Wittman","CWA Central Wisconsin"
+      ],
+      "TN":[
+        "BNA Nashville","CHA Chattanooga","TYS Knoxville","MEM Memphis","MKL Jackson"
+      ],
+      "KY":[
+        "SDF Louisville","LEX Blue Grass","CVG Cincinnati/N. Kentucky (FBO)","BWG Bowling Green"
+      ],
+      "RI":[ "PVD Providence","UUU Newport","OQU Quonset" ],
+      "NH":[ "MHT Manchester","PSM Portsmouth","CON Concord" ],
+      "VT":[ "BTV Burlington","RUT Rutland","MPV Barre/Montpelier" ],
+      "ME":[ "PWM Portland","BGR Bangor","RKD Rockland" ],
+      "DE":[ "ILG Wilmington/New Castle","GED Georgetown" ],
+      "WV":[ "CRW Charleston","HTS Huntington" ],
+      "Other":[
+        "We frequently travel beyond these states on request. If your airport or helipad allows third-party service and ramp access can be arranged, we’ll meet you there."
+      ]
+    };
+
+    const stateSelect = document.getElementById('stateSelect');
+    const stateAirports = document.getElementById('stateAirports');
+    const stateLabel = document.getElementById('stateLabel');
+    const airportList = document.getElementById('airportList');
+    const remoteNote  = document.getElementById('remoteNote');
+
+    stateSelect.addEventListener('change', () => {
+      const s = stateSelect.value;
+      if(!s){ stateAirports.classList.add('hidden'); return; }
+      stateLabel.textContent = s;
+      airportList.innerHTML = "";
+      (AIRPORTS[s] || []).forEach(a => {
+        const li = document.createElement('li'); li.textContent = a; airportList.appendChild(li);
       });
-    }
-  };
-  pushMany(fives,5); pushMany(fours,4); pushMany(threes,3); pushMany(twos,2); pushMany(ones,1);
-  // shuffle
-  out.sort(()=>Math.random()-0.5);
-  return out;
-}
-const DEMO_REVIEWS = generateDemoReviews();
-
-/* ------------------------------
-   VIEWS
---------------------------------*/
-function StarRow(rating){
-  const full = '★'.repeat(rating), empty='☆'.repeat(5-rating);
-  return `<span class="text-amber-500">${full}</span><span class="text-gray-300">${empty}</span>`;
-}
-
-function HeaderKPI(){
-  return `
-  <section class="grid md:grid-cols-3 gap-4 mt-6">
-    <div class="card p-5">
-      <div class="text-3xl font-bold">NYC-Only</div>
-      <div class="text-gray-600 mt-1 text-sm">We serve the five boroughs — fast, local routes.</div>
-    </div>
-    <div class="card p-5">
-      <div class="text-3xl font-bold">Flat ${fmtMoney(BASE_PRICE)}</div>
-      <div class="text-gray-600 mt-1 text-sm">Add ${fmtMoney(INSURANCE_PRICE)} insurance (optional) up to $200 coverage.</div>
-    </div>
-    <div class="card p-5">
-      <div class="text-3xl font-bold">Proof & Tracking</div>
-      <div class="text-gray-600 mt-1 text-sm">Photo + timestamp when your return is dropped off.</div>
-    </div>
-  </section>`;
-}
-
-function ViewHome(){
-  return `
-  <div class="grid gap-6">
-    <section class="card p-6">
-      <h1 class="text-3xl font-semibold">Return pickup in NYC — <span style="color:var(--brand)">${fmtMoney(BASE_PRICE)}</span></h1>
-      <p class="text-gray-600 mt-2">Upload your prepaid label, pick a 2-hour window, we collect and drop at USPS/UPS/FedEx/Amazon Hub. Optional ${fmtMoney(INSURANCE_PRICE)} insurance (up to $200).</p>
-      <div class="mt-5">
-        <form id="zipForm" class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          <input id="zipInput" class="border rounded-md px-3 py-2 w-48" placeholder="Enter NYC ZIP"/>
-          <button class="btn">Check & Book</button>
-          <span id="zipErr" class="text-red-600 text-sm"></span>
-        </form>
-      </div>
-      <ul class="mt-6 grid md:grid-cols-3 gap-3 text-sm">
-        <li class="card p-4">✅ Same-day & next-day windows</li>
-        <li class="card p-4">📷 Proof photo & drop-off timestamp</li>
-        <li class="card p-4">🗽 ${CITY_LABEL} coverage only</li>
-      </ul>
-    </section>
-    ${HeaderKPI()}
-    <section class="card p-6">
-      <h2 class="text-2xl font-semibold">How it works</h2>
-      <ol class="list-decimal ml-6 mt-3 space-y-2 text-gray-700">
-        <li>Enter your ZIP to confirm NYC service.</li>
-        <li>Upload your prepaid return label & select a pickup window.</li>
-        <li>Pay ${fmtMoney(BASE_PRICE)} (add ${fmtMoney(INSURANCE_PRICE)} insurance if you want). We pick it up and send proof when dropped.</li>
-      </ol>
-      <a href="#/book" class="btn mt-5">Book a pickup</a>
-    </section>
-  </div>`;
-}
-
-function ViewBook(){
-  return `
-  <div class="card p-6">
-    <h1 class="text-2xl font-semibold">Book a pickup</h1>
-    <p class="text-sm text-gray-600 mt-1">${CITY_LABEL} only. Prepaid labels required. Most items under 25 lb; see FAQ for limits.</p>
-    <form id="bookForm" class="grid md:grid-cols-2 gap-4 mt-4">
-      <div>
-        <label class="block text-sm font-medium">Email</label>
-        <input required name="email" type="email" class="border rounded-md px-3 py-2 w-full"/>
-      </div>
-      <div>
-        <label class="block text-sm font-medium">Phone (optional)</label>
-        <input name="phone" class="border rounded-md px-3 py-2 w-full"/>
-      </div>
-      <div class="md:col-span-2">
-        <label class="block text-sm font-medium">Name (optional)</label>
-        <input name="name" class="border rounded-md px-3 py-2 w-full"/>
-      </div>
-
-      <div class="md:col-span-2 grid md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium">Address</label>
-          <input required name="address1" class="border rounded-md px-3 py-2 w-full"/>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Apt / Suite (optional)</label>
-          <input name="address2" class="border rounded-md px-3 py-2 w-full"/>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">City</label>
-          <input required name="city" value="New York" class="border rounded-md px-3 py-2 w-full"/>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">State</label>
-          <input required name="state" value="NY" class="border rounded-md px-3 py-2 w-full"/>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">ZIP (NYC only)</label>
-          <input required name="zip" class="border rounded-md px-3 py-2 w-full"/>
-          <p id="zipWarn" class="text-xs text-red-600 mt-1"></p>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Pickup Date</label>
-          <input required name="date" type="date" class="border rounded-md px-3 py-2 w-full"/>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Time Window</label>
-          <select name="slot" class="border rounded-md px-3 py-2 w-full">
-            <option value="10:00-12:00">10:00–12:00</option>
-            <option value="12:00-14:00">12:00–14:00</option>
-            <option value="16:00-18:00">16:00–18:00</option>
-            <option value="18:00-20:00">18:00–20:00</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Carrier</label>
-          <select name="carrier" class="border rounded-md px-3 py-2 w-full">
-            <option>USPS</option><option>UPS</option><option>FedEx</option><option>AmazonHub</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Packages</label>
-          <input required name="itemsCount" type="number" min="1" max="6" value="1" class="border rounded-md px-3 py-2 w-full"/>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Weight</label>
-          <select name="weightBand" class="border rounded-md px-3 py-2 w-full">
-            <option value="<=15">≤ 15 lb</option>
-            <option value="15-25">15–25 lb (+$2)</option>
-            <option value="25+">> 25 lb (+$4)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="md:col-span-2">
-        <label class="block text-sm font-medium">Building / pickup notes (optional)</label>
-        <textarea name="notes" class="border rounded-md px-3 py-2 w-full" rows="3" placeholder="Buzzer code, leave with doorman, etc."></textarea>
-      </div>
-
-      <div class="md:col-span-2">
-        <label class="block text-sm font-medium">Upload prepaid label (PDF / image)</label>
-        <input id="labelFile" type="file" accept=".pdf,.png,.jpg,.jpeg" class="border rounded-md px-3 py-2 w-full"/>
-        <p class="text-xs text-gray-500 mt-1">If your retailer provides a QR code (no printer), just upload a screenshot of the QR.</p>
-      </div>
-
-      <div class="md:col-span-2 flex items-center gap-2">
-        <input id="insurance" type="checkbox"/>
-        <label for="insurance" class="text-sm">Add insurance for ${fmtMoney(INSURANCE_PRICE)} (coverage up to $200 while in our possession)</label>
-      </div>
-
-      <div class="md:col-span-2 flex items-center justify-between bg-gray-50 border rounded-lg px-4 py-3">
-        <div class="text-sm">
-          <div>Base: <strong>${fmtMoney(BASE_PRICE)}</strong></div>
-          <div class="text-gray-600">Extras: +$2 per extra box; +$2 (15–25 lb), +$4 (>25 lb); +${fmtMoney(INSURANCE_PRICE)} optional insurance.</div>
-        </div>
-        <div class="text-right">
-          <div class="text-xs text-gray-500">Estimated total</div>
-          <div id="estTotal" class="text-xl font-semibold">${fmtMoney(BASE_PRICE)}</div>
-        </div>
-      </div>
-
-      <div class="md:col-span-2 flex gap-3">
-        <button class="btn" type="submit">Pay & Book (test)</button>
-        <a class="link text-sm" href="#/faq">What’s covered?</a>
-      </div>
-      <p id="bookErr" class="text-red-600 text-sm md:col-span-2"></p>
-    </form>
-  </div>`;
-}
-
-function ViewTrack(id){
-  const o = ORDERS.get(id);
-  if(!o){
-    return `
-    <div class="card p-6">
-      <h1 class="text-2xl font-semibold">Track your pickup</h1>
-      <p class="mt-2 text-sm text-gray-600">We couldn’t find that order. Double-check your tracking link.</p>
-    </div>`;
-  }
-  return `
-  <div class="card p-6">
-    <h1 class="text-2xl font-semibold">Order #${o.id}</h1>
-    <p class="text-sm text-gray-600 mt-1">${o.email} — ${o.address1}, ${o.city} ${o.state} ${o.zip}</p>
-    <div class="grid md:grid-cols-3 gap-4 mt-4">
-      <div class="card p-4">
-        <div class="text-xs text-gray-500">Status</div>
-        <div class="text-lg font-semibold">${o.status}</div>
-      </div>
-      <div class="card p-4">
-        <div class="text-xs text-gray-500">Pickup window</div>
-        <div class="text-lg font-semibold">${o.date} ${o.slot}</div>
-      </div>
-      <div class="card p-4">
-        <div class="text-xs text-gray-500">Total paid</div>
-        <div class="text-lg font-semibold">${fmtMoney(o.total)}</div>
-      </div>
-    </div>
-    <div class="mt-4 text-sm">
-      <div>Carrier: <strong>${o.carrier}</strong></div>
-      <div>Packages: <strong>${o.itemsCount}</strong>, Weight: <strong>${o.weightBand}</strong>, Insurance: <strong>${o.insurance ? 'Yes' : 'No'}</strong></div>
-      <div class="mt-2 text-gray-600">You’ll receive a photo + timestamp once we drop off your return.</div>
-    </div>
-  </div>`;
-}
-
-function ViewPricing(){
-  return `
-  <div class="grid gap-6">
-    <section class="card p-6">
-      <h1 class="text-2xl font-semibold">Pricing</h1>
-      <ul class="mt-3 text-gray-700 space-y-2">
-        <li>Base pickup (NYC only): <strong>${fmtMoney(BASE_PRICE)}</strong></li>
-        <li>Optional insurance: <strong>${fmtMoney(INSURANCE_PRICE)}</strong> (coverage up to $200 while in our possession)</li>
-        <li>Extra box: <strong>$2</strong> each (same address & window)</li>
-        <li>Weight adders: <strong>$2</strong> (15–25 lb), <strong>$4</strong> (>25 lb)</li>
-      </ul>
-      <p class="text-sm text-gray-600 mt-3">Prepaid labels only. We’re a courier, not the retailer. Not affiliated with any carrier.</p>
-    </section>
-  </div>`;
-}
-
-function ViewFAQ(){
-  return `
-  <div class="grid gap-6">
-    <section class="card p-6">
-      <h1 class="text-2xl font-semibold">FAQ</h1>
-      <div class="mt-3 space-y-4 text-gray-800">
-        <div>
-          <h3 class="font-medium">Do you serve only NYC?</h3>
-          <p class="text-sm text-gray-700">Yes — we currently cover the NYC metro (five boroughs). Enter your ZIP on the home page to confirm coverage.</p>
-        </div>
-        <div>
-          <h3 class="font-medium">Do I need a printer?</h3>
-          <p class="text-sm text-gray-700">If your retailer supports QR codes, upload a screenshot. Otherwise upload a PDF/image of your label and attach it to your package.</p>
-        </div>
-        <div>
-          <h3 class="font-medium">What’s covered by insurance?</h3>
-          <p class="text-sm text-gray-700">Optional ${fmtMoney(INSURANCE_PRICE)} covers up to $200 if your package is lost or damaged while in our possession (from pickup until accepted by the carrier). You must submit a claim within 7 days with proof of value.</p>
-        </div>
-        <div>
-          <h3 class="font-medium">What’s not allowed?</h3>
-          <p class="text-sm text-gray-700">Hazmat/aerosols/batteries/liquids per carrier rules; improperly sealed boxes; items over 50 lb; cash or perishable goods.</p>
-        </div>
-        <div>
-          <h3 class="font-medium">Can I cancel?</h3>
-          <p class="text-sm text-gray-700">Free up to 2 hours before your slot. Inside 2 hours or missed pickup: $3 fee.</p>
-        </div>
-      </div>
-    </section>
-  </div>`;
-}
-
-function ViewServiceArea(){
-  return `
-  <div class="grid gap-6">
-    <section class="card p-6">
-      <h1 class="text-2xl font-semibold">Service Area — NYC Metro Only</h1>
-      <p class="text-sm text-gray-700 mt-1">We cover the five boroughs: Manhattan, Brooklyn, Queens, Bronx, Staten Island.</p>
-      <p class="text-sm text-gray-700 mt-2">Enter your ZIP on the home page to confirm. We’re expanding coverage as we grow.</p>
-    </section>
-  </div>`;
-}
-
-function ViewLegal(){
-  return `
-  <div class="grid gap-6">
-    <section class="card p-6">
-      <h1 class="text-2xl font-semibold">Legal</h1>
-      <h2 class="mt-4 font-medium">Terms of Service (summary)</h2>
-      <ul class="list-disc ml-6 mt-2 text-sm text-gray-700 space-y-1">
-        <li>We are a courier service for prepaid returns. We’re not affiliated with any retailer or carrier.</li>
-        <li>Liability: from pickup until accepted by the carrier. Optional insurance (${fmtMoney(INSURANCE_PRICE)}) covers up to $200; otherwise liability is limited.</li>
-        <li>Prohibited items: hazmat, liquids, perishable goods, cash, items over 50 lb, or not compliant with carrier policies.</li>
-        <li>Missed pickup: $3; free cancellation up to 2 hours before your slot.</li>
-      </ul>
-      <h2 class="mt-6 font-medium">Privacy (summary)</h2>
-      <ul class="list-disc ml-6 mt-2 text-sm text-gray-700 space-y-1">
-        <li>We collect contact info and address solely to complete your pickup.</li>
-        <li>Label images may contain personal info; they’re stored securely and auto-purged on a schedule.</li>
-        <li>We do not sell your data.</li>
-      </ul>
-    </section>
-  </div>`;
-}
-
-function ViewReviews(){
-  // compute distribution
-  const counts = {5:0,4:0,3:0,2:0,1:0};
-  DEMO_REVIEWS.forEach(r=>counts[r.rating]++);
-  const total = DEMO_REVIEWS.length;
-  const pct = k => Math.round((counts[k]/total)*100);
-
-  // top highlights (pick a handful)
-  const highlights = DEMO_REVIEWS
-    .filter(r=>r.rating>=4)
-    .slice(0,6);
-
-  // grid items
-  const grid = DEMO_REVIEWS.slice(0,24).map(r=>`
-    <div class="border rounded-lg p-3">
-      <div class="flex items-center justify-between">
-        <div class="font-medium">${r.name} <span class="text-xs text-gray-500">(${r.borough})</span></div>
-        <div class="text-sm">${StarRow(r.rating)}</div>
-      </div>
-      <p class="text-sm text-gray-700 mt-2">${r.text}</p>
-      <div class="text-[11px] text-orange-600 mt-1">SAMPLE review — replace with real customer reviews</div>
-      <div class="text-xs text-gray-500 mt-1">${new Date(r.createdAt).toLocaleDateString()}</div>
-    </div>
-  `).join("");
-
-  return `
-  <div class="grid gap-6">
-    <section class="card p-6">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div>
-          <h1 class="text-2xl font-semibold">Customer Reviews</h1>
-          <div class="text-sm text-gray-600">${total} total reviews (DEMO dataset)</div>
-        </div>
-        <div class="text-right">
-          <div class="text-sm">Rating distribution</div>
-          <canvas id="starsChart" width="360" height="160"></canvas>
-        </div>
-      </div>
-      <div class="mt-4">
-        <div class="text-sm text-gray-700 mb-2">
-          ~${pct(5)}% ★★★★★, ${pct(4)}% ★★★★, ${pct(3)}% ★★★, ${pct(2)}% ★★, ${pct(1)}% ★
-          — includes exactly 20 one-star reviews to keep it realistic.
-        </div>
-        <div class="grid md:grid-cols-3 gap-3">${grid}</div>
-      </div>
-      <div class="mt-4 text-xs text-gray-500">
-        NOTE: All reviews shown here are **SAMPLE / PLACEHOLDER** to demo the UI. Replace with real reviews before launch.
-      </div>
-    </section>
-  </div>`;
-}
-
-/* ------------------------------
-   SIMPLE ROUTER
---------------------------------*/
-function render(){
-  const app = document.getElementById('app');
-  const hash = location.hash || "#/";
-  const [_, route, param] = hash.split("/"); // e.g. #/track/abc
-  let html = "";
-
-  if(route==="" || route===undefined){ html = ViewHome(); }
-  else if(route==="book"){ html = ViewBook(); }
-  else if(route==="track"){ html = ViewTrack(param||""); }
-  else if(route==="pricing"){ html = ViewPricing(); }
-  else if(route==="faq"){ html = ViewFAQ(); }
-  else if(route==="service-area"){ html = ViewServiceArea(); }
-  else if(route==="legal"){ html = ViewLegal(); }
-  else if(route==="reviews"){ html = ViewReviews(); }
-  else { html = `<div class="card p-6"><h1 class="text-2xl font-semibold">Not found</h1></div>`; }
-  app.innerHTML = html;
-
-  // hydrate interactive pieces
-  if(route==="" || route===undefined){
-    const form = document.getElementById("zipForm");
-    if(form){
-      form.addEventListener("submit",(e)=>{
-        e.preventDefault();
-        const zip = document.getElementById("zipInput").value.trim();
-        const err = document.getElementById("zipErr");
-        if(!/^\d{5}$/.test(zip)){ err.textContent="Enter a 5-digit ZIP."; return; }
-        if(!NYC_ZIPS.has(zip)){ err.textContent="Sorry — we currently cover the NYC metro only."; return; }
-        location.hash = "#/book";
-      });
-    }
-  }
-
-  if(route==="book"){
-    const form = document.getElementById("bookForm");
-    const estEl = document.getElementById("estTotal");
-    const zipWarn = document.getElementById("zipWarn");
-    const insuranceEl = document.getElementById("insurance");
-    const itemsEl = form.querySelector('[name="itemsCount"]');
-    const weightEl = form.querySelector('[name="weightBand"]');
-    const zipEl = form.querySelector('[name="zip"]');
-    const errEl = document.getElementById("bookErr");
-
-    function refreshTotal(){
-      const items = Math.max(1, parseInt(itemsEl.value||"1",10));
-      const insurance = insuranceEl.checked;
-      const weightBand = weightEl.value;
-      estEl.textContent = fmtMoney(calcTotal(items, insurance, weightBand));
-    }
-    [insuranceEl,itemsEl,weightEl].forEach(el=>el.addEventListener("change",refreshTotal));
-    refreshTotal();
-
-    zipEl.addEventListener("blur", ()=>{
-      const z = zipEl.value.trim();
-      if(!/^\d{5}$/.test(z)) { zipWarn.textContent="Enter a 5-digit ZIP."; return; }
-      if(!NYC_ZIPS.has(z)) { zipWarn.textContent="Sorry — NYC metro only."; return; }
-      zipWarn.textContent="";
+      remoteNote.textContent = "Remote-access means we can service private helipads, hospital pads, corporate rooftops and off-airport hangars where site permissions are granted.";
+      stateAirports.classList.remove('hidden');
     });
 
-    form.addEventListener("submit",(e)=>{
-      e.preventDefault();
-      errEl.textContent="";
-      const data = Object.fromEntries(new FormData(form).entries());
-      // validate ZIP NYC
-      const z = (data.zip||"").toString().trim();
-      if(!/^\d{5}$/.test(z) || !NYC_ZIPS.has(z)){ errEl.textContent="Service is NYC-only. Please use a NYC ZIP."; return; }
-
-      const items = Math.max(1, parseInt(data.itemsCount||"1",10));
-      const insurance = document.getElementById("insurance").checked;
-      const weightBand = data.weightBand || "<=15";
-      const total = calcTotal(items, insurance, weightBand);
-      // fake "checkout": store order and go to track
-      const id = uid();
-      ORDERS.set(id, {
-        id,
-        status: "scheduled",
-        email: data.email,
-        phone: data.phone||"",
-        name: data.name||"",
-        address1: data.address1,
-        address2: data.address2||"",
-        city: data.city||"New York",
-        state: data.state||"NY",
-        zip: z,
-        date: data.date,
-        slot: data.slot,
-        carrier: data.carrier,
-        itemsCount: items,
-        weightBand,
-        insurance,
-        total
-      });
-      // Normally, redirect to Stripe here. For SPA demo, go directly to track page.
-      alert("Demo: payment step is stubbed. Proceeding to tracking page.");
-      location.hash = "#/track/"+id;
+    /* Contact form UX: light validation + thank you inline (FormSubmit will also send/redirect) */
+    const form = document.getElementById('quote-form');
+    const formMsg = document.getElementById('form-msg');
+    form.addEventListener('submit', () => {
+      formMsg.textContent = "Thanks! We received your request — we’ll reply quickly with availability and an estimate.";
     });
-  }
-
-  if(route==="reviews"){
-    // Draw chart
-    const ctx = document.getElementById("starsChart");
-    if(ctx){
-      const counts = {5:0,4:0,3:0,2:0,1:0};
-      DEMO_REVIEWS.forEach(r=>counts[r.rating]++);
-      // Chart.js defaults (no custom colors set)
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['5★','4★','3★','2★','1★'],
-          datasets: [{ label: 'Count', data: [counts[5],counts[4],counts[3],counts[2],counts[1]] }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { display:false }, title: { display:false } },
-          scales: { y: { beginAtZero:true, ticks: { stepSize: 50 } } }
-        }
-      });
-    }
-  }
-}
-
-window.addEventListener("hashchange", render);
-window.addEventListener("load", ()=>{
-  document.getElementById("year").textContent = new Date().getFullYear();
-  render();
-});
-</script>
+  </script>
 </body>
 </html>
