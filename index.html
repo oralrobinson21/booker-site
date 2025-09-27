@@ -2,33 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
   <title>On-Site Jet & Helicopter Detailing — Anywhere You Need Us | BookerPilot</title>
-  <meta name="description" content="Mobile aircraft detailing for jets and helicopters. We come to your FBO, hangar, ramp, or helipad across the Northeast, Mid-Atlantic & Southeast. Exterior, interior, brightwork — done right and ready for wheels-up." />
-  <meta name="keywords" content="aircraft detailing, jet detailing, helicopter detailing, brightwork polishing, aircraft interior cleaning, AOG quick turn cleaning, FBO cleaning, hangar detailing, aviation detailing, mobile aircraft cleaning, on-site jet detailing, private jet cleaning" />
+  <meta name="description" content="Mobile aircraft detailing for jets & helicopters. We come to your FBO, hangar, ramp or helipad across the Northeast, Mid-Atlantic & Southeast. Exterior, interior, brightwork. Call, text or email for a quote." />
+  <meta name="robots" content="index,follow" />
   <link rel="canonical" href="https://bookerpilot.com/" />
+
+  <!-- Open Graph -->
   <meta property="og:title" content="On-Site Jet & Helicopter Detailing — Anywhere You Need Us" />
-  <meta property="og:description" content="Exterior, interior, brightwork — done right and ready for wheels-up. We come to your FBO, hangar, ramp or helipad." />
+  <meta property="og:description" content="Mobile aircraft detailing for jets & helicopters. Exterior, interior, brightwork — done right and ready for wheels-up." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://bookerpilot.com/" />
-  <meta name="theme-color" content="#4F46E5" />
+  <meta property="og:image" content="https://bookerpilot.com/og.jpg" />
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- AOS + Feather -->
+  <!-- AOS (fade in) -->
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
   <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <!-- Feather Icons -->
   <script defer src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
   <style>
+    /* Global */
     html { scroll-behavior: smooth; }
     [id] { scroll-margin-top: 84px; }
-    html, body { overflow-x: hidden; } /* prevent horizontal scroll */
+    body { overflow-x: hidden; } /* prevent horizontal scroll */
 
-    /* Gradient hero */
+    /* Gradient animation */
     .gradient-bg {
-      background: linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 20%,#3b82f6 40%,#60a5fa 60%,#93c5fd 80%,#dbeafe 100%);
+      background: linear-gradient(135deg,
+        #1e3a8a 0%,
+        #1d4ed8 20%,
+        #3b82f6 40%,
+        #60a5fa 60%,
+        #93c5fd 80%,
+        #dbeafe 100%);
       background-size: 200% 200%;
       animation: waveBackground 8s ease infinite;
     }
@@ -38,82 +52,51 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Reveal (desktop: in-flow; mobile: true bottom-sheet) */
-    .reveal-wrap { position: relative; }
-    .reveal-mask {
-      position: relative;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .6s cubic-bezier(.4,0,.2,1);
+    /* Inline dropdown (no overlays) */
+    details.dropdown {
+      margin-top: .75rem;
+      border: 1px solid #e5e7eb; border-radius: 14px; background: #fff;
     }
-    .reveal-open .reveal-mask { max-height: 1400px; }
+    details.dropdown[open] { box-shadow: 0 8px 22px rgba(0,0,0,.06); }
+    summary.dropdown-summary {
+      list-style: none; cursor: pointer; user-select: none;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; font-weight: 700; color: #111827;
+    }
+    summary.dropdown-summary::-webkit-details-marker { display: none; }
+    .chev { transition: transform .2s ease; }
+    details[open] .chev { transform: rotate(180deg); }
+    .dropdown-body { padding: 14px 16px 18px; }
 
-    .reveal-handle {
-      position: relative; margin: -10px auto 0; width: 120px; height: 32px;
-      background: #e5e7eb; border-radius: 9999px 9999px 0 0;
-      box-shadow: 0 -4px 16px rgba(0,0,0,.06) inset; cursor: pointer;
-    }
-    .reveal-handle::after {
-      content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      width:38px; height:4px; border-radius:9999px; background:#9ca3af;
-    }
-
-    /* Mobile bottom-sheet behavior (fixed + translateY) */
-    @media (max-width:640px){
-      .reveal-mask{
-        position: fixed; left:0; right:0; bottom:0; width:100%;
-        max-height: none;  /* we slide instead */
-        background:#fff; border-top-left-radius:18px; border-top-right-radius:18px;
-        box-shadow: 0 -16px 40px rgba(0,0,0,.15);
-        padding: 16px 14px 22px;
-        overflow-y: auto; -webkit-overflow-scrolling: touch;
-        transform: translateY(100%); /* closed */
-        transition: transform .35s ease;
-        z-index: 60;
-      }
-      .reveal-open .reveal-mask{ transform: translateY(0); } /* open */
-      .reveal-backdrop{
-        position: fixed; inset:0; background: rgba(0,0,0,.35); backdrop-filter: blur(2px);
-        z-index: 50;
-      }
-      .sheet-close{
-        position: sticky; top: -8px; display: inline-flex; margin-left: auto; 
-        border-radius: 9999px; padding: 8px;
-      }
-    }
+    /* Small utility cards */
+    .svc-card { border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; }
+    .svc-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,.05); transform: translateY(-1px); transition: all .18s ease; }
 
     /* Toast */
     .toast {
       position: fixed; left: 50%; transform: translateX(-50%);
       bottom: 24px; background: #111827; color: #fff;
-      padding: .75rem 1rem; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,.2);
-      z-index: 9999; display: none;
+      padding: .7rem 1rem; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,.2);
+      z-index: 50; display: none; font-size: .925rem;
     }
     .toast.show { display: block; }
   </style>
-
-  <!-- JSON-LD -->
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"LocalBusiness","name":"BookerPilot Aircraft Detailing","image":"https://bookerpilot.com/icon.png","telephone":"+1-917-615-7104","areaServed":["Northeast","Mid-Atlantic","Southeast"],"url":"https://bookerpilot.com/","description":"On-site aircraft detailing for jets and helicopters. Exterior, interior, brightwork. Mobile team serving FBOs, hangars, ramps and helipads.","sameAs":[]}
-  </script>
 </head>
-
-<body class="font-sans antialiased text-gray-900 bg-white" id="home">
+<body class="font-sans antialiased text-gray-900" id="home">
   <!-- NAV -->
-  <nav class="bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 shadow-sm sticky top-0 z-40">
+  <nav class="bg-white/95 backdrop-blur shadow-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <a href="#home" class="flex items-center">
-          <i data-feather="layers" class="h-6 w-6 text-indigo-600"></i>
-          <span class="ml-2 text-lg font-bold text-indigo-600">BookerPilot</span>
+          <i data-feather="wind" class="h-7 w-7 text-indigo-600"></i>
+          <span class="ml-2 text-xl font-extrabold text-indigo-600">BookerPilot</span>
         </a>
         <div class="hidden sm:flex sm:items-center space-x-8">
-          <a href="#features" class="text-gray-600 hover:text-gray-900 text-sm font-medium">Features</a>
-          <a href="#services" class="text-gray-600 hover:text-gray-900 text-sm font-medium">Services</a>
-          <a href="#area" class="text-gray-600 hover:text-gray-900 text-sm font-medium">Service Area</a>
-          <a href="#faq" class="text-gray-600 hover:text-gray-900 text-sm font-medium">FAQ</a>
-          <a href="#contact" class="text-gray-600 hover:text-gray-900 text-sm font-medium">Contact</a>
-          <a href="tel:+19176157104" class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700">Call 917-615-7104</a>
+          <a href="#features" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">Features</a>
+          <a href="#services" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">Services</a>
+          <a href="#areas"    class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">Service Areas</a>
+          <a href="#contact"  class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
+          <a href="tel:19176157104" class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-indigo-700">Call 917-615-7104</a>
         </div>
       </div>
     </div>
@@ -122,348 +105,303 @@
   <!-- HERO -->
   <header class="gradient-bg text-white">
     <div class="max-w-7xl mx-auto py-14 px-4 sm:py-20 sm:px-6 lg:px-8">
-      <div class="max-w-3xl" data-aos="fade-up">
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight" data-aos="fade-up">
           On-Site Jet & Helicopter Detailing — Anywhere You Need Us.
         </h1>
-        <p class="mt-5 text-lg sm:text-xl text-indigo-100">
+        <p class="mt-5 text-lg sm:text-xl text-indigo-100" data-aos="fade-up" data-aos-delay="80">
           We come to your <strong>FBO</strong>, hangar, ramp or helipad across the Northeast, Mid-Atlantic & Southeast.
           Exterior, interior, brightwork — done right and ready for wheels-up.
         </p>
-        <div class="mt-8 grid sm:grid-cols-3 gap-3">
-          <a href="tel:+19176157104" class="flex items-center justify-center rounded-lg bg-white text-indigo-700 font-semibold py-3 hover:bg-gray-50">
-            <i data-feather="phone-call" class="mr-2"></i> Call Now
+        <div class="mt-8 flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="120">
+          <a href="tel:19176157104" class="inline-flex items-center bg-white text-indigo-700 px-5 py-3 rounded-lg font-semibold hover:bg-gray-50">
+            <i data-feather="phone" class="mr-2"></i> Call Now
           </a>
-          <a href="sms:+19176157104?body=Hi%20BookerPilot%2C%20I%27d%20like%20a%20quote%20for%20aircraft%20detailing."
-             class="flex items-center justify-center rounded-lg bg-violet-600 text-white font-semibold py-3 hover:bg-violet-700">
+          <a href="sms:+19176157104?body=Hi%20BookerPilot%2C%20I%27d%20like%20a%20quote." class="inline-flex items-center bg-violet-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-violet-700">
             <i data-feather="message-circle" class="mr-2"></i> Text for Quote
           </a>
-          <a href="#contact" class="flex items-center justify-center rounded-lg bg-white/20 ring-1 ring-white/40 text-white font-semibold py-3 hover:bg-white/25">
+          <a href="#contact" class="inline-flex items-center bg-white/20 ring-1 ring-white/40 text-white px-5 py-3 rounded-lg font-semibold hover:bg-white/25">
             <i data-feather="mail" class="mr-2"></i> Email Us
           </a>
         </div>
-        <p class="mt-4 text-sm sm:text-base text-indigo-100/90">
+        <p class="mt-4 text-sm text-indigo-100/90">
           NYC-based • Mobile team • Short-notice & overnight slots available
         </p>
       </div>
     </div>
   </header>
 
+  <!-- TRUST -->
+  <section class="bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-sm font-semibold uppercase text-gray-500 tracking-wide">Trusted on ramps & hangars across the East & Gulf Coasts</p>
+    </div>
+  </section>
+
   <!-- FEATURES -->
-  <section id="features" class="py-12 sm:py-16 bg-white">
+  <section id="features" class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center">
         <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Features</h2>
-        <p class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900" data-aos="fade-up">
+        <p class="mt-2 text-3xl sm:text-4xl leading-8 font-extrabold tracking-tight text-gray-900" data-aos="fade-up">
           Everything you need for a showroom-ready aircraft
         </p>
       </div>
 
-      <div class="mt-10 grid md:grid-cols-2 gap-8">
-        <div class="flex" data-aos="fade-up">
+      <!-- Primary 4 -->
+      <div class="mt-10 grid md:grid-cols-2 gap-6">
+        <div class="flex svc-card p-5" data-aos="fade-up">
           <div class="flex-shrink-0">
             <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
               <i data-feather="droplet"></i>
             </div>
           </div>
           <div class="ml-4">
-            <h3 class="text-lg font-semibold text-gray-900">Exterior Wash & Dry</h3>
-            <p class="mt-2 text-gray-600">PH-balanced soaps, de-bug, undercarriage splash, pitot/static awareness, safe around sensors & brightwork.</p>
+            <h3 class="text-lg leading-6 font-semibold text-gray-900">Exterior Wash & Dry</h3>
+            <p class="mt-2 text-sm text-gray-600">PH-balanced soaps, de-bug, undercarriage splash, pitot/static awareness, safe around sensors & brightwork.</p>
           </div>
         </div>
 
-        <div class="flex" data-aos="fade-up" data-aos-delay="100">
+        <div class="flex svc-card p-5" data-aos="fade-up" data-aos-delay="60">
+          <div class="flex-shrink-0">
+            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+              <i data-feather="briefcase"></i>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-lg leading-6 font-semibold text-gray-900">Cabin & Cockpit Detail</h3>
+            <p class="mt-2 text-sm text-gray-600">Leather clean/condition, carpets, galley & lav, fingerprints, glass. Flight deck wiped down with avionics-safe products.</p>
+          </div>
+        </div>
+
+        <div class="flex svc-card p-5" data-aos="fade-up" data-aos-delay="120">
           <div class="flex-shrink-0">
             <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
               <i data-feather="sun"></i>
             </div>
           </div>
           <div class="ml-4">
-            <h3 class="text-lg font-semibold text-gray-900">Brightwork Polish</h3>
-            <p class="mt-2 text-gray-600">Multi-stage compounding & polish for a mirror finish with sealant to keep it shining.</p>
+            <h3 class="text-lg leading-6 font-semibold text-gray-900">Brightwork Care</h3>
+            <p class="mt-2 text-sm text-gray-600">Hand polish & protection for leading edges, inlets, spinners & boots — mirror gloss without swirl.</p>
           </div>
         </div>
 
-        <div class="flex" data-aos="fade-up" data-aos-delay="200">
+        <div class="flex svc-card p-5" data-aos="fade-up" data-aos-delay="180">
           <div class="flex-shrink-0">
             <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-              <i data-feather="wind"></i>
+              <i data-feather="shield"></i>
             </div>
           </div>
           <div class="ml-4">
-            <h3 class="text-lg font-semibold text-gray-900">Interior Cabin Detail</h3>
-            <p class="mt-2 text-gray-600">Cabin reset, galley & lav sanitation, carpets extraction, leather clean/condition, wood & glass polish.</p>
-          </div>
-        </div>
-
-        <div class="flex" data-aos="fade-up" data-aos-delay="300">
-          <div class="flex-shrink-0">
-            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-              <i data-feather="clock"></i>
-            </div>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-lg font-semibold text-gray-900">Quick-Turn / AOG Friendly</h3>
-            <p class="mt-2 text-gray-600">Coordinated with your crew & FBO for fast turns, short-notice dispatch and overnight work windows.</p>
+            <h3 class="text-lg leading-6 font-semibold text-gray-900">Safety-First Process</h3>
+            <p class="mt-2 text-sm text-gray-600">Grounding awareness, static & pitot protection, FOD control, MSDS on site. Coordinated with FBO & security.</p>
           </div>
         </div>
       </div>
 
-      <!-- Pull handle + bottom-sheet -->
-      <div class="reveal-wrap mt-8" id="reveal">
-        <div id="pull-handle" class="reveal-handle" title="Tap to reveal more services"></div>
-
-        <div id="reveal-mask" class="reveal-mask">
-          <div class="sm:hidden flex justify-end -mt-1">
-            <button id="sheetClose" class="sheet-close hover:bg-gray-100" aria-label="Close extra services">
-              <i data-feather="x"></i>
-            </button>
+      <!-- Inline “even more services” dropdown (no full-screen) -->
+      <details id="more-services" class="dropdown mt-8">
+        <summary class="dropdown-summary">
+          <span>Even more services</span>
+          <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+          </svg>
+        </summary>
+        <div class="dropdown-body">
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="flex svc-card p-5">
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="layers"></i></div></div>
+              <div class="ml-4">
+                <h4 class="font-semibold text-gray-900">Exterior Deep Clean</h4>
+                <p class="text-sm text-gray-600 mt-1">Belly/gear degrease, APU/exhaust soot removal, clay & fallout decon, post-storm cleanups.</p>
+              </div>
+            </div>
+            <div class="flex svc-card p-5">
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="droplets"></i></div></div>
+              <div class="ml-4">
+                <h4 class="font-semibold text-gray-900">Paint Protection</h4>
+                <p class="text-sm text-gray-600 mt-1">Sealants or ceramic on request for longer-lasting gloss & easier washes.</p>
+              </div>
+            </div>
+            <div class="flex svc-card p-5">
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="zap"></i></div></div>
+              <div class="ml-4">
+                <h4 class="font-semibold text-gray-900">Ozone / Odor Neutralization</h4>
+                <p class="text-sm text-gray-600 mt-1">Short ozone cycles or enzymes to remove smoke, galley, pet or mildew odors.</p>
+              </div>
+            </div>
+            <div class="flex svc-card p-5">
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="airplay"></i></div></div>
+              <div class="ml-4">
+                <h4 class="font-semibold text-gray-900">Helicopter Detailing</h4>
+                <p class="text-sm text-gray-600 mt-1">Rotor & hub cleaning, skid degrease, canopy/windows crystal-clear for max visibility.</p>
+              </div>
+            </div>
+            <div class="flex svc-card p-5">
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="refresh-ccw"></i></div></div>
+              <div class="ml-4">
+                <h4 class="font-semibold text-gray-900">Maintenance Plans</h4>
+                <p class="text-sm text-gray-600 mt-1">Monthly/quarterly programs for flight departments & owners.</p>
+              </div>
+            </div>
+            <div class="flex svc-card p-5">
+              <div class="flex-shrink-0"><div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white"><i data-feather="camera"></i></div></div>
+              <div class="ml-4">
+                <h4 class="font-semibold text-gray-900">Photo Report & Sign-off</h4>
+                <p class="text-sm text-gray-600 mt-1">Before/after photos plus work log for your records and QA.</p>
+              </div>
+            </div>
           </div>
+        </div>
+      </details>
+    </div>
+  </section>
 
-          <section id="services" class="mt-2 sm:mt-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Even more services</h3>
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-                <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                    <i data-feather="droplets"></i>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <h4 class="font-semibold text-gray-900">Exterior Deep Clean</h4>
-                  <p class="text-sm text-gray-600 mt-1">Belly/gear degrease, APU/exhaust soot removal, clay & fallout decon, post-storm cleanups.</p>
-                </div>
-              </div>
-
-              <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-                <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                    <i data-feather="shield"></i>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <h4 class="font-semibold text-gray-900">Paint Protection</h4>
-                  <p class="text-sm text-gray-600 mt-1">Sealants or ceramic on request for longer-lasting gloss & easier washes.</p>
-                </div>
-              </div>
-
-              <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-                <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                    <i data-feather="zap"></i>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <h4 class="font-semibold text-gray-900">Ozone / Odor Neutralization</h4>
-                  <p class="text-sm text-gray-600 mt-1">Short ozone cycles or enzymes to remove smoke, galley, pet or mildew odors.</p>
-                </div>
-              </div>
-
-              <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-                <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                    <i data-feather="airplay"></i>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <h4 class="font-semibold text-gray-900">Helicopter Detailing</h4>
-                  <p class="text-sm text-gray-600 mt-1">Rotor & hub cleaning, skid degrease, canopy/windows crystal-clear for max visibility.</p>
-                </div>
-              </div>
-
-              <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-                <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                    <i data-feather="repeat"></i>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <h4 class="font-semibold text-gray-900">Maintenance Plans</h4>
-                  <p class="text-sm text-gray-600 mt-1">Monthly/quarterly programs for flight departments & owners.</p>
-                </div>
-              </div>
-
-              <div class="border rounded-lg p-5 bg-white shadow-sm flex">
-                <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                    <i data-feather="file-text"></i>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <h4 class="font-semibold text-gray-900">Photo Report & Sign-off</h4>
-                  <p class="text-sm text-gray-600 mt-1">Before/after photos plus work log for your records and QA.</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="text-center mt-4">
-              <button id="collapse-more" class="hidden sm:inline text-indigo-600 text-sm hover:text-indigo-800 underline">Hide extra services</button>
-            </div>
-          </section>
+  <!-- SERVICES (quick explainer) -->
+  <section id="services" class="py-6 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="p-6 bg-white rounded-xl border">
+          <h3 class="font-semibold text-gray-900 flex items-center"><i data-feather="map-pin" class="mr-2 text-indigo-600"></i> We come to you</h3>
+          <p class="mt-2 text-sm text-gray-600">FBO coordination, gate access and ramp safety handled. Remote-access friendly with advance notice.</p>
+        </div>
+        <div class="p-6 bg-white rounded-xl border">
+          <h3 class="font-semibold text-gray-900 flex items-center"><i data-feather="clock" class="mr-2 text-indigo-600"></i> Short-notice friendly</h3>
+          <p class="mt-2 text-sm text-gray-600">Day-of or overnight where possible. Optional immediate service surcharge based on location and urgency.</p>
+        </div>
+        <div class="p-6 bg-white rounded-xl border">
+          <h3 class="font-semibold text-gray-900 flex items-center"><i data-feather="phone-call" class="mr-2 text-indigo-600"></i> Easy booking</h3>
+          <p class="mt-2 text-sm text-gray-600">Call, text, or email. We’ll price your aircraft (type, condition, location) and lock in a slot.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SERVICE AREA -->
-  <section id="area" class="py-12 sm:py-16 bg-gray-50">
+  <!-- SERVICE AREAS -->
+  <section id="areas" class="py-14 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="lg:text-center">
-        <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Service Area</h2>
-        <p class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900" data-aos="fade-up">
-          We’re mobile — pick your state & airport
-        </p>
-        <p class="mt-3 text-gray-600" data-aos="fade-up" data-aos-delay="100">
-          Based in NYC. We travel across the Northeast, Mid-Atlantic & Southeast. Immediate dispatch available (rush fee from <strong>$1,500</strong> based on location).
-        </p>
-      </div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900">Where we work</h2>
+      <p class="mt-2 text-gray-600">Based in New York City. Mobile coverage across the Northeast, Mid-Atlantic & Southeast. Choose a state to see sample airports we regularly serve (major → local). This expands inline on mobile — it won’t cover the screen.</p>
 
-      <div class="mt-8 grid md:grid-cols-3 gap-4">
-        <div class="md:col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
-          <select id="stateSelect" class="w-full border rounded-lg px-3 py-2">
+      <div class="mt-5 grid md:grid-cols-2 gap-6">
+        <div>
+          <label for="stateSelect" class="block text-sm font-medium text-gray-700">State</label>
+          <select id="stateSelect" class="mt-1 block w-full border rounded-lg px-3 py-2">
             <option value="">Select a state…</option>
-            <option>New York</option><option>New Jersey</option><option>Connecticut</option>
-            <option>Pennsylvania</option><option>Massachusetts</option><option>Maryland</option>
-            <option>Virginia</option><option>District of Columbia</option>
-            <option>North Carolina</option><option>South Carolina</option><option>Georgia</option><option>Florida</option>
+            <option>New York</option>
+            <option>New Jersey</option>
+            <option>Pennsylvania</option>
+            <option>Connecticut</option>
+            <option>Massachusetts</option>
+            <option>Maryland</option>
+            <option>Virginia</option>
+            <option>District of Columbia</option>
+            <option>Delaware</option>
+            <option>Rhode Island</option>
+            <option>New Hampshire</option>
+            <option>Vermont</option>
+            <option>Maine</option>
+            <option>North Carolina</option>
+            <option>South Carolina</option>
+            <option>Georgia</option>
+            <option>Florida</option>
+            <option>Ohio</option>
+            <option>Michigan</option>
+            <option>Illinois</option>
+            <option>Indiana</option>
+            <option>Wisconsin</option>
+            <option>Minnesota</option>
+            <option>Tennessee</option>
+            <option>Kentucky</option>
+            <option>West Virginia</option>
+            <option>Alabama</option>
+            <option>Mississippi</option>
+            <option>Louisiana</option>
+            <option>Texas</option>
           </select>
         </div>
-        <div class="md:col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Airport (major → local)</label>
-          <select id="airportSelect" class="w-full border rounded-lg px-3 py-2">
-            <option value="">Select a state first…</option>
-          </select>
-        </div>
-        <div class="md:col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Not listed?</label>
-          <input id="otherAirport" type="text" placeholder="Type airport name/ICAO" class="w-full border rounded-lg px-3 py-2" />
-          <p class="text-xs text-gray-500 mt-2">We also service remote strips and private helipads — tell us where and we’ll confirm access.</p>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">City / Airport (optional)</label>
+          <input id="airportSearch" type="text" placeholder="Type an airport or city…"
+                 class="mt-1 block w-full border rounded-lg px-3 py-2" />
         </div>
       </div>
 
-      <div class="mt-6">
-        <a href="#contact" class="inline-flex items-center rounded-lg bg-indigo-600 text-white font-semibold px-5 py-3 hover:bg-indigo-700">
-          <i data-feather="send" class="mr-2"></i> Get a quote for this airport
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- TERMS -->
-  <section class="py-10 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="rounded-xl border border-gray-200 p-6 sm:p-8 bg-gray-50">
-        <h3 class="text-xl font-bold text-gray-900 mb-2">Booking & Payment Terms</h3>
-        <p class="text-gray-700">
-          <strong>$2,000 deposit</strong> (or <strong>25%</strong> of project total, whichever is greater) to book — non-refundable.
-          <strong>50%</strong> on arrival, <strong>25%</strong> at completion. Optional on-job insurance add-on <strong>$700</strong>.
-          Immediate/overnight dispatch available; travel-based rush fee from <strong>$1,500</strong>.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq" class="bg-gray-50 py-14">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="lg:text-center mb-8">
-        <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase" data-aos="fade-up">FAQ</h2>
-        <p class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900" data-aos="fade-up">Frequently asked questions</p>
-      </div>
-
-      <dl class="grid md:grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up">
-          <dt class="text-lg font-medium text-gray-900">What aircraft do you service?</dt>
-          <dd class="mt-2 text-gray-600">Pistons & turboprops up to large-cabin business jets and helicopters. We tailor products & processes to each airframe and finish.</dd>
+      <!-- inline results (not a modal) -->
+      <details id="airportsPanel" class="dropdown mt-6">
+        <summary class="dropdown-summary">
+          <span id="airportsTitle">Airports (select a state above)</span>
+          <svg class="chev" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+          </svg>
+        </summary>
+        <div class="dropdown-body">
+          <ul id="airportList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm text-gray-800"></ul>
+          <p class="mt-3 text-xs text-gray-500">Don’t see your field? We service most public & private airports/heliports with FBO coordination.</p>
         </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="100">
-          <dt class="text-lg font-medium text-gray-900">How fast can you get here?</dt>
-          <dd class="mt-2 text-gray-600">Same-day or overnight in many cases. We coordinate with your FBO/hangar for access and ramp safety. Rush fee may apply based on distance.</dd>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="200">
-          <dt class="text-lg font-medium text-gray-900">Do you offer ongoing maintenance?</dt>
-          <dd class="mt-2 text-gray-600">Yes — monthly or quarterly programs keep brightwork, paint and cabins consistent while reducing per-visit time and cost.</dd>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm" data-aos="fade-up" data-aos-delay="300">
-          <dt class="text-lg font-medium text-gray-900">How do I get a price?</dt>
-          <dd class="mt-2 text-gray-600">Call or text us with the aircraft type, location/airport, and timing. We’ll quote immediately and lock in your slot with the deposit.</dd>
-        </div>
-      </dl>
+      </details>
     </div>
   </section>
 
   <!-- CONTACT -->
-  <section id="contact" class="bg-white">
+  <section id="contact" class="bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
       <div class="lg:text-center mb-8">
-        <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Contact Us</h2>
-        <p class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">Call, text, or email for a quote</p>
+        <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Contact</h2>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900">Call, text or email for a quote</p>
+        <p class="mt-2 text-gray-600 max-w-2xl mx-auto">No payment required on the website. We’ll confirm scope, location & access, then get you on the schedule.</p>
       </div>
 
-      <div class="grid lg:grid-cols-2 gap-8">
-        <div class="space-y-4">
-          <a href="tel:+19176157104" class="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-            <div class="flex items-center">
-              <i data-feather="phone-call" class="text-indigo-600 mr-3"></i>
-              <div><div class="font-semibold">Call</div><div class="text-gray-600 text-sm">+1 (917) 615-7104</div></div>
-            </div>
-            <i data-feather="chevron-right" class="text-gray-400"></i>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="space-y-3">
+          <a href="tel:19176157104" class="inline-flex items-center bg-white border rounded-lg px-4 py-3 hover:bg-gray-50">
+            <i data-feather="phone" class="mr-2 text-indigo-600"></i> 917-615-7104
           </a>
-          <a href="sms:+19176157104?body=Hi%20BookerPilot%2C%20I%27d%20like%20a%20quote%20for%20aircraft%20detailing."
-             class="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-            <div class="flex items-center">
-              <i data-feather="message-square" class="text-indigo-600 mr-3"></i>
-              <div><div class="font-semibold">Text</div><div class="text-gray-600 text-sm">We reply fast</div></div>
-            </div>
-            <i data-feather="chevron-right" class="text-gray-400"></i>
+          <a href="sms:+19176157104?body=Hi%20BookerPilot%2C%20I%27d%20like%20a%20quote."
+             class="inline-flex items-center bg-white border rounded-lg px-4 py-3 hover:bg-gray-50">
+            <i data-feather="message-circle" class="mr-2 text-indigo-600"></i> Text us for a quote
           </a>
+          <div class="text-sm text-gray-500">NYC-based • Mobile team</div>
         </div>
 
-        <form id="quote-form" action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="space-y-4" autocomplete="off">
-          <input type="hidden" name="_subject" value="Aircraft Detailing Inquiry" />
-          <input type="hidden" name="_captcha" value="false" />
+        <!-- Email form via FormSubmit -->
+        <form id="quoteForm" action="https://formsubmit.co/bookerpilot@outlook.com" method="POST" class="bg-white border rounded-xl p-4 space-y-3" autocomplete="off">
+          <input type="hidden" name="_subject" value="Aircraft Detailing Quote Request" />
+          <input type="hidden" name="_captcha"  value="false" />
           <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_next" value="https://bookerpilot.com/#home" />
+          <input type="hidden" name="_next"     value="https://bookerpilot.com/#home" />
 
           <div class="grid sm:grid-cols-2 gap-3">
-            <input type="text" name="name" placeholder="Your Name" class="w-full border rounded-lg px-3 py-2" required>
-            <input type="email" name="email" placeholder="you@example.com" class="w-full border rounded-lg px-3 py-2" required>
+            <input required name="name"  placeholder="Your name" class="w-full border rounded-lg px-3 py-2"
+                   oncopy="return false" onpaste="return false" spellcheck="false" autocomplete="off">
+            <input required type="email" name="email" placeholder="you@example.com" class="w-full border rounded-lg px-3 py-2"
+                   oncopy="return false" onpaste="return false" spellcheck="false" autocomplete="off">
           </div>
           <div class="grid sm:grid-cols-2 gap-3">
-            <input type="tel" name="phone" placeholder="Phone" class="w-full border rounded-lg px-3 py-2">
-            <input type="text" name="aircraft" placeholder="Aircraft (e.g., Gulfstream G450)" class="w-full border rounded-lg px-3 py-2">
+            <input name="phone" placeholder="Phone (optional)" class="w-full border rounded-lg px-3 py-2"
+                   oncopy="return false" onpaste="return false" autocomplete="off">
+            <input name="aircraft" placeholder="Aircraft (type/tail)" class="w-full border rounded-lg px-3 py-2" autocomplete="off">
           </div>
-          <div class="grid sm:grid-cols-2 gap-3">
-            <input type="text" id="chosenState" name="state" placeholder="State / Region" class="w-full border rounded-lg px-3 py-2">
-            <input type="text" id="chosenAirport" name="airport" placeholder="Airport (e.g., Teterboro TEB)" class="w-full border rounded-lg px-3 py-2">
-          </div>
-          <textarea name="message" class="w-full border rounded-lg px-3 py-2 h-32" placeholder="Timing, requested services, special instructions"></textarea>
-          <label class="inline-flex items-center text-sm text-gray-600">
-            <input type="checkbox" name="newsletter" class="mr-2"> Send me maintenance tips & availability updates.
-          </label>
-          <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 shadow">Send</button>
-          <p id="form-msg" class="text-sm text-gray-500"></p>
+          <textarea required name="details" placeholder="Where is the aircraft? What do you need?"
+                    class="w-full border rounded-lg px-3 py-2 h-28"></textarea>
+          <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700">Email Us</button>
+          <p id="formMsg" class="text-sm text-gray-500"></p>
         </form>
       </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="bg-white border-t">
+  <footer class="bg-white">
     <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <nav class="flex flex-wrap gap-x-6 gap-y-2 mb-4 sm:mb-0 text-sm">
-          <a href="#features" class="text-gray-600 hover:text-gray-900">Features</a>
-          <a href="#services" class="text-gray-600 hover:text-gray-900">Services</a>
-          <a href="#area" class="text-gray-600 hover:text-gray-900">Service Area</a>
-          <a href="#faq" class="text-gray-600 hover:text-gray-900">FAQ</a>
-          <a href="#contact" class="text-gray-600 hover:text-gray-900">Contact</a>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <nav class="flex flex-wrap justify-center sm:justify-start gap-x-6 text-sm text-gray-600">
+          <a href="#features" class="hover:text-gray-900">Features</a>
+          <a href="#services" class="hover:text-gray-900">Services</a>
+          <a href="#areas" class="hover:text-gray-900">Service Areas</a>
+          <a href="#contact" class="hover:text-gray-900">Contact</a>
         </nav>
-        <div class="text-gray-400 text-sm">&copy; 2025 BookerPilot. All rights reserved.</div>
+        <p class="text-sm text-gray-400">&copy; <span id="y"></span> BookerPilot. All rights reserved.</p>
       </div>
     </div>
   </footer>
@@ -471,109 +409,285 @@
   <!-- Toast -->
   <div id="toast" class="toast"></div>
 
+  <!-- JSON-LD (SEO) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"LocalBusiness",
+    "name":"BookerPilot",
+    "image":"https://bookerpilot.com/og.jpg",
+    "telephone":"+1-917-615-7104",
+    "email":"bookerpilot@outlook.com",
+    "url":"https://bookerpilot.com",
+    "description":"On-site aircraft detailing for business jets and helicopters. Exterior, interior, brightwork. Mobile across the Northeast, Mid-Atlantic and Southeast.",
+    "areaServed":[
+      "NY","NJ","PA","CT","MA","MD","VA","DC","DE","RI","NH","VT","ME",
+      "NC","SC","GA","FL","OH","MI","IL","IN","WI","MN","TN","KY","WV","AL","MS","LA","TX"
+    ],
+    "sameAs": [],
+    "serviceType":"Aircraft detailing, jet detailing, helicopter detailing"
+  }
+  </script>
+
+  <!-- App JS -->
   <script>
-    // Init libs
-    document.addEventListener('DOMContentLoaded', () => {
-      try { AOS.init({ duration: 700, once: true }); } catch(e){}
-      try { feather.replace(); } catch(e){}
-    });
+    // Init
+    document.getElementById('y').textContent = new Date().getFullYear();
+    AOS.init({ duration: 650, once: true });
+    if (window.feather && typeof feather.replace === 'function') feather.replace();
 
-    // ===== Bottom-sheet logic (robust, never auto-opens)
-    const revealWrap  = document.querySelector('.reveal-wrap');
-    const pullHandle  = document.getElementById('pull-handle');
-    const revealMask  = document.getElementById('reveal-mask');
-    const collapseBtn = document.getElementById('collapse-more');
-    const sheetClose  = document.getElementById('sheetClose');
-    let backdropEl = null;
-
-    // Ensure closed on load
-    revealWrap.classList.remove('reveal-open');
-
-    function openReveal(){
-      if (revealWrap.classList.contains('reveal-open')) return;
-      revealWrap.classList.add('reveal-open');
-
-      // Mobile backdrop
-      if (window.matchMedia('(max-width: 640px)').matches) {
-        backdropEl = document.createElement('div');
-        backdropEl.className = 'reveal-backdrop';
-        document.body.appendChild(backdropEl);
-        backdropEl.addEventListener('click', closeReveal, { once: true });
-        // prevent body scroll (iOS-friendly)
-        document.body.style.overflow = 'hidden';
-      }
-    }
-    function closeReveal(){
-      revealWrap.classList.remove('reveal-open');
-      if (backdropEl) { backdropEl.remove(); backdropEl = null; }
-      document.body.style.overflow = '';
-      // reset scroll inside sheet
-      revealMask.scrollTop = 0;
+    const toast = document.getElementById('toast');
+    function showToast(msg) {
+      toast.textContent = msg; toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    pullHandle.addEventListener('click', () => {
-      revealWrap.classList.contains('reveal-open') ? closeReveal() : openReveal();
-    });
-    sheetClose.addEventListener('click', closeReveal);
-    collapseBtn.addEventListener('click', closeReveal);
-
-    // Close on Escape
-    window.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeReveal(); });
-    // Close if navigating via hash
-    window.addEventListener('hashchange', closeReveal);
-    // Close when clicking any in-page nav link
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', closeReveal);
-    });
-
-    // ===== Service area dropdowns
-    const airportsByState = {
-      "New York": ["TEB — Teterboro (NJ, NYC market)","HPN — Westchester/White Plains","FRG — Republic/Farmingdale","JFK — John F. Kennedy","LGA — LaGuardia","ISP — MacArthur","SWF — Stewart","ITH — Ithaca","ROC — Rochester"],
-      "New Jersey": ["TEB — Teterboro","MMU — Morristown","LDJ — Linden","TTN — Trenton","ACY — Atlantic City"],
-      "Connecticut": ["BDL — Bradley","HVN — Tweed-New Haven","OXC — Waterbury-Oxford","GON — Groton-New London"],
-      "Pennsylvania": ["PNE — Northeast Philadelphia","PHL — Philadelphia Intl","PIT — Pittsburgh","MDT — Harrisburg","LNS — Lancaster"],
-      "Massachusetts": ["BOS — Logan","BED — Hanscom/Concord","ACK — Nantucket","HYA — Hyannis","MVY — Martha’s Vineyard"],
-      "Maryland": ["MTN — Martin State","BWI — Baltimore/Washington","FME — Tipton","ANP — Lee Annapolis"],
-      "Virginia": ["IAD — Dulles","DCA — Reagan","RIC — Richmond","ORF — Norfolk","PHF — Newport News"],
-      "District of Columbia": ["DCA — Reagan (access restrictions)"],
-      "North Carolina": ["CLT — Charlotte","RDU — Raleigh-Durham","ILM — Wilmington","FAY — Fayetteville","HQU — Augusta Regional (nearby GA)"],
-      "South Carolina": ["CHS — Charleston","CAE — Columbia","MYR — Myrtle Beach","GSP — Greenville-Spartanburg","JZI — Charleston Exec"],
-      "Georgia": ["PDK — DeKalb-Peachtree","FTY — Fulton County","SAV — Savannah","AGS — Augusta"],
-      "Florida": ["OPF — Miami-Opa-locka","PBI — West Palm","FLL — Fort Lauderdale","MCO — Orlando","TPA — Tampa","JAX — Jacksonville","RSW — Fort Myers","SRQ — Sarasota"]
+    // Airports data (sample major → local; extend as needed)
+    const AIRPORTS = {
+      "New York": [
+        "KJFK — John F. Kennedy Intl (NYC)",
+        "KLGA — LaGuardia (NYC)",
+        "KTEB — Teterboro (NYC metro)",
+        "KHPN — Westchester County (White Plains)",
+        "KFRG — Republic (Farmingdale)",
+        "KISP — Long Island MacArthur",
+        "KBUF — Buffalo Niagara Intl",
+        "KRME — Griffiss (Rome)",
+        "KITH — Ithaca Tompkins",
+        "KELM — Elmira/Corning",
+        "KMVY/KACK — seasonal ferry support (on request)"
+      ],
+      "New Jersey": [
+        "KTEB — Teterboro",
+        "KEWR — Newark Liberty",
+        "KMMU — Morristown",
+        "KCDW — Essex County",
+        "KACY — Atlantic City Intl",
+        "KWRI — McGuire (coord req.)"
+      ],
+      "Pennsylvania": [
+        "KPHL — Philadelphia Intl",
+        "KPIT — Pittsburgh Intl",
+        "KMDT — Harrisburg Intl",
+        "KAGC — Allegheny County",
+        "KABE — Lehigh Valley",
+        "KCXY — Capital City"
+      ],
+      "Connecticut": [
+        "KBDL — Bradley Intl",
+        "KHVN — Tweed New Haven",
+        "KIJD — Windham",
+        "KGON — Groton-New London",
+        "KOXC — Waterbury-Oxford"
+      ],
+      "Massachusetts": [
+        "KBOS — Logan Intl",
+        "KBED — Hanscom Field",
+        "KOWD — Norwood",
+        "KORH — Worcester",
+        "KBAF — Westfield-Barnes"
+      ],
+      "Maryland": [
+        "KBWI — Baltimore/Washington",
+        "KMTN — Martin State",
+        "KADW — Joint Base Andrews (coord req.)",
+        "KHGR — Hagerstown"
+      ],
+      "Virginia": [
+        "KIAD — Dulles Intl",
+        "KDCA — Reagan National (coord)",
+        "KRIC — Richmond Intl",
+        "KORF — Norfolk Intl",
+        "KPHF — Newport News/Williamsburg",
+        "KCHO — Charlottesville"
+      ],
+      "District of Columbia": [
+        "KDCA — Reagan National (coord)",
+        "Nearby: KIAD, KHEF, KJYO"
+      ],
+      "Delaware": [
+        "KILG — Wilmington",
+        "KGED — Delaware Coastal",
+        "KDOV — Dover AFB (coord)"
+      ],
+      "Rhode Island": [
+        "KPVD — Providence",
+        "KOQU — Quonset State",
+        "KUUU — Newport State"
+      ],
+      "New Hampshire": [
+        "KMHT — Manchester",
+        "KPSM — Portsmouth Intl at Pease",
+        "KCON — Concord"
+      ],
+      "Vermont": [
+        "KBTV — Burlington Intl",
+        "KRUT — Rutland",
+        "KMPV — Montpelier"
+      ],
+      "Maine": [
+        "KPWM — Portland Intl Jetport",
+        "KBGR — Bangor Intl",
+        "KRKD — Knox County"
+      ],
+      "North Carolina": [
+        "KRDU — Raleigh-Durham",
+        "KCLT — Charlotte Douglas",
+        "KGSO — Piedmont Triad",
+        "KILM — Wilmington",
+        "KOAJ — Albert J. Ellis (JAX area NC)"
+      ],
+      "South Carolina": [
+        "KCHS — Charleston",
+        "KCAE — Columbia Metro",
+        "KMYR — Myrtle Beach",
+        "KGMU — Greenville Downtown"
+      ],
+      "Georgia": [
+        "KATL — Hartsfield-Jackson",
+        "KPDK — DeKalb-Peachtree",
+        "KSAV — Savannah",
+        "KCSG — Columbus"
+      ],
+      "Florida": [
+        "KMIA — Miami Intl",
+        "KOPF — Miami-Opa Locka Exec",
+        "KFLL — Fort Lauderdale",
+        "KPBI — Palm Beach Intl",
+        "KMCO — Orlando Intl",
+        "KTPA — Tampa Intl",
+        "KSRQ — Sarasota",
+        "KJAX — Jacksonville Intl",
+        "KFMY — Page Field (Fort Myers)"
+      ],
+      "Ohio": [
+        "KCLE — Cleveland Hopkins",
+        "KCMH — John Glenn Columbus",
+        "KDAY — Dayton Intl",
+        "KOSU — Ohio State University"
+      ],
+      "Michigan": [
+        "KDTW — Detroit Metro",
+        "KYIP — Willow Run",
+        "KGRR — Grand Rapids",
+        "KLAN — Lansing"
+      ],
+      "Illinois": [
+        "KORD — O’Hare",
+        "KMDW — Midway",
+        "KPWK — Chicago Executive",
+        "KSPI — Springfield"
+      ],
+      "Indiana": [
+        "KIND — Indianapolis Intl",
+        "KGYY — Gary/Chicago",
+        "KFWA — Fort Wayne"
+      ],
+      "Wisconsin": [
+        "KMKE — Milwaukee",
+        "KMSN — Madison",
+        "KGRB — Green Bay"
+      ],
+      "Minnesota": [
+        "KMSP — Minneapolis–St Paul",
+        "KSTP — St Paul Downtown",
+        "KDLH — Duluth"
+      ],
+      "Tennessee": [
+        "KBNA — Nashville",
+        "KMEM — Memphis",
+        "KTYS — Knoxville"
+      ],
+      "Kentucky": [
+        "KSDF — Louisville",
+        "KLEX — Lexington Blue Grass",
+        "KCVG — Cincinnati/N Kentucky"
+      ],
+      "West Virginia": [
+        "KCRW — Yeager",
+        "KHTS — Tri-State",
+        "KCKB — North Central"
+      ],
+      "Alabama": [
+        "KBHM — Birmingham",
+        "KMGM — Montgomery",
+        "KHSV — Huntsville"
+      ],
+      "Mississippi": [
+        "KJAN — Jackson",
+        "KGPT — Gulfport-Biloxi",
+        "KTUP — Tupelo"
+      ],
+      "Louisiana": [
+        "KMSY — New Orleans",
+        "KBTR — Baton Rouge",
+        "KSHV — Shreveport"
+      ],
+      "Texas": [
+        "KIAH — Houston Intercontinental",
+        "KHOU — Houston Hobby",
+        "KDFW — Dallas/Fort Worth",
+        "KDAL — Dallas Love Field",
+        "KAUS — Austin",
+        "KSAT — San Antonio"
+      ]
     };
-    const stateSelect   = document.getElementById('stateSelect');
-    const airportSelect = document.getElementById('airportSelect');
-    const chosenState   = document.getElementById('chosenState');
-    const chosenAirport = document.getElementById('chosenAirport');
+
+    // Populate airport list
+    const stateSelect = document.getElementById('stateSelect');
+    const airportsPanel = document.getElementById('airportsPanel');
+    const airportsTitle = document.getElementById('airportsTitle');
+    const airportList = document.getElementById('airportList');
+    const airportSearch = document.getElementById('airportSearch');
 
     stateSelect.addEventListener('change', () => {
-      const state = stateSelect.value;
-      airportSelect.innerHTML = '';
-      const first = document.createElement('option');
-      first.value=''; first.textContent = state ? 'Select an airport…' : 'Select a state first…';
-      airportSelect.appendChild(first);
-      (airportsByState[state] || []).forEach(a=>{
-        const opt=document.createElement('option'); opt.value=a; opt.textContent=a;
-        airportSelect.appendChild(opt);
-      });
-      if (chosenState) chosenState.value = state;
+      const st = stateSelect.value;
+      populateAirports(st);
+      if (st) { airportsPanel.open = true; }
     });
-    airportSelect.addEventListener('change', ()=>{ if (chosenAirport) chosenAirport.value = airportSelect.value; });
 
-    // ===== Contact form light validation
-    const form = document.getElementById('quote-form');
-    const formMsg = document.getElementById('form-msg');
-    const toast = document.getElementById('toast');
-    function showToast(text){ toast.textContent = text; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2600); }
-    form.addEventListener('submit', (e) => {
-      const email = form.querySelector('input[name="email"]').value.trim();
-      const phone = form.querySelector('input[name="phone"]').value.trim();
-      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      const phoneOk = !phone || /^\+?[0-9\s().-]{7,}$/.test(phone);
-      if (!emailOk){ e.preventDefault(); formMsg.textContent = "Please enter a valid email (must include @ and .)"; formMsg.className="text-sm text-red-600"; return; }
-      if (!phoneOk){ e.preventDefault(); formMsg.textContent = "Please enter a valid phone number"; formMsg.className="text-sm text-red-600"; return; }
+    airportSearch.addEventListener('input', () => {
+      const st = stateSelect.value;
+      populateAirports(st, airportSearch.value.trim().toLowerCase());
+    });
+
+    function populateAirports(state, filter="") {
+      airportList.innerHTML = "";
+      if (!state || !AIRPORTS[state]) {
+        airportsTitle.textContent = "Airports (select a state above)";
+        return;
+      }
+      airportsTitle.textContent = `${state} — sample airports`;
+      const arr = AIRPORTS[state].filter(a => a.toLowerCase().includes(filter));
+      if (arr.length === 0) {
+        airportList.innerHTML = `<li class="text-gray-500">No matches. Try a different term.</li>`;
+        return;
+      }
+      arr.forEach(a => {
+        const li = document.createElement('li');
+        li.className = "p-3 bg-gray-50 rounded-lg border";
+        li.textContent = a;
+        airportList.appendChild(li);
+      });
+    }
+
+    // Form client-side validation + friendly toast after submit
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\+?[0-9\s().-]{7,}$/;
+    const quoteForm = document.getElementById('quoteForm');
+    const formMsg = document.getElementById('formMsg');
+
+    quoteForm.addEventListener('submit', (e) => {
+      const fd = new FormData(quoteForm);
+      const name = (fd.get('name')||"").toString().trim();
+      const email = (fd.get('email')||"").toString().trim();
+      const phone = (fd.get('phone')||"").toString().trim();
+      if (!name) { e.preventDefault(); formMsg.textContent="Please enter your name."; formMsg.className="text-sm text-red-600"; return; }
+      if (!emailRegex.test(email)) { e.preventDefault(); formMsg.textContent="Enter a valid email (must include @ and .)."; formMsg.className="text-sm text-red-600"; return; }
+      if (phone && !phoneRegex.test(phone)) { e.preventDefault(); formMsg.textContent="Enter a valid phone number."; formMsg.className="text-sm text-red-600"; return; }
       formMsg.textContent = "Sending…"; formMsg.className="text-sm text-gray-500";
-      showToast("Thanks! We’ll reply shortly with a quote.");
+      // Let FormSubmit handle the POST and redirect. Show toast for UX.
+      setTimeout(() => showToast("Thanks! Please check your email — we’ll reply shortly."), 300);
     });
   </script>
 </body>
