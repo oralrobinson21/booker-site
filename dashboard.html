@@ -1,41 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Dashboard – BookerPilot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-</head>
-<body class="min-h-screen bg-gray-50 flex items-center justify-center">
-  <div class="w-full max-w-2xl bg-white shadow p-8 rounded-xl text-center">
-    <h1 class="text-3xl font-bold mb-4">Welcome to your Dashboard</h1>
-    <p class="mb-6 text-gray-700">Here you’ll see your subscription status and future booking tools.</p>
-
-    <p id="user-email" class="text-indigo-600 font-medium"></p>
-
-    <button id="logout" class="mt-6 bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Log Out</button>
-  </div>
-
-<script>
-const SUPABASE_URL = 'https://lzitxdifsukaywuansgh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6aXR4ZGlmc3VrYXl3dWFuc2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NzY3ODMsImV4cCI6MjA3MzM1Mjc4M30.hH9S-SLi7u2Hmy-9pNb_Z1l0fZCTsZ8HultBUY9WpEo';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// show logged-in user's email
-supabase.auth.getUser().then(({ data, error }) => {
-  if (error || !data.user) {
-    window.location.href = '/login.html';
-    return;
-  }
-  document.getElementById('user-email').textContent = `Logged in as ${data.user.email}`;
-});
-
-// logout button
-document.getElementById('logout').addEventListener('click', async () => {
-  await supabase.auth.signOut();
-  window.location.href = '/login.html';
-});
-</script>
-</body>
-</html>
+<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>CityTask Workspace</title><script src='https://cdn.tailwindcss.com'></script></head>
+<body class='bg-slate-50 p-6'>
+<div class='max-w-6xl mx-auto space-y-4'>
+<div class='flex justify-between'><h1 class='text-2xl font-bold'>CityTask Business + Pro Workspace</h1><button id='logout' class='px-3 py-2 bg-slate-800 text-white rounded'>Logout</button></div>
+<div id='msg' class='text-sm text-red-600'></div>
+<section id='needsBiz' class='hidden bg-white p-4 rounded shadow space-y-3'>
+<h2 class='font-semibold'>Create Business Workspace</h2>
+<form id='bizForm' class='grid grid-cols-2 gap-2'>
+<input required name='legal_name' placeholder='Legal business name' class='border p-2 rounded'><input required name='operating_name' placeholder='Public operating name' class='border p-2 rounded'>
+<input name='business_type' placeholder='Business type' class='border p-2 rounded'><input name='timezone' placeholder='Timezone' value='UTC' class='border p-2 rounded'>
+<button class='col-span-2 bg-indigo-600 text-white p-2 rounded'>Create business</button></form></section>
+<div class='grid md:grid-cols-2 gap-4'>
+<section class='bg-white p-4 rounded shadow'><h3 class='font-semibold mb-2'>Pro Profile</h3><form id='proForm' class='space-y-2'>
+<input name='display_name' placeholder='Display name' class='w-full border p-2 rounded'><input name='pro_type' placeholder='Pro type' class='w-full border p-2 rounded'><input name='service_tags' placeholder='service tags comma-separated' class='w-full border p-2 rounded'><textarea name='availability' placeholder='availability shell' class='w-full border p-2 rounded'></textarea><button class='bg-indigo-600 text-white px-3 py-2 rounded'>Save profile</button></form></section>
+<section class='bg-white p-4 rounded shadow'><h3 class='font-semibold mb-2'>Setup Data</h3><div class='space-y-2'>
+<button data-add='serviceCategories' class='add bg-slate-200 px-2 py-1 rounded'>Add Service Category</button>
+<button data-add='serviceTypes' class='add bg-slate-200 px-2 py-1 rounded'>Add Service Type</button>
+<button data-add='customers' class='add bg-slate-200 px-2 py-1 rounded'>Add Customer</button>
+<button data-add='sites' class='add bg-slate-200 px-2 py-1 rounded'>Add Job Site</button>
+<button data-add='tasks' class='add bg-slate-200 px-2 py-1 rounded'>Add Task</button></div></section>
+</div>
+<section class='bg-white p-4 rounded shadow'><h3 class='font-semibold'>Live Summary</h3><pre id='summary' class='text-xs overflow-auto'></pre></section>
+</div>
+<script type='module'>
+import * as api from './src/citytask.js';
+const msg=document.getElementById('msg');
+function refresh(){try{const d=api.dashboardData();document.getElementById('needsBiz').classList.toggle('hidden',!d.needsBusiness);document.getElementById('summary').textContent=JSON.stringify(d,null,2);}catch(e){msg.textContent='Please log in first.';location.href='/login.html';}}
+refresh();
+document.getElementById('logout').onclick=()=>{api.logout();location.href='/login.html'};
+document.getElementById('bizForm')?.addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.target);api.createBusiness(Object.fromEntries(f.entries()));refresh();});
+document.getElementById('proForm').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.target);const x=Object.fromEntries(f.entries());x.service_tags=x.service_tags?x.service_tags.split(',').map(s=>s.trim()).filter(Boolean):[];api.upsertProProfile(x);refresh();});
+document.querySelectorAll('.add').forEach(btn=>btn.onclick=()=>{const t=btn.dataset.add;const name=prompt(`Name for ${t}`);if(!name)return;api.createEntity(t,{name,status:'active',title:name,description:name});refresh();});
+</script></body></html>
