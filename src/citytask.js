@@ -4,21 +4,21 @@ const enums = {
   businessStates: ['draft', 'created', 'onboarding', 'active', 'limited', 'suspended', 'archived'],
   checklistStatuses: ['incomplete', 'complete', 'blocked', 'optional', 'provider_gated'],
   providerStatuses: ['not_configured', 'configured', 'verified', 'degraded', 'failed', 'acknowledged', 'disabled'],
-  roles: ['owner', 'admin', 'dispatcher', 'operations_manager', 'reviewer', 'finance', 'crew_lead', 'worker/pro', 'read_only', 'platform_admin'],
+  roles: ['owner', 'admin', 'dispatcher', 'operations_manager', 'reviewer', 'finance', 'crew_lead', 'worker', 'read_only', 'platform_admin'],
   proReadiness: ['draft', 'profile_started', 'profile_complete', 'availability_missing', 'credential_pending', 'business_assignable', 'limited', 'suspended', 'archived'],
 };
 
 const checklistDefaults = [
   'profile_complete','service_area_configured','operating_hours_configured','service_catalog_configured','team_or_pro_configured','proof_policy_configured','storage_acknowledged','provider_gates_acknowledged'
 ];
-const providerDefaults = ['storage','stripe','email','sms','telephony','iot'];
+const providerDefaults = ['supabase_storage','stripe_connect','stripe_billing','email','sms','telephony','iot','maps','monitoring'];
 
 const id = () => crypto.randomUUID();
 const now = () => new Date().toISOString();
 
 function load() {
   const raw = localStorage.getItem(DB_KEY);
-  if (!raw) return { users: [], businesses: [], memberships: [], checklists: [], providerGates: [], pros: [], customers: [], sites: [], serviceCategories: [], serviceTypes: [], operatingHours: [], tasks: [], assignments: [], scheduleEntries: [], auditEvents: [] };
+  if (!raw) return { users: [], businesses: [], memberships: [], checklists: [], providerGates: [], pros: [], customers: [], sites: [], serviceAreas: [], serviceCategories: [], serviceTypes: [], operatingHours: [], tasks: [], assignments: [], scheduleEntries: [], auditEvents: [] };
   return JSON.parse(raw);
 }
 function save(db) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
@@ -81,6 +81,14 @@ export function upsertProProfile(data) {
 
 export function createEntity(table, obj) {
   const { user, db, business, membership } = getBusinessContext(); if (!membership) throw new Error('403');
+  if (table === 'tasks') {
+    if (!obj.customer_id || !obj.site_id || !obj.service_type_id) throw new Error('task_missing_dependencies');
+    const hasCustomer = db.customers.some(c => c.id === obj.customer_id && c.business_id === business.id);
+    const hasSite = db.sites.some(s => s.id === obj.site_id && s.business_id === business.id);
+    const service = db.serviceTypes.find(s => s.id === obj.service_type_id && s.business_id === business.id);
+    if (!hasCustomer || !hasSite || !service) throw new Error('task_invalid_dependencies');
+    if (service.active === false) throw new Error('service_inactive');
+  }
   const row = { id: id(), business_id: business.id, created_at: now(), updated_at: now(), ...obj };
   db[table].push(row);
   audit(db, { actor_user_id: user.id, business_id: business.id, actor_role: membership.role, event_type: `${table.slice(0,-1)}_created`, object_type: table, object_id: row.id, after_json: row });
